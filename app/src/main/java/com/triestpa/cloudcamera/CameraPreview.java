@@ -67,7 +67,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         Log.d(TAG, "surface destroyed");
     }
 
-    /**
+    /*
      * When this function returns, mCamera will be null.
      */
     public void stopPreviewAndFreeCamera() {

@@ -1,10 +1,13 @@
 package com.triestpa.cloudcamera;
 
+import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -54,6 +57,33 @@ public class CameraActivity extends AppCompatActivity {
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.removeView(mPreview);
         mPreview.stopPreviewAndFreeCamera();
+    }
+
+
+    /* ----- Toolbar Events -----*/
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_camera, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_gallery) {
+            Intent galleryIntent = new Intent(this, GalleryActivity.class);
+            startActivity(galleryIntent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -188,13 +218,13 @@ public class CameraActivity extends AppCompatActivity {
 
             final ParseFile picFile = new ParseFile(timeStamp, picData);
             picFile.saveInBackground(new SaveCallback() {
-                                      @Override
-                                      public void done(ParseException e) {
-                                          Picture newPic = new Picture();
-                                          newPic.setPhoto(picFile);
-                                          newPic.saveInBackground();
-                                      }
-                                  }
+                                         @Override
+                                         public void done(ParseException e) {
+                                             Picture newPic = new Picture();
+                                             newPic.setPhoto(picFile);
+                                             newPic.saveInBackground();
+                                         }
+                                     }
             );
         }
     };
