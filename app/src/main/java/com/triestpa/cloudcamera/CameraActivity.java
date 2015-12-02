@@ -22,6 +22,7 @@ import com.parse.SaveCallback;
 public class CameraActivity extends AppCompatActivity {
     protected final static String TAG = CameraActivity.class.getName();
     public static final int MEDIA_TYPE_IMAGE = 1;
+    public static final int MEDIA_TYPE_VIDEO = 2;
 
     private Camera mCamera;
     private CameraPreview mPreview;
@@ -30,7 +31,8 @@ public class CameraActivity extends AppCompatActivity {
     protected static int cameraID = Camera.CameraInfo.CAMERA_FACING_BACK;
     private String flashStatus = Camera.Parameters.FLASH_MODE_OFF;
 
-    /* ----- Activity Lifecycle Events -----*/
+    /** ----- Activity Lifecycle Events -----*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +62,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
 
-    /* ----- Toolbar Events -----*/
+    /** ----- Toolbar Events -----*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -87,7 +89,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
 
-    /* ----- Set UI Listeners -----*/
+    /** ----- Set UI Listeners -----*/
 
     public void setPictureButton() {
         // Add a listener to the Capture button
@@ -157,6 +159,7 @@ public class CameraActivity extends AppCompatActivity {
                 Camera.Parameters params = mCamera.getParameters();
                 ImageButton flashButton = (ImageButton) findViewById(R.id.button_flash);
 
+                // Check if device has flash
                 if (params.getFlashMode() == null) {
                     Log.d(TAG, "Device Does Not Have Flash");
                 } else if (params.getFlashMode()
@@ -178,7 +181,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
 
-    /* ----- Camera Configuration Methods -----*/
+    /** ----- Camera Configuration Methods -----*/
 
     public void cameraInit(int camID) {
         mCamera = getCameraInstance(camID);
