@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
-
 @SuppressWarnings( "deprecation" ) // Suppress warnings for the more compatible, deprecated Camera class
 public class CameraActivity extends AppCompatActivity {
     protected final static String TAG = CameraActivity.class.getName();
@@ -37,7 +36,7 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //Reinitialize the camera and preview on resume
+        // Reinitialize the camera and preview on resume
         cameraInit(cameraID);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
@@ -47,7 +46,6 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // surfaceDestroyed in CameraPreview is automatically called here
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.removeView(mPreview);
         mPreview.stopPreviewAndFreeCamera();
@@ -91,9 +89,9 @@ public class CameraActivity extends AppCompatActivity {
                 if (cameraID == Camera.CameraInfo.CAMERA_FACING_BACK) {
                     // switch to front facing camera
                     cameraInit(Camera.CameraInfo.CAMERA_FACING_FRONT);
-                    // the flash must be off if front camera is in use
+
+                    // the flash is disabled if front camera is in use
                     flashStatus = Camera.Parameters.FLASH_MODE_OFF;
-                    Log.i(TAG, "flash off");
                     ImageButton flashButton = (ImageButton) findViewById(R.id.button_flash);
                     flashButton.setVisibility(View.INVISIBLE);
                     flashButton.setImageResource(R.drawable.ic_action_flash_off);
@@ -115,7 +113,32 @@ public class CameraActivity extends AppCompatActivity {
         flashButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggleFlash();
+                // Not applicable if front facing camera is selected
+                if (cameraID == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                    return;
+                }
+
+                // get Camera parameters
+                Camera.Parameters params = mCamera.getParameters();
+                ImageButton flashButton = (ImageButton) findViewById(R.id.button_flash);
+
+                if (params.getFlashMode() == null) {
+                    Log.d(TAG, "Device Does Not Have Flash");
+                }
+                else if (params.getFlashMode()
+                        .contentEquals(Camera.Parameters.FLASH_MODE_ON)) {
+                    // turn flash off
+                    params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                    flashStatus = Camera.Parameters.FLASH_MODE_OFF;
+                    flashButton.setImageResource(R.drawable.ic_action_flash_off);
+                } else {
+                    // turn flash on
+                    params.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+                    flashStatus = Camera.Parameters.FLASH_MODE_ON;
+                    flashButton.setImageResource(R.drawable.ic_action_flash_on);
+                }
+                // set Camera parameters
+                mCamera.setParameters(params);
             }
         });
     }
@@ -132,34 +155,6 @@ public class CameraActivity extends AppCompatActivity {
         mPreview = new CameraPreview(this, mCamera);
         preview_active = true;
 
-    }
-
-    public void toggleFlash() {
-        // Not applicable if front facing camera is selected
-        if (cameraID == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            return;
-        }
-
-        // get Camera parameters
-        Camera.Parameters params = mCamera.getParameters();
-        ImageButton flashButton = (ImageButton) findViewById(R.id.button_flash);
-
-        if (params.getFlashMode()
-                .contentEquals(Camera.Parameters.FLASH_MODE_ON)) {
-            // turn flash off
-            params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-            flashStatus = Camera.Parameters.FLASH_MODE_OFF;
-            Log.i(TAG, "flash off");
-            flashButton.setImageResource(R.drawable.ic_action_flash_off);
-        } else {
-            // turn flash on
-            params.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
-            Log.i(TAG, "flash on");
-            flashStatus = Camera.Parameters.FLASH_MODE_ON;
-            flashButton.setImageResource(R.drawable.ic_action_flash_on);
-        }
-        // set Camera parameters
-        mCamera.setParameters(params);
     }
 
     // A safe way to get an instance of the Camera object.
@@ -187,12 +182,9 @@ public class CameraActivity extends AppCompatActivity {
 
             Log.i("TAG", "Picture Taken");
 
-
            // Intent intent = new Intent(getBaseContext(), SubmitPhotoActivity.class);
            // intent.putExtra("picture", data);
            // startActivity(intent);
-
-            finish();
         }
     };
 }
