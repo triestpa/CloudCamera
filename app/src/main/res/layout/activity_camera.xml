@@ -3,14 +3,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.triestpa.cloudcamera.CameraActivity">
 
-    <TextView
+    <FrameLayout
+        android:id="@+id/camera_preview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1" />
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_gravity="center|bottom"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/button_swap"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/rec_button"
+            android:src="@drawable/ic_action_switch_camera" />
+
+        <Button
+            android:id="@+id/button_capture"
+            android:layout_width="75dip"
+            android:layout_height="75dip"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/circular_button"
+            android:textColor="#fff" />
+
+        <ImageButton
+            android:id="@+id/button_flash"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@+id/button_capture"
+            android:background="@drawable/rec_button"
+            android:src="@drawable/ic_action_flash_off" />
+    </LinearLayout>
+
 </RelativeLayout>
+
