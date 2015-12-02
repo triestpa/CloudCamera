@@ -10,7 +10,12 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
-@SuppressWarnings( "deprecation" ) // Suppress warnings for the more compatible, deprecated Camera class
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.SaveCallback;
+
+@SuppressWarnings("deprecation")
+// Suppress warnings for the more compatible, deprecated Camera class
 public class CameraActivity extends AppCompatActivity {
     protected final static String TAG = CameraActivity.class.getName();
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -124,8 +129,7 @@ public class CameraActivity extends AppCompatActivity {
 
                 if (params.getFlashMode() == null) {
                     Log.d(TAG, "Device Does Not Have Flash");
-                }
-                else if (params.getFlashMode()
+                } else if (params.getFlashMode()
                         .contentEquals(Camera.Parameters.FLASH_MODE_ON)) {
                     // turn flash off
                     params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
@@ -178,13 +182,20 @@ public class CameraActivity extends AppCompatActivity {
     private PictureCallback mPicture = new PictureCallback() {
 
         @Override
-        public void onPictureTaken(byte[] data, Camera camera) {
-
+        public void onPictureTaken(byte[] picData, Camera camera) {
+            String timeStamp = "" + System.currentTimeMillis() + ".jpeg";
             Log.i("TAG", "Picture Taken");
 
-           // Intent intent = new Intent(getBaseContext(), SubmitPhotoActivity.class);
-           // intent.putExtra("picture", data);
-           // startActivity(intent);
+            final ParseFile picFile = new ParseFile(timeStamp, picData);
+            picFile.saveInBackground(new SaveCallback() {
+                                      @Override
+                                      public void done(ParseException e) {
+                                          Picture newPic = new Picture();
+                                          newPic.setPhoto(picFile);
+                                          newPic.saveInBackground();
+                                      }
+                                  }
+            );
         }
     };
 }
