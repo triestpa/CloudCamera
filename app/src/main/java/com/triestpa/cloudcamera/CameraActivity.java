@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -192,6 +193,24 @@ public class CameraActivity extends AppCompatActivity {
         mPreview = new CameraPreview(this, mCamera);
         preview_active = true;
 
+        //STEP #1: Get rotation degrees
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        Camera.getCameraInfo(cameraID, info);
+        int rotation = getWindowManager().getDefaultDisplay().getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0: degrees = 0; break; //Natural orientation
+            case Surface.ROTATION_90: degrees = 90; break; //Landscape left
+            case Surface.ROTATION_180: degrees = 180; break;//Upside down
+            case Surface.ROTATION_270: degrees = 270; break;//Landscape right
+        }
+        int rotate = (info.orientation - degrees + 360) % 360;
+
+        //STEP #2: Set the 'rotation' parameter
+        Camera.Parameters params = mCamera.getParameters();
+        params.setRotation(rotate);
+        mCamera.setParameters(params);
+
     }
 
     // A safe way to get an instance of the Camera object.
@@ -216,10 +235,8 @@ public class CameraActivity extends AppCompatActivity {
 
         @Override
         public void onPictureTaken(byte[] picData, Camera camera) {
-            String timeStamp = "" + System.currentTimeMillis() + ".jpeg";
             Log.i("TAG", "Picture Taken");
-
-            final ParseFile picFile = new ParseFile(timeStamp, picData);
+            final ParseFile picFile = new ParseFile("photo.jpeg", picData);
             picFile.saveInBackground(new SaveCallback() {
                                          @Override
                                          public void done(ParseException e) {
