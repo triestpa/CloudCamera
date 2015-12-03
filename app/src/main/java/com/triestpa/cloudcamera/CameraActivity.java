@@ -188,11 +188,6 @@ public class CameraActivity extends AppCompatActivity {
         mCamera = getCameraInstance(camID);
         cameraID = camID;
 
-        // Create our Preview view and set it as the content of our
-        // activity.
-        mPreview = new CameraPreview(this, mCamera);
-        preview_active = true;
-
         //STEP #1: Get rotation degrees
         Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(cameraID, info);
@@ -210,6 +205,11 @@ public class CameraActivity extends AppCompatActivity {
         Camera.Parameters params = mCamera.getParameters();
         params.setRotation(rotate);
         mCamera.setParameters(params);
+
+        // Create our Preview view and set it as the content of our
+        // activity.
+        mPreview = new CameraPreview(this, mCamera, rotate);
+        preview_active = true;
 
     }
 

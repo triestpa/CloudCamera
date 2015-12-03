@@ -18,11 +18,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private Camera mCamera;
     protected int parentWidth, parentHeight;
 
-    public CameraPreview(Context context, Camera camera) {
+    public CameraPreview(Context context, Camera camera, int rotation) {
         super(context);
         mCamera = camera;
 
-        camera.setDisplayOrientation(90);
+        camera.setDisplayOrientation(rotation);
         camera.getParameters().setPreviewSize(parentWidth, parentHeight);
 
         // Install a SurfaceHolder.Callback so we get notified when the
