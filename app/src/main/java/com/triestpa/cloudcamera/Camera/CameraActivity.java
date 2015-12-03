@@ -217,7 +217,6 @@ public class CameraActivity extends AppCompatActivity {
         // activity.
         mPreview = new CameraPreview(this, mCamera, previewRotate);
         preview_active = true;
-
     }
 
     // A safe way to get an instance of the Camera object.

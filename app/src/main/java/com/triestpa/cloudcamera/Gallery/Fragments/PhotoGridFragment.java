@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -24,17 +25,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ImageGridFragment extends Fragment {
-    private final static String TAG = ImageGridFragment.class.getName();
+public class PhotoGridFragment extends Fragment {
+    private final static String TAG = PhotoGridFragment.class.getName();
     RecyclerView mImageGrid;
     PhotoGridAdapter mAdapter;
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
-    public ImageGridFragment() {
+    public PhotoGridFragment() {
         // Required empty public constructor
     }
 
-    public static ImageGridFragment newInstance() {
-        ImageGridFragment fragment = new ImageGridFragment();
+    public static PhotoGridFragment newInstance() {
+        PhotoGridFragment fragment = new PhotoGridFragment();
         return fragment;
     }
 
@@ -47,23 +49,33 @@ public class ImageGridFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_image_grid, container, false);
-
+        View v = inflater.inflate(R.layout.fragment_photo_grid, container, false);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.image_grid_swipe_refresh_layout);
         mImageGrid = (RecyclerView) v.findViewById(R.id.image_grid);
+
+
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mImageGrid.setHasFixedSize(true);
 
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
         mImageGrid.setLayoutManager(layoutManager);
 
         DisplayMetrics metrics = getActivity().getResources().getDisplayMetrics();
-        int imageDimensions = metrics.widthPixels / 2;
+        int imageDimensions = metrics.widthPixels / 3;
 
         mAdapter = new PhotoGridAdapter(new ArrayList<Picture>(), imageDimensions, this);
 
         mImageGrid.setAdapter(mAdapter);
 
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshPhotos();
+            }
+        });
+
+        mSwipeRefreshLayout.setRefreshing(true);
         refreshPhotos();
 
         return v;
@@ -92,6 +104,7 @@ public class ImageGridFragment extends Fragment {
             public void done(List<Picture> pictures, ParseException e) {
                 mAdapter.setData((ArrayList<Picture>) pictures);
                 mAdapter.notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
     }

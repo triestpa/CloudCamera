@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
-import com.triestpa.cloudcamera.Gallery.Fragments.ImageGridFragment;
+import com.triestpa.cloudcamera.Gallery.Fragments.PhotoGridFragment;
 import com.triestpa.cloudcamera.Model.Picture;
 import com.triestpa.cloudcamera.R;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.ImageViewHolder> {
     final static String TAG = PhotoGridAdapter.class.getName();
     private ArrayList<Picture> mPhotos;
-    private ImageGridFragment mFragment;
+    private PhotoGridFragment mFragment;
     private int imgDimens;
     private Picasso picassoInstance;
 
@@ -25,20 +25,21 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class ImageViewHolder extends RecyclerView.ViewHolder {
-        public View vLayout;
-        public ImageView vImage;
+        public View mLayout;
+        public ImageView mImage;
+
 
         public ImageViewHolder(View v) {
             super(v);
-            vLayout = v;
-            vImage = (ImageView) v.findViewById(R.id.gallery_image);
+            mLayout = v;
+            mImage = (ImageView) v.findViewById(R.id.gallery_image);
         }
     }
 
-    public PhotoGridAdapter(List<Picture> photos, int imgDimens, ImageGridFragment fragment) {
+    public PhotoGridAdapter(List<Picture> photos, int imgDimens, PhotoGridFragment fragment) {
         mPhotos = (ArrayList<Picture>) photos;
         this.imgDimens = imgDimens;
-        this.mFragment = (ImageGridFragment) fragment;
+        this.mFragment = (PhotoGridFragment) fragment;
 
         Picasso.Builder picassoBuilder = new Picasso.Builder(fragment.getContext());
         picassoInstance = picassoBuilder.build();
@@ -51,7 +52,7 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
     // Create new views (invoked by the layout manager)
     @Override
     public PhotoGridAdapter.ImageViewHolder onCreateViewHolder(ViewGroup parent,
-                                                          int viewType) {
+                                                               int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_photo_grid, parent, false);
         // set the view's size, margins, paddings and layout parameters
@@ -71,14 +72,14 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
 
         final Picture thisPic = mPhotos.get(position);
 
-        holder.vImage.setOnClickListener(new View.OnClickListener() {
+        holder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mFragment.showLargePhoto(v, thisPic.getPhoto().getUrl(), thisPic.getThumbnail().getUrl());
             }
         });
 
-        picassoInstance.load(thisPic.getThumbnail().getUrl()).resize(imgDimens, imgDimens).centerCrop().placeholder(R.drawable.loading).into(holder.vImage);
+        picassoInstance.load(thisPic.getThumbnail().getUrl()).resize(imgDimens, imgDimens).centerCrop().placeholder(R.drawable.loading).into(holder.mImage);
     }
 
     // Return the size of your dataset (invoked by the layout manager)

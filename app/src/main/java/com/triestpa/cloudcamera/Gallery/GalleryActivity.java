@@ -17,7 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.triestpa.cloudcamera.Gallery.Fragments.ImageGridFragment;
+import com.triestpa.cloudcamera.Gallery.Fragments.PhotoGridFragment;
 import com.triestpa.cloudcamera.R;
 
 public class GalleryActivity extends AppCompatActivity {
@@ -126,7 +126,7 @@ public class GalleryActivity extends AppCompatActivity {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             if (position == 0) {
-                return new ImageGridFragment();
+                return new PhotoGridFragment();
             }
             return PlaceholderFragment.newInstance(position + 1);
         }
