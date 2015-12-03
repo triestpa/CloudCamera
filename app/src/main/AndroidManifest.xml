@@ -18,22 +18,28 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".CameraActivity"
+            android:name=".Camera.CameraActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".GalleryActivity"
+            android:name=".Gallery.GalleryActivity"
             android:label="@string/title_activity_gallery"
-            android:parentActivityName=".CameraActivity"
+            android:parentActivityName=".Camera.CameraActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.triestpa.cloudcamera.CameraActivity" />
+                android:value=".Camera.CameraActivity" />
         </activity>
+        <activity
+            android:name=".Gallery.PhotoViewActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_image_view"
+            android:theme="@style/FullscreenTheme"></activity>
     </application>
 
 </manifest>

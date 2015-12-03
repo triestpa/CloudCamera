@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.parse.Parse;
 import com.parse.ParseObject;
+import com.triestpa.cloudcamera.Model.Picture;
 
 public class CloudCameraApplication extends Application {
 
