@@ -12,4 +12,8 @@ public class Picture extends ParseObject {
     public void setPhoto(ParseFile photo) {
         put("fullSizePhoto", photo);
     }
+
+    public ParseFile getThumbnail() {
+        return getParseFile("photoThumbnail");
+    }
 }
