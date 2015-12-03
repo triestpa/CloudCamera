@@ -6,10 +6,11 @@
     android:id="@+id/image_view_content"
     tools:context=".Gallery.PhotoViewActivity">
 
-    <it.sephiroth.android.library.imagezoom.ImageViewTouch
+    <ImageView
         android:id="@+id/fullsize_image"
         android:layout_centerInParent="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:transitionName="@string/transition_picture" />
 
 </RelativeLayout>

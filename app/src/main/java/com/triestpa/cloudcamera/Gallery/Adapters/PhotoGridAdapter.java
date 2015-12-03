@@ -75,7 +75,7 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
         holder.vImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFragment.showLargePhoto(v, thisPic.getPhoto().getUrl());
+                mFragment.showLargePhoto(v, thisPic.getPhoto().getUrl(), thisPic.getThumbnail().getUrl());
             }
         });
 

@@ -1,6 +1,7 @@
 package com.triestpa.cloudcamera.Gallery;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -10,22 +11,25 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.squareup.picasso.Picasso;
 import com.triestpa.cloudcamera.R;
 
 import java.io.IOException;
 
-import it.sephiroth.android.library.imagezoom.ImageViewTouch;
-
 public class PhotoViewActivity extends AppCompatActivity {
     static final String TAG = PhotoViewActivity.class.getName();
+    public static final String EXTRA_THUMBNAIL_URL = "THUMBNAIL_URL";
+    public static final String EXTRA_FULLSIZE_URL = "FULLSIZE_URL";
+
     private static final int UI_ANIMATION_DELAY = 300;
     private final Handler mHideHandler = new Handler();
-    private ImageViewTouch mImageView;
+    private ImageView mImageView;
     RelativeLayout mContentView;
 
     private final Runnable mHidePart2Runnable = new Runnable() {
@@ -68,11 +72,14 @@ public class PhotoViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        String fullsizeURL = intent.getStringExtra(EXTRA_FULLSIZE_URL);
+        String thumbnailURL = intent.getStringExtra(EXTRA_THUMBNAIL_URL);
 
         setContentView(R.layout.activity_image_view);
 
         mVisible = true;
-        mImageView = (ImageViewTouch) findViewById(R.id.fullsize_image);
+        mImageView = (ImageView) findViewById(R.id.fullsize_image);
 
         mContentView = (RelativeLayout) findViewById(R.id.image_view_content);
 
@@ -84,12 +91,14 @@ public class PhotoViewActivity extends AppCompatActivity {
             }
         });
 
-        downloadImage();
+        Picasso.with(this).load(thumbnailURL).resize(500,500).centerCrop().placeholder(R.drawable.loading).into(mImageView);
+
+        downloadImage(fullsizeURL);
     }
 
-    public void downloadImage() {
+    public void downloadImage(String url) {
         ImageDownloadHandler handler = new ImageDownloadHandler();
-        handler.execute("http://files.parsetfss.com/d0bdb5f9-4a42-4f6d-b4c6-a1a4ffbc8928/tfss-df0b3dbb-8ef7-48ab-94d3-f8573697d9a7-photo.jpeg");
+        handler.execute(url);
     }
 
     public class ImageDownloadHandler extends AsyncTask<String, Void, byte[]> {

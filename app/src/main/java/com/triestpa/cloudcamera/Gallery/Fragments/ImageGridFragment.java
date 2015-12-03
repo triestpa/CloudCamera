@@ -2,6 +2,8 @@ package com.triestpa.cloudcamera.Gallery.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -67,10 +69,20 @@ public class ImageGridFragment extends Fragment {
         return v;
     }
 
-    public void showLargePhoto(View v, String url) {
+    public void showLargePhoto(View thumbnailView, String fullSizeURL, String thumbnailURL) {
         Intent intent = new Intent(getActivity(), PhotoViewActivity.class);
-        intent.putExtra("URL", url);
-        startActivity(intent);
+        intent.putExtra(PhotoViewActivity.EXTRA_FULLSIZE_URL, fullSizeURL);
+        intent.putExtra(PhotoViewActivity.EXTRA_THUMBNAIL_URL, thumbnailURL);
+
+        String transitionName = getString(R.string.transition_picture);
+
+        ActivityOptionsCompat options =
+                ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                        thumbnailView,   // The view which starts the transition
+                        transitionName    // The transitionName of the view we’re transitioning to
+                );
+
+        ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
     }
 
     protected void refreshPhotos() {
