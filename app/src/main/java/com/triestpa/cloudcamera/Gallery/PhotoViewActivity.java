@@ -18,7 +18,6 @@ import com.squareup.okhttp.Response;
 import com.triestpa.cloudcamera.R;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 
@@ -84,23 +83,13 @@ public class PhotoViewActivity extends AppCompatActivity {
                 toggle();
             }
         });
-        mImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggle();
-            }
-        });
 
         downloadImage();
     }
 
     public void downloadImage() {
         ImageDownloadHandler handler = new ImageDownloadHandler();
-        try {
-            handler.execute("http://files.parsetfss.com/d0bdb5f9-4a42-4f6d-b4c6-a1a4ffbc8928/tfss-df0b3dbb-8ef7-48ab-94d3-f8573697d9a7-photo.jpeg").get();
-        } catch (InterruptedException | ExecutionException e) {
-            Log.e(TAG, e.getMessage());
-        }
+        handler.execute("http://files.parsetfss.com/d0bdb5f9-4a42-4f6d-b4c6-a1a4ffbc8928/tfss-df0b3dbb-8ef7-48ab-94d3-f8573697d9a7-photo.jpeg");
     }
 
     public class ImageDownloadHandler extends AsyncTask<String, Void, byte[]> {
