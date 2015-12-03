@@ -4,7 +4,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_gallery">Gallery</string>
     <string name="section_format">Hello World from section: %1$d</string>
-    <string name="transition_picture">Hello World from section: %1$d</string>
+    <string name="transition_picture">Picture Zoom Transition</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

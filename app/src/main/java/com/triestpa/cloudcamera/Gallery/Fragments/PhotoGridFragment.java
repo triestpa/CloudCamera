@@ -87,7 +87,6 @@ public class PhotoGridFragment extends Fragment {
         intent.putExtra(PhotoViewActivity.EXTRA_THUMBNAIL_URL, thumbnailURL);
 
         String transitionName = getString(R.string.transition_picture);
-
         ActivityOptionsCompat options =
                 ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
                         thumbnailView,   // The view which starts the transition
