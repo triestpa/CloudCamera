@@ -65,7 +65,6 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
         return vh;
     }
 
-
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ImageViewHolder holder, int position) {

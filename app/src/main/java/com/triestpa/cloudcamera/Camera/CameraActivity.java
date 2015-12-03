@@ -208,9 +208,14 @@ public class CameraActivity extends AppCompatActivity {
         params.setRotation(rotate);
         mCamera.setParameters(params);
 
+        int previewRotate = rotate;
+        if (cameraID == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            previewRotate = (rotate + 180) % 360;
+        }
+
         // Create our Preview view and set it as the content of our
         // activity.
-        mPreview = new CameraPreview(this, mCamera, rotate);
+        mPreview = new CameraPreview(this, mCamera, previewRotate);
         preview_active = true;
 
     }
