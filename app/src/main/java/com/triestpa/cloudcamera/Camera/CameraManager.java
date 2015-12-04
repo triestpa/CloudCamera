@@ -43,6 +43,7 @@ public class CameraManager {
     private String flashStatus = Camera.Parameters.FLASH_MODE_OFF;
     private boolean isRecording = false;
     private String mVideoOutputFilePath;
+    private int mRotate;
 
     public CameraManager() {
     }
@@ -52,43 +53,52 @@ public class CameraManager {
      */
     public void cameraInit(int camID, Activity activity, FrameLayout preview) {
         mCamera = getCameraInstance(camID);
-        cameraID = camID;
 
-        // Sync the device rotation to the camera rotation
-        Camera.CameraInfo info = new Camera.CameraInfo();
-        Camera.getCameraInfo(cameraID, info);
-        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
-        int degrees = 0;
-        switch (rotation) {
-            case Surface.ROTATION_0:
-                degrees = 0;
-                break; //Natural orientation
-            case Surface.ROTATION_90:
-                degrees = 90;
-                break; //Landscape left
-            case Surface.ROTATION_180:
-                degrees = 180;
-                break;//Upside down
-            case Surface.ROTATION_270:
-                degrees = 270;
-                break;//Landscape right
+        if (mCamera != null) {
+            cameraID = camID;
+
+            // Sync the device rotation to the camera rotation
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(cameraID, info);
+            int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+            int degrees = 0;
+            switch (rotation) {
+                case Surface.ROTATION_0:
+                    degrees = 0;
+                    break; //Natural orientation
+                case Surface.ROTATION_90:
+                    degrees = 90;
+                    break; //Landscape left
+                case Surface.ROTATION_180:
+                    degrees = 180;
+                    break;//Upside down
+                case Surface.ROTATION_270:
+                    degrees = 270;
+                    break;//Landscape right
+            }
+            int rotate = (info.orientation - degrees + 360) % 360;
+
+            mRotate = rotate;
+
+            Camera.Parameters params = mCamera.getParameters();
+            params.setRotation(rotate);
+
+            mCamera.setParameters(params);
+
+            int previewRotate = rotate;
+            if (cameraID == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                previewRotate = (rotate + 180) % 360;
+            }
+
+            // Create our Preview view and set it as the content of our
+            // activity.
+            mPreview = new CameraPreview(activity, mCamera, previewRotate);
+            preview_active = true;
+            preview.addView(mPreview);
         }
-        int rotate = (info.orientation - degrees + 360) % 360;
-
-        Camera.Parameters params = mCamera.getParameters();
-        params.setRotation(rotate);
-        mCamera.setParameters(params);
-
-        int previewRotate = rotate;
-        if (cameraID == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            previewRotate = (rotate + 180) % 360;
+        else {
+            Log.e(TAG, "Camera Instance Failed");
         }
-
-        // Create our Preview view and set it as the content of our
-        // activity.
-        mPreview = new CameraPreview(activity, mCamera, previewRotate);
-        preview_active = true;
-        preview.addView(mPreview);
     }
 
     // A safe way to get an instance of the Camera object.
@@ -139,29 +149,35 @@ public class CameraManager {
      * ----- Video Configuration Methods -----
      */
     private boolean prepareVideoRecorder() {
-
-        //    mCamera = getCameraInstance(cameraID);
         mMediaRecorder = new MediaRecorder();
 
-        // Step 1: Unlock and set camera to MediaRecorder
+        //Unlock and set camera to MediaRecorder
         mCamera.unlock();
         mMediaRecorder.setCamera(mCamera);
 
-        // Step 2: Set sources
+        // Set sources
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
-        // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
-        mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+        // Set orientation
+        mMediaRecorder.setOrientationHint(mRotate);
 
-        // Step 4: Set output file
+        // Set a CamcorderProfile (requires API Level 8 or higher)
+        if (cameraID == Camera.CameraInfo.CAMERA_FACING_BACK) {
+            mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+        }
+        else {
+            mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_LOW));
+        }
+
+        // Set output file
         mVideoOutputFilePath = getOutputMediaFile(MEDIA_TYPE_VIDEO).toString();
         mMediaRecorder.setOutputFile(mVideoOutputFilePath);
 
-        // Step 5: Set the preview output
+        // Set the preview output
         mMediaRecorder.setPreviewDisplay(mPreview.getHolder().getSurface());
 
-        // Step 6: Prepare configured MediaRecorder
+        // Prepare configured MediaRecorder
         try {
             mMediaRecorder.prepare();
         } catch (IllegalStateException e) {
@@ -213,7 +229,9 @@ public class CameraManager {
 
     public boolean swapCamera(FrameLayout preview, Activity activity) {
         // must remove view before swapping it
-        preview.removeView(mPreview);
+        stopPreview(preview);
+        releaseCamera();
+
         if (cameraID == Camera.CameraInfo.CAMERA_FACING_BACK) {
             // switch to front facing camera
             cameraInit(Camera.CameraInfo.CAMERA_FACING_FRONT, activity, preview);
@@ -301,8 +319,6 @@ public class CameraManager {
         } else {
             // initialize video camera
             if (prepareVideoRecorder()) {
-                // Camera is available and unlocked, MediaRecorder is prepared,
-                // now you can start recording
                 mMediaRecorder.start();
                 isRecording = true;
             } else {
@@ -326,7 +342,6 @@ public class CameraManager {
             Log.e(TAG, e.getMessage());
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
-            e.printStackTrace();
         }
 
         Bitmap thumbnailImage = ThumbnailUtils.createVideoThumbnail(mVideoOutputFilePath, MediaStore.Images.Thumbnails.MINI_KIND);

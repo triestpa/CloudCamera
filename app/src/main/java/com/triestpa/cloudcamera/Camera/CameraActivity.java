@@ -1,11 +1,15 @@
 package com.triestpa.cloudcamera.Camera;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -13,7 +17,6 @@ import android.widget.ImageButton;
 import com.triestpa.cloudcamera.Gallery.GalleryActivity;
 import com.triestpa.cloudcamera.R;
 
-@SuppressWarnings("deprecation")
 // Suppress warnings for the more compatible, deprecated Camera class
 public class CameraActivity extends AppCompatActivity {
     protected final static String TAG = CameraActivity.class.getName();
@@ -107,7 +110,7 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-                if (mCameraManager.swapCamera(preview, getParent())) {
+                if (mCameraManager.swapCamera(preview, CameraActivity.this)) {
                     ImageButton flashButton = (ImageButton) findViewById(R.id.button_flash);
                     flashButton.setVisibility(View.VISIBLE);
                 } else {
@@ -150,11 +153,42 @@ public class CameraActivity extends AppCompatActivity {
                         Button recordButton = (Button) v;
                         if (mCameraManager.toggleRecording()) {
                             recordButton.setText("Stop");
+                            lockOrientation();
                         } else {
                             recordButton.setText("Record");
+                            unlockOrientation();
                         }
                     }
                 });
+    }
+
+
+    public void lockOrientation() {
+        int orientation = getRequestedOrientation();
+        int rotation = ((WindowManager) getSystemService(
+                Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+                break;
+            case Surface.ROTATION_90:
+                orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+                break;
+            case Surface.ROTATION_180:
+                orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+                break;
+            case Surface.ROTATION_270:
+                orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+                break;
+            default:
+                orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+                break;
+        }
+        setRequestedOrientation(orientation);
+    }
+
+    public void unlockOrientation() {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
 
