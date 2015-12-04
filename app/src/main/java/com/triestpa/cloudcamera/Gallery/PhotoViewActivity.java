@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.triestpa.cloudcamera.R;
 
@@ -31,6 +32,8 @@ public class PhotoViewActivity extends AppCompatActivity {
     private final Handler mHideHandler = new Handler();
     private ImageView mImageView;
     RelativeLayout mContentView;
+
+    private String mFullsizeURL, mThumbnailURL;
 
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
@@ -73,14 +76,18 @@ public class PhotoViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        String fullsizeURL = intent.getStringExtra(EXTRA_FULLSIZE_URL);
-        String thumbnailURL = intent.getStringExtra(EXTRA_THUMBNAIL_URL);
+        mFullsizeURL = intent.getStringExtra(EXTRA_FULLSIZE_URL);
+        mThumbnailURL = intent.getStringExtra(EXTRA_THUMBNAIL_URL);
 
         setContentView(R.layout.activity_image_view);
 
         mVisible = true;
-        mImageView = (ImageView) findViewById(R.id.fullsize_image);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mImageView = (ImageView) findViewById(R.id.fullsize_image);
         mContentView = (RelativeLayout) findViewById(R.id.image_view_content);
 
         // Set up the user interaction to manually show or hide the system UI.
@@ -91,9 +98,20 @@ public class PhotoViewActivity extends AppCompatActivity {
             }
         });
 
-        Picasso.with(this).load(thumbnailURL).resize(500,500).centerCrop().placeholder(R.drawable.loading).into(mImageView);
+        Picasso.with(this).load(mThumbnailURL).memoryPolicy(MemoryPolicy.NO_CACHE).resize(500,500).centerCrop().placeholder(R.drawable.loading).into(mImageView);
 
-        downloadImage(fullsizeURL);
+        downloadImage(mFullsizeURL);
+
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        if (level == TRIM_MEMORY_UI_HIDDEN) {
+            mContentView = null;
+            mImageView = null;
+            System.gc();
+        }
+        super.onTrimMemory(level);
     }
 
     public void downloadImage(String url) {
