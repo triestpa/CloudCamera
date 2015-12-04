@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
@@ -25,9 +23,7 @@ public class CameraActivity extends AppCompatActivity {
     private final static int MODE_VIDEO = 1;
     int mMode = MODE_PICTURE;
 
-    FloatingActionButton mFlashButton;
-    FloatingActionButton mCaptureButton;
-    FloatingActionButton mSwapButton;
+    FloatingActionButton mFlashButton, mCaptureButton, mSwapButton, mModeButton, mGalleryButton;
 
     /**
      * ----- Activity Lifecycle Events -----
@@ -51,10 +47,14 @@ public class CameraActivity extends AppCompatActivity {
         mFlashButton = (FloatingActionButton) findViewById(R.id.button_flash);
         mCaptureButton = (FloatingActionButton) findViewById(R.id.button_capture);
         mSwapButton = (FloatingActionButton) findViewById(R.id.button_swap);
+        mModeButton = (FloatingActionButton) findViewById(R.id.button_mode);
+        mGalleryButton = (FloatingActionButton) findViewById(R.id.button_gallery);
 
-        setPictureButton();
+        setCaptureButton();
         setCameraSwapButton();
         setFlashButton();
+        setModeButton();
+        setGalleryButton();
     }
 
     /* End the camera and view on pause */
@@ -68,39 +68,10 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     /**
-     * ----- Toolbar Events -----
-     */
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_camera, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_gallery) {
-            Intent galleryIntent = new Intent(this, GalleryActivity.class);
-            startActivity(galleryIntent);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    /**
      * ----- Set UI Listeners -----
      */
 
-    public void setPictureButton() {
+    public void setCaptureButton() {
         // Add a listener to the Capture button
         mCaptureButton.setOnClickListener(new View.OnClickListener() {
 
@@ -117,6 +88,26 @@ public class CameraActivity extends AppCompatActivity {
                 }
             }
 
+        });
+    }
+
+    public void setModeButton() {
+        mModeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMode == MODE_PICTURE) {
+                    mMode = MODE_VIDEO;
+                    mModeButton.setImageResource(R.drawable.ic_switch_camera_white_24dp);
+                    mModeButton.setLabelText(getString(R.string.camera_mode_photo));
+                    mCaptureButton.setImageResource(R.drawable.ic_videocam_white_24dp);
+                }
+                else {
+                    mMode = MODE_PICTURE;
+                    mModeButton.setImageResource(R.drawable.ic_switch_video_white_24dp);
+                    mModeButton.setLabelText(getString(R.string.camera_mode_video));
+                    mCaptureButton.setImageResource(R.drawable.ic_photo_camera_white_24dp);
+                }
+            }
         });
     }
 
@@ -158,6 +149,16 @@ public class CameraActivity extends AppCompatActivity {
                     mFlashButton.setImageResource(R.drawable.ic_flash_on_white_24dp);
                     mFlashButton.setLabelText(getString(R.string.camera_flash_on));
                 }
+            }
+        });
+    }
+
+    public void setGalleryButton() {
+        mGalleryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent galleryIntent = new Intent(getApplicationContext(), GalleryActivity.class);
+                startActivity(galleryIntent);
             }
         });
     }
