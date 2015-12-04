@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.triestpa.cloudcamera.Gallery.Fragments.PhotoGridFragment;
 import com.triestpa.cloudcamera.Model.Picture;
@@ -80,7 +79,7 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
             }
         });
 
-        picassoInstance.load(thisPic.getThumbnail().getUrl()).resize(imgDimens, imgDimens).memoryPolicy(MemoryPolicy.NO_CACHE).centerCrop().placeholder(R.drawable.loading).into(holder.mImage);
+        picassoInstance.load(thisPic.getThumbnail().getUrl()).resize(imgDimens, imgDimens).centerCrop().into(holder.mImage);
     }
 
     // Return the size of your dataset (invoked by the layout manager)

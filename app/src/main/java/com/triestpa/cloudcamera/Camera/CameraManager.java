@@ -248,11 +248,6 @@ public class CameraManager {
             // get an image from the camera
             mCamera.takePicture(null, null, mPicture);
             preview_active = false;
-        } else {
-            // else reset to preview to take another pic
-            mCamera.stopPreview();
-            mCamera.startPreview();
-            preview_active = true;
         }
     }
 
@@ -262,6 +257,10 @@ public class CameraManager {
         @Override
         public void onPictureTaken(byte[] picData, Camera camera) {
             Log.i("TAG", "Picture Taken");
+            // reset to preview to take another pic
+            mCamera.stopPreview();
+            mCamera.startPreview();
+            preview_active = true;
             UploadUtilities.uploadPhoto(picData);
         }
     };

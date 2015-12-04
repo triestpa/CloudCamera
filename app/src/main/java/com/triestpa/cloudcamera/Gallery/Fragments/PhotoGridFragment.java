@@ -1,6 +1,8 @@
 package com.triestpa.cloudcamera.Gallery.Fragments;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -12,6 +14,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -21,6 +24,7 @@ import com.triestpa.cloudcamera.Gallery.PhotoViewActivity;
 import com.triestpa.cloudcamera.Model.Picture;
 import com.triestpa.cloudcamera.R;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,8 +87,15 @@ public class PhotoGridFragment extends Fragment {
 
     public void showLargePhoto(View thumbnailView, String fullSizeURL, String thumbnailURL) {
         Intent intent = new Intent(getActivity(), PhotoViewActivity.class);
+
+        Bitmap thumbnailBitmap = ((BitmapDrawable)((ImageView)thumbnailView).getDrawable()).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        thumbnailBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] bitmapdata = stream.toByteArray();
+
         intent.putExtra(PhotoViewActivity.EXTRA_FULLSIZE_URL, fullSizeURL);
         intent.putExtra(PhotoViewActivity.EXTRA_THUMBNAIL_URL, thumbnailURL);
+        intent.putExtra(PhotoViewActivity.EXTRA_THUMBNAIL_BYTES, bitmapdata);
 
         String transitionName = getString(R.string.transition_picture);
         ActivityOptionsCompat options =
