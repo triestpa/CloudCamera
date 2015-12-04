@@ -10,10 +10,9 @@ import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.triestpa.cloudcamera.Gallery.GalleryActivity;
 import com.triestpa.cloudcamera.R;
 
@@ -22,6 +21,13 @@ public class CameraActivity extends AppCompatActivity {
     protected final static String TAG = CameraActivity.class.getName();
     CameraManager mCameraManager;
 
+    private final static int MODE_PICTURE = 0;
+    private final static int MODE_VIDEO = 1;
+    int mMode = MODE_PICTURE;
+
+    FloatingActionButton mFlashButton;
+    FloatingActionButton mCaptureButton;
+    FloatingActionButton mSwapButton;
 
     /**
      * ----- Activity Lifecycle Events -----
@@ -32,10 +38,7 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera);
         mCameraManager = new CameraManager();
 
-        setPictureButton();
-        setCameraSwapButton();
-        setFlashButton();
-        setRecordButton();
+
     }
 
     @Override
@@ -44,6 +47,14 @@ public class CameraActivity extends AppCompatActivity {
         // Reinitialize the camera and preview on resume
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         mCameraManager.cameraInit(mCameraManager.cameraID, this, preview);
+
+        mFlashButton = (FloatingActionButton) findViewById(R.id.button_flash);
+        mCaptureButton = (FloatingActionButton) findViewById(R.id.button_capture);
+        mSwapButton = (FloatingActionButton) findViewById(R.id.button_swap);
+
+        setPictureButton();
+        setCameraSwapButton();
+        setFlashButton();
     }
 
     /* End the camera and view on pause */
@@ -91,12 +102,19 @@ public class CameraActivity extends AppCompatActivity {
 
     public void setPictureButton() {
         // Add a listener to the Capture button
-        Button captureButton = (Button) findViewById(R.id.button_capture);
-        captureButton.setOnClickListener(new View.OnClickListener() {
+        mCaptureButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                mCameraManager.takePicture();
+                if (mMode == MODE_PICTURE) {
+                    mCameraManager.takePicture();
+                } else {
+                    if (mCameraManager.toggleRecording()) {
+                        lockOrientation();
+                    } else {
+                        unlockOrientation();
+                    }
+                }
             }
 
         });
@@ -105,18 +123,22 @@ public class CameraActivity extends AppCompatActivity {
     //Set a button to flip the camera to front-facing/back-facing
     public void setCameraSwapButton() {
         // Add a listener to the Capture button
-        ImageButton swapButton = (ImageButton) findViewById(R.id.button_swap);
-        swapButton.setOnClickListener(new View.OnClickListener() {
+        mSwapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
                 if (mCameraManager.swapCamera(preview, CameraActivity.this)) {
-                    ImageButton flashButton = (ImageButton) findViewById(R.id.button_flash);
-                    flashButton.setVisibility(View.VISIBLE);
+                    mSwapButton.setLabelText(getString(R.string.camera_front));
+                    mSwapButton.setImageResource(R.drawable.ic_camera_front_white_24dp);
+
+                    mFlashButton.setVisibility(View.VISIBLE);
                 } else {
-                    ImageButton flashButton = (ImageButton) findViewById(R.id.button_flash);
-                    flashButton.setVisibility(View.INVISIBLE);
-                    flashButton.setImageResource(R.drawable.ic_action_flash_off);
+                    mSwapButton.setLabelText(getString(R.string.camera_rear));
+                    mSwapButton.setImageResource(R.drawable.ic_camera_rear_white_24dp);
+
+                    mFlashButton.setVisibility(View.GONE);
+                    mFlashButton.setImageResource(R.drawable.ic_flash_off_white_24dp);
+                    mFlashButton.setLabelText(getString(R.string.camera_flash_off));
                 }
             }
         });
@@ -125,41 +147,19 @@ public class CameraActivity extends AppCompatActivity {
     //Toggle the camera flash
     public void setFlashButton() {
         // Add a listener to the Capture button
-        ImageButton flashButton = (ImageButton) findViewById(R.id.button_flash);
-        flashButton.setOnClickListener(new View.OnClickListener() {
+        mFlashButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ImageButton flashButton = (ImageButton) v;
 
                 if (mCameraManager.toggleFlash()) {
-                    flashButton.setImageResource(R.drawable.ic_action_flash_on);
+                    mFlashButton.setImageResource(R.drawable.ic_flash_off_white_24dp);
+                    mFlashButton.setLabelText(getString(R.string.camera_flash_off));
                 } else {
-                    flashButton.setImageResource(R.drawable.ic_action_flash_off);
+                    mFlashButton.setImageResource(R.drawable.ic_flash_on_white_24dp);
+                    mFlashButton.setLabelText(getString(R.string.camera_flash_on));
                 }
             }
         });
-    }
-
-    public void setRecordButton() {
-        // Add a listener to the Capture button
-        Button recordButton = (Button) findViewById(R.id.button_record);
-
-        recordButton.setOnClickListener(
-                new View.OnClickListener()
-
-                {
-                    @Override
-                    public void onClick(View v) {
-                        Button recordButton = (Button) v;
-                        if (mCameraManager.toggleRecording()) {
-                            recordButton.setText("Stop");
-                            lockOrientation();
-                        } else {
-                            recordButton.setText("Record");
-                            unlockOrientation();
-                        }
-                    }
-                });
     }
 
 

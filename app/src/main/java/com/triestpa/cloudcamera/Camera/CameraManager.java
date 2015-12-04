@@ -8,11 +8,6 @@ import android.util.Log;
 import android.view.Surface;
 import android.widget.FrameLayout;
 
-import com.parse.ParseException;
-import com.parse.ParseFile;
-import com.parse.SaveCallback;
-import com.triestpa.cloudcamera.Model.Picture;
-
 import java.io.File;
 import java.io.IOException;
 

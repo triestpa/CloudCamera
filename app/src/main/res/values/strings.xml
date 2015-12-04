@@ -11,4 +11,14 @@
     <string name="title_activity_image_view">ImageViewActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="camera_flash_off">Disable Flash</string>
+    <string name="camera_flash_on">Enable Flash</string>
+    <string name="camera_mode_photo">Switch to Photo Mode</string>
+    <string name="camera_mode_video">Switch to Video Mode</string>
+    <string name="camera_front">Use Front Camera</string>
+    <string name="camera_rear">Use Rear Camera</string>
+
+
 </resources>
+

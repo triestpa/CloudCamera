@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Camera.CameraActivity"
-    android:background="@color/md_black_1000">
+    android:background="@color/md_black_1000"
+    tools:context=".Camera.CameraActivity">
 
     <FrameLayout
         android:id="@+id/camera_preview"
@@ -12,45 +13,60 @@
         android:layout_height="fill_parent"
         android:layout_weight="1" />
 
-    <LinearLayout
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/button_capture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:orientation="horizontal">
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_photo_camera_white_24dp"
+        fab:fab_colorNormal="@color/colorPrimary"
+        fab:fab_colorPressed="@color/colorPrimaryDark"
+        fab:fab_colorRipple="@color/colorAccent"/>
 
-        <ImageButton
-            android:id="@+id/button_swap"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/rec_button"
-            android:src="@drawable/ic_action_switch_camera" />
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/camera_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        fab:menu_labels_position="right"
+        fab:menu_colorNormal="@color/colorPrimary"
+        fab:menu_colorPressed="@color/colorPrimaryDark"
+        fab:menu_colorRipple="@color/colorAccent"
+        fab:menu_fab_size="normal"
+        fab:menu_icon="@drawable/ic_settings_white_24dp">
 
-        <Button
-            android:id="@+id/button_capture"
-            android:layout_width="75dip"
-            android:layout_height="75dip"
-            android:layout_marginBottom="20dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:background="@drawable/circular_button"
-            android:textColor="#fff" />
-
-        <ImageButton
+        <com.github.clans.fab.FloatingActionButton
             android:id="@+id/button_flash"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/rec_button"
-            android:src="@drawable/ic_action_flash_off" />
-
-        <Button
+            style="@style/MenuButtonsStyle"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="Record"
-            android:id="@+id/button_record"/>
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_flash_on_white_24dp"
+            fab:fab_label="@string/camera_flash_on" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/button_swap"
+            style="@style/MenuButtonsStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_camera_front_white_24dp"
+            fab:fab_label="@string/camera_front" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/mode_swap"
+            style="@style/MenuButtonsStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_switch_video_white_24dp"
+            fab:fab_label="@string/camera_mode_video" />
+
+
+    </com.github.clans.fab.FloatingActionMenu>
 
 </RelativeLayout>
 
