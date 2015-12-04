@@ -1,11 +1,14 @@
 package com.triestpa.cloudcamera.Camera;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Surface;
 import android.widget.FrameLayout;
@@ -14,8 +17,13 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.SaveCallback;
 import com.triestpa.cloudcamera.Model.Picture;
+import com.triestpa.cloudcamera.Model.Video;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,12 +40,12 @@ public class CameraManager {
     private Boolean preview_active;
 
     public int cameraID = Camera.CameraInfo.CAMERA_FACING_BACK;
-    public String flashStatus = Camera.Parameters.FLASH_MODE_OFF;
-    public boolean isRecording = false;
+    private String flashStatus = Camera.Parameters.FLASH_MODE_OFF;
+    private boolean isRecording = false;
+    private String mVideoOutputFilePath;
 
     public CameraManager() {
     }
-
 
     /**
      * ----- Camera Initialization Methods -----
@@ -147,7 +155,8 @@ public class CameraManager {
         mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
 
         // Step 4: Set output file
-        mMediaRecorder.setOutputFile(getOutputMediaFile(MEDIA_TYPE_VIDEO).toString());
+        mVideoOutputFilePath = getOutputMediaFile(MEDIA_TYPE_VIDEO).toString();
+        mMediaRecorder.setOutputFile(mVideoOutputFilePath);
 
         // Step 5: Set the preview output
         mMediaRecorder.setPreviewDisplay(mPreview.getHolder().getSurface());
@@ -218,8 +227,7 @@ public class CameraManager {
 
         if (cameraID == Camera.CameraInfo.CAMERA_FACING_BACK) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -246,18 +254,39 @@ public class CameraManager {
         @Override
         public void onPictureTaken(byte[] picData, Camera camera) {
             Log.i("TAG", "Picture Taken");
-            final ParseFile picFile = new ParseFile("photo.jpeg", picData);
-            picFile.saveInBackground(new SaveCallback() {
-                                         @Override
-                                         public void done(ParseException e) {
-                                             Picture newPic = new Picture();
-                                             newPic.setPhoto(picFile);
-                                             newPic.saveInBackground();
-                                         }
-                                     }
-            );
+            uploadPhoto(picData);
         }
     };
+
+    private void uploadPhoto(byte[] picData) {
+        final ParseFile picFile = new ParseFile("photo.jpeg", picData);
+        picFile.saveInBackground(new SaveCallback() {
+                                     @Override
+                                     public void done(ParseException e) {
+                                         if (e == null) {
+                                             savePhoto(picFile);
+                                         } else {
+                                             Log.e(TAG, e.getMessage());
+                                         }
+                                     }
+                                 }
+        );
+    }
+
+    private void savePhoto(ParseFile photoFile) {
+        Picture newPic = new Picture();
+        newPic.setPhoto(photoFile);
+        newPic.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "Picture Uploaded");
+                } else {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        });
+    }
 
     public boolean toggleRecording() {
 
@@ -267,6 +296,8 @@ public class CameraManager {
             releaseMediaRecorder(); // release the MediaRecorder object
             mCamera.lock();         // take camera access back from MediaRecorder
             isRecording = false;
+            Log.i("TAG", "Video Recorded");
+            saveVideoFile();
         } else {
             // initialize video camera
             if (prepareVideoRecorder()) {
@@ -283,14 +314,82 @@ public class CameraManager {
         return isRecording;
     }
 
-    /**
+    private void saveVideoFile() {
+        File file = new File(mVideoOutputFilePath);
+        int size = (int) file.length();
+        byte[] bytes = new byte[size];
+        try {
+            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+            buf.read(bytes, 0, bytes.length);
+            buf.close();
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, e.getMessage());
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
+        }
+
+        Bitmap thumbnailImage = ThumbnailUtils.createVideoThumbnail(mVideoOutputFilePath, MediaStore.Images.Thumbnails.MINI_KIND);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        thumbnailImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        final ParseFile thumbnailFile = new ParseFile("thumbnail.jpeg", byteArray);
+
+
+        final ParseFile vidFile = new ParseFile("video.mp4", bytes);
+        vidFile.saveInBackground(new SaveCallback() {
+                                     @Override
+                                     public void done(ParseException e) {
+                                         if (e == null) {
+                                             saveThumbnail(vidFile, thumbnailFile);
+                                         } else {
+                                             Log.e(TAG, e.getMessage());
+                                         }
+                                     }
+
+                                 }
+        );
+    }
+
+    private void saveThumbnail(final ParseFile videoFile,final ParseFile thumbnailFile) {
+        thumbnailFile.saveInBackground(new SaveCallback() {
+                                     @Override
+                                     public void done(ParseException e) {
+                                         if (e == null) {
+                                             saveVideo(videoFile, thumbnailFile);
+                                         } else {
+                                             Log.e(TAG, e.getMessage());
+                                         }
+                                     }
+
+                                 }
+        );
+    }
+
+    private void saveVideo(ParseFile videoFile, ParseFile thumbnailFile) {
+        Video newVid = new Video();
+        newVid.setVideo(videoFile);
+        newVid.setThumbnail(thumbnailFile);
+        newVid.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d(TAG, "Video Uploaded");
+                } else {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        });
+    }
+
+    /*
      * Create a file Uri for saving an image or video
      */
     private static Uri getOutputMediaFileUri(int type) {
         return Uri.fromFile(getOutputMediaFile(type));
     }
 
-    /**
+    /*
      * Create a File for saving an image or video
      */
     private static File getOutputMediaFile(int type) {
