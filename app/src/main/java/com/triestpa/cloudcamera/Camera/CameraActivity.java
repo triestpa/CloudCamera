@@ -17,6 +17,7 @@ public class CameraActivity extends AppCompatActivity {
     protected final static String TAG = CameraActivity.class.getName();
     CameraManager mCameraManager;
 
+
     private final static int MODE_PICTURE = 0;
     private final static int MODE_VIDEO = 1;
     int mMode = MODE_PICTURE;
@@ -142,7 +143,6 @@ public class CameraActivity extends AppCompatActivity {
         mFlashButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (mCameraManager.toggleFlash()) {
                     mFlashButton.setImageResource(R.drawable.ic_flash_off_white_24dp);
                     mFlashButton.setLabelText(getString(R.string.camera_flash_off));

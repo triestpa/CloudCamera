@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
 import com.triestpa.cloudcamera.Model.Picture;
 import com.triestpa.cloudcamera.Model.Video;
@@ -31,14 +32,24 @@ public class UploadUtilities {
 
     public static void uploadPhoto(byte[] picData) {
         final ParseFile picFile = new ParseFile("photo.jpeg", picData);
+        final Upload thisUpload = new Upload(picFile);
+
+        UploadManager.getInstance().addUpload(thisUpload);
+
         picFile.saveInBackground(new SaveCallback() {
                                      @Override
                                      public void done(ParseException e) {
                                          if (e == null) {
                                              savePhoto(picFile);
+                                             thisUpload.setCompleted(true);
                                          } else {
                                              Log.e(TAG, e.getMessage());
                                          }
+                                     }
+                                 }, new ProgressCallback() {
+                                     @Override
+                                     public void done(Integer percentDone) {
+                                        thisUpload.setProgress(percentDone);
                                      }
                                  }
         );
@@ -119,6 +130,7 @@ public class UploadUtilities {
             public void done(ParseException e) {
                 if (e == null) {
                     Log.d(TAG, "Video Uploaded");
+                    //TODO delete video file
                 } else {
                     Log.e(TAG, e.getMessage());
                 }

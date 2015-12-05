@@ -45,7 +45,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Gallery.GalleryActivity" />
         </activity>
-        <activity android:name=".Gallery.VideoGallery.VideoViewActivity"></activity>
+        <activity android:name=".Gallery.VideoGallery.VideoViewActivity" />
+
     </application>
 
 </manifest>

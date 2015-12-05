@@ -16,7 +16,6 @@ import java.io.IOException;
 public class CameraManager {
     private final static String TAG = CameraManager.class.getName();
 
-
     private Camera mCamera;
     private CameraPreview mPreview;
     private MediaRecorder mMediaRecorder;
@@ -146,13 +145,8 @@ public class CameraManager {
         // Set orientation
         mMediaRecorder.setOrientationHint(mRotate);
 
-        // Set a CamcorderProfile (requires API Level 8 or higher)
-        if (cameraID == Camera.CameraInfo.CAMERA_FACING_BACK) {
-            mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
-        }
-        else {
-            mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_LOW));
-        }
+        // Always use low-quality videos - Parse does not accept if they are larger than 10mb
+        mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_LOW));
 
         // Set output file
         File videoFile = UploadUtilities.getOutputMediaFile(UploadUtilities.MEDIA_TYPE_VIDEO);
@@ -199,6 +193,7 @@ public class CameraManager {
         // Check if device has flash
         if (params.getFlashMode() == null) {
             Log.d(TAG, "Device Does Not Have Flash");
+            return false;
         } else if (params.getFlashMode()
                 .contentEquals(Camera.Parameters.FLASH_MODE_ON)) {
             // turn flash off
@@ -263,6 +258,7 @@ public class CameraManager {
             mCamera.stopPreview();
             mCamera.startPreview();
             preview_active = true;
+
             UploadUtilities.uploadPhoto(picData);
         }
     };
