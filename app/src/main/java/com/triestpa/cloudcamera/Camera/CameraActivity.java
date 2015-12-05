@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -24,7 +23,7 @@ public class CameraActivity extends AppCompatActivity {
     private final static int MODE_VIDEO = 1;
     int mMode = MODE_PICTURE;
 
-    FloatingActionButton mFlashButton, mCaptureButton, mSwapButton, mModeButton, mGalleryButton;
+    FloatingActionButton mFlashButton, mCaptureButton, mSwapButton, mModeButton, mGalleryButton, mUploadViewButton;
 
     /**
      * ----- Activity Lifecycle Events -----
@@ -53,21 +52,14 @@ public class CameraActivity extends AppCompatActivity {
         mSwapButton = (FloatingActionButton) findViewById(R.id.button_swap);
         mModeButton = (FloatingActionButton) findViewById(R.id.button_mode);
         mGalleryButton = (FloatingActionButton) findViewById(R.id.button_gallery);
+        mUploadViewButton = (FloatingActionButton) findViewById(R.id.button_upload_view);
 
         setCaptureButton();
         setCameraSwapButton();
         setFlashButton();
         setModeButton();
         setGalleryButton();
-
-        Button uploadViewButton = (Button) findViewById(R.id.button_upload_view);
-        uploadViewButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent uploadViewIntent = new Intent(CameraActivity.this, UploadStatusActivity.class);
-                startActivity(uploadViewIntent);
-            }
-        });
+        setUploadViewButton();
     }
 
     /* End the camera and view on pause */
@@ -176,6 +168,16 @@ public class CameraActivity extends AppCompatActivity {
                     Intent galleryIntent = new Intent(getApplicationContext(), GalleryActivity.class);
                     startActivity(galleryIntent);
                 }
+            }
+        });
+    }
+
+    public void setUploadViewButton() {
+        mUploadViewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent uploadViewIntent = new Intent(CameraActivity.this, UploadStatusActivity.class);
+                startActivity(uploadViewIntent);
             }
         });
     }

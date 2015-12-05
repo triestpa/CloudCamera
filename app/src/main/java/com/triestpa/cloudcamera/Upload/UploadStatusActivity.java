@@ -44,7 +44,7 @@ public class UploadStatusActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
         mUploadGrid.setLayoutManager(layoutManager);
 
-        mAdapter = new UploadGridAdapter(uploads);
+        mAdapter = new UploadGridAdapter(uploads, this);
         mUploadGrid.setAdapter(mAdapter);
 
         mRunning = true;

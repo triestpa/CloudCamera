@@ -11,15 +11,6 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1" />
-
-
-    <Button
-        android:id="@+id/button_upload_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Uploads"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"/>
     
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/camera_menu"
@@ -59,6 +50,14 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_switch_video_white_24dp"
             fab:fab_label="@string/camera_mode_video" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/button_upload_view"
+            style="@style/MenuButtonsStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_cloud_upload_white_24dp"
+            fab:fab_label="@string/view_uploads"/>
     </com.github.clans.fab.FloatingActionMenu>
 
     <com.github.clans.fab.FloatingActionButton

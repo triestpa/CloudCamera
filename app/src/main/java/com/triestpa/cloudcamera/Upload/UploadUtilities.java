@@ -32,7 +32,7 @@ public class UploadUtilities {
 
     public static void uploadPhoto(byte[] picData) {
         final ParseFile picFile = new ParseFile("photo.jpeg", picData);
-        final Upload thisUpload = new Upload(picFile);
+        final Upload thisUpload = new Upload(picFile, Upload.TYPE_PHOTO);
 
         UploadManager.getInstance().addUpload(thisUpload);
 
@@ -92,7 +92,7 @@ public class UploadUtilities {
         final ParseFile thumbnailFile = new ParseFile("thumbnail.jpeg", byteArray);
 
         final ParseFile vidFile = new ParseFile("video.mp4", bytes);
-        final Upload thisUpload = new Upload(vidFile);
+        final Upload thisUpload = new Upload(vidFile, Upload.TYPE_VIDEO);
         UploadManager.getInstance().addUpload(thisUpload);
 
         vidFile.saveInBackground(new SaveCallback() {

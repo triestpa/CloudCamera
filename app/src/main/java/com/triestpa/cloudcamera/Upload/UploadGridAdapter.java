@@ -1,9 +1,11 @@
 package com.triestpa.cloudcamera.Upload;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.triestpa.cloudcamera.R;
@@ -13,21 +15,24 @@ import java.util.List;
 
 public class UploadGridAdapter extends RecyclerView.Adapter<UploadGridAdapter.UploadViewHolder> {
     private ArrayList<Upload> mUploads;
+    private Context mContext;
 
     public static class UploadViewHolder extends RecyclerView.ViewHolder {
         public View mLayout;
         public TextView mStatusText;
-
+        public ImageView mMediaImage;
 
         public UploadViewHolder(View v) {
             super(v);
             mLayout = v;
             mStatusText = (TextView) v.findViewById(R.id.upload_status);
+            mMediaImage = (ImageView) v.findViewById(R.id.media_image);
         }
     }
 
-    public UploadGridAdapter(List<Upload> uploads) {
+    public UploadGridAdapter(List<Upload> uploads, Context context) {
         mUploads = (ArrayList<Upload>) uploads;
+        mContext = context;
     }
 
     public void setData(ArrayList<Upload> uploads) {
@@ -51,6 +56,15 @@ public class UploadGridAdapter extends RecyclerView.Adapter<UploadGridAdapter.Up
     public void onBindViewHolder(UploadViewHolder holder, int position) {
 
         final Upload thisUpload = mUploads.get(position);
+
+        if (thisUpload.getType() == Upload.TYPE_PHOTO) {
+            holder.mLayout.setBackgroundColor(mContext.getResources().getColor(R.color.md_blue_500));
+            holder.mMediaImage.setImageResource(R.drawable.ic_photo_camera_white_24dp);
+        }
+        else {
+            holder.mLayout.setBackgroundColor(mContext.getResources().getColor(R.color.md_green_500));
+            holder.mMediaImage.setImageResource(R.drawable.ic_videocam_white_24dp);
+        }
 
         if (thisUpload.isAborted()) {
             holder.mStatusText.setText("Aborted");
