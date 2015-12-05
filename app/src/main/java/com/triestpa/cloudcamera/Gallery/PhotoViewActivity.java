@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
@@ -29,6 +30,8 @@ public class PhotoViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_image_view);
+
         Intent intent = getIntent();
         mFullsizeURL = intent.getStringExtra(EXTRA_FULLSIZE_URL);
         mThumbnailURL = intent.getStringExtra(EXTRA_THUMBNAIL_URL);
@@ -36,7 +39,10 @@ public class PhotoViewActivity extends AppCompatActivity {
         byte[] thumbnailBytes = intent.getByteArrayExtra(EXTRA_THUMBNAIL_BYTES);
         Bitmap thumbnailBitmap = BitmapFactory.decodeByteArray(thumbnailBytes, 0, thumbnailBytes.length);
 
-        setContentView(R.layout.activity_image_view);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         mImageView = (ImageView) findViewById(R.id.fullsize_image);
         mImageView.setImageBitmap(thumbnailBitmap);
     }
@@ -49,10 +55,7 @@ public class PhotoViewActivity extends AppCompatActivity {
             mImageView = (ImageView) findViewById(R.id.fullsize_image);
         }
 
-       // Picasso.with(this).load(mThumbnailURL).resize(500,500).centerCrop().into(mImageView);
-
         downloadImage(mFullsizeURL);
-
     }
 
     @Override

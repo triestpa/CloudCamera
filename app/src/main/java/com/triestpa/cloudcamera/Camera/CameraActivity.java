@@ -1,18 +1,16 @@
 package com.triestpa.cloudcamera.Camera;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Surface;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.triestpa.cloudcamera.Gallery.GalleryActivity;
 import com.triestpa.cloudcamera.R;
+import com.triestpa.cloudcamera.Utilities.DeviceUtilities;
 
 // Suppress warnings for the more compatible, deprecated Camera class
 public class CameraActivity extends AppCompatActivity {
@@ -33,13 +31,16 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         mCameraManager = new CameraManager();
-
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (!DeviceUtilities.isOnline(this)) {
+            Snackbar.make(findViewById(android.R.id.content), "No Internet Connection Detected, Some Features May Not Be Available", Snackbar.LENGTH_SHORT).show();
+        }
+
         // Reinitialize the camera and preview on resume
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         mCameraManager.cameraInit(mCameraManager.cameraID, this, preview);
@@ -81,9 +82,9 @@ public class CameraActivity extends AppCompatActivity {
                     mCameraManager.takePicture();
                 } else {
                     if (mCameraManager.toggleRecording()) {
-                        lockOrientation();
+                        DeviceUtilities.lockOrientation(CameraActivity.this);
                     } else {
-                        unlockOrientation();
+                        DeviceUtilities.unlockOrientation(CameraActivity.this);
                     }
                 }
             }
@@ -157,40 +158,14 @@ public class CameraActivity extends AppCompatActivity {
         mGalleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent galleryIntent = new Intent(getApplicationContext(), GalleryActivity.class);
-                startActivity(galleryIntent);
+                if (!DeviceUtilities.isOnline(CameraActivity.this)) {
+                    Snackbar.make(findViewById(android.R.id.content), "No Internet Connection Detected, Gallery View Unavailable", Snackbar.LENGTH_SHORT).show();
+                }
+                else {
+                    Intent galleryIntent = new Intent(getApplicationContext(), GalleryActivity.class);
+                    startActivity(galleryIntent);
+                }
             }
         });
     }
-
-
-    public void lockOrientation() {
-        int orientation = getRequestedOrientation();
-        int rotation = ((WindowManager) getSystemService(
-                Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
-        switch (rotation) {
-            case Surface.ROTATION_0:
-                orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-                break;
-            case Surface.ROTATION_90:
-                orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-                break;
-            case Surface.ROTATION_180:
-                orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
-                break;
-            case Surface.ROTATION_270:
-                orientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
-                break;
-            default:
-                orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-                break;
-        }
-        setRequestedOrientation(orientation);
-    }
-
-    public void unlockOrientation() {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-    }
-
-
 }

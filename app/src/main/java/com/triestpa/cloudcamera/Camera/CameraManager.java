@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.Surface;
 import android.widget.FrameLayout;
 
+import com.triestpa.cloudcamera.Utilities.UploadUtilities;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -64,6 +66,7 @@ public class CameraManager {
 
             Camera.Parameters params = mCamera.getParameters();
             params.setRotation(rotate);
+            params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
 
             mCamera.setParameters(params);
 
@@ -99,7 +102,6 @@ public class CameraManager {
 
         return c; // returns null if camera is unavailable
     }
-
 
     /**
      * ----- Camera Release Methods -----
