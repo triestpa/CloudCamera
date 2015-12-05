@@ -1,4 +1,4 @@
-package com.triestpa.cloudcamera.Gallery.Fragments;
+package com.triestpa.cloudcamera.Gallery.PhotoGallery;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,8 +19,6 @@ import android.widget.ImageView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.triestpa.cloudcamera.Gallery.Adapters.PhotoGridAdapter;
-import com.triestpa.cloudcamera.Gallery.PhotoViewActivity;
 import com.triestpa.cloudcamera.Model.Picture;
 import com.triestpa.cloudcamera.R;
 

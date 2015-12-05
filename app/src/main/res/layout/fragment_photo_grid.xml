@@ -3,7 +3,7 @@
     android:id="@+id/image_grid_swipe_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Gallery.Fragments.PhotoGridFragment">
+    tools:context=".Gallery.PhotoGallery.PhotoGridFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/image_grid"

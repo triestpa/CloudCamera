@@ -1,4 +1,4 @@
-package com.triestpa.cloudcamera.Gallery;
+package com.triestpa.cloudcamera.Gallery.PhotoGallery;
 
 import android.content.Intent;
 import android.graphics.Bitmap;

@@ -1,4 +1,4 @@
-package com.triestpa.cloudcamera.Gallery.Adapters;
+package com.triestpa.cloudcamera.Gallery.VideoGallery;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
-import com.triestpa.cloudcamera.Gallery.Fragments.VideoGridFragment;
 import com.triestpa.cloudcamera.Model.Video;
 import com.triestpa.cloudcamera.R;
 
@@ -75,7 +74,7 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Imag
         holder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // mFragment.showLargePhoto(v, thisVideo.getPhoto().getUrl(), thisVideo.getThumbnail().getUrl());
+                mFragment.playVideo();
             }
         });
 

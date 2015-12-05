@@ -1,6 +1,8 @@
-package com.triestpa.cloudcamera.Gallery.Fragments;
+package com.triestpa.cloudcamera.Gallery.VideoGallery;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,7 +16,6 @@ import android.view.ViewGroup;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
-import com.triestpa.cloudcamera.Gallery.Adapters.VideoGridAdapter;
 import com.triestpa.cloudcamera.Model.Video;
 import com.triestpa.cloudcamera.R;
 
@@ -76,6 +77,11 @@ public class VideoGridFragment extends Fragment {
         refreshVideos();
 
         return v;
+    }
+
+    protected void playVideo() {
+        Intent videoIntent = new Intent(getActivity(), VideoViewActivity.class);
+        ActivityCompat.startActivity(getActivity(), videoIntent, null);
     }
 
     protected void refreshVideos() {

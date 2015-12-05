@@ -14,8 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.triestpa.cloudcamera.Gallery.Fragments.PhotoGridFragment;
-import com.triestpa.cloudcamera.Gallery.Fragments.VideoGridFragment;
+import com.triestpa.cloudcamera.Gallery.PhotoGallery.PhotoGridFragment;
+import com.triestpa.cloudcamera.Gallery.VideoGallery.VideoGridFragment;
 import com.triestpa.cloudcamera.R;
 
 public class GalleryActivity extends AppCompatActivity {

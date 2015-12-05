@@ -1,4 +1,4 @@
-package com.triestpa.cloudcamera.Gallery.Adapters;
+package com.triestpa.cloudcamera.Gallery.PhotoGallery;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
-import com.triestpa.cloudcamera.Gallery.Fragments.PhotoGridFragment;
 import com.triestpa.cloudcamera.Model.Picture;
 import com.triestpa.cloudcamera.R;
 
