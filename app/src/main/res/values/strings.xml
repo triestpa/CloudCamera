@@ -19,6 +19,7 @@
     <string name="camera_mode_video">Switch to Video Mode</string>
     <string name="camera_front">Use Front Camera</string>
     <string name="camera_rear">Use Rear Camera</string>
+    <string name="title_activity_upload_status">UploadStatusActivity</string>
 
 
 </resources>

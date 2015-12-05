@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.triestpa.cloudcamera.Gallery.GalleryActivity;
 import com.triestpa.cloudcamera.R;
+import com.triestpa.cloudcamera.UploadStatusActivity;
 import com.triestpa.cloudcamera.Utilities.DeviceUtilities;
 
 // Suppress warnings for the more compatible, deprecated Camera class
@@ -57,6 +59,15 @@ public class CameraActivity extends AppCompatActivity {
         setFlashButton();
         setModeButton();
         setGalleryButton();
+
+        Button uploadViewButton = (Button) findViewById(R.id.button_upload_view);
+        uploadViewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent uploadViewIntent = new Intent(CameraActivity.this, UploadStatusActivity.class);
+                startActivity(uploadViewIntent);
+            }
+        });
     }
 
     /* End the camera and view on pause */

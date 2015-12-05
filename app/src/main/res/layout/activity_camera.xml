@@ -13,6 +13,14 @@
         android:layout_weight="1" />
 
 
+    <Button
+        android:id="@+id/button_upload_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Uploads"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"/>
+    
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/camera_menu"
         android:layout_width="wrap_content"

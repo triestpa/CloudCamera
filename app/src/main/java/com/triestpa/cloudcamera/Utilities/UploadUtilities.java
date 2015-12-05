@@ -71,11 +71,11 @@ public class UploadUtilities {
     }
 
     public static void saveVideoFile(String filepath) {
-        File file = new File(filepath);
-        int size = (int) file.length();
+        final File videoFile = new File(filepath);
+        int size = (int) videoFile.length();
         byte[] bytes = new byte[size];
         try {
-            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(videoFile));
             buf.read(bytes, 0, bytes.length);
             buf.close();
         } catch (FileNotFoundException e) {
@@ -90,18 +90,26 @@ public class UploadUtilities {
         byte[] byteArray = stream.toByteArray();
         final ParseFile thumbnailFile = new ParseFile("thumbnail.jpeg", byteArray);
 
-
         final ParseFile vidFile = new ParseFile("video.mp4", bytes);
+        final Upload thisUpload = new Upload(vidFile);
+        UploadManager.getInstance().addUpload(thisUpload);
+
         vidFile.saveInBackground(new SaveCallback() {
                                      @Override
                                      public void done(ParseException e) {
                                          if (e == null) {
+                                             thisUpload.setCompleted(true);
+                                             videoFile.delete();
                                              saveThumbnail(vidFile, thumbnailFile);
                                          } else {
                                              Log.e(TAG, e.getMessage());
                                          }
                                      }
-
+                                 }, new ProgressCallback() {
+                                     @Override
+                                     public void done(Integer percentDone) {
+                                         thisUpload.setProgress(percentDone);
+                                     }
                                  }
         );
     }
@@ -130,7 +138,6 @@ public class UploadUtilities {
             public void done(ParseException e) {
                 if (e == null) {
                     Log.d(TAG, "Video Uploaded");
-                    //TODO delete video file
                 } else {
                     Log.e(TAG, e.getMessage());
                 }
