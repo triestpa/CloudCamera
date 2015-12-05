@@ -11,7 +11,7 @@ import android.widget.FrameLayout;
 import com.github.clans.fab.FloatingActionButton;
 import com.triestpa.cloudcamera.Gallery.GalleryActivity;
 import com.triestpa.cloudcamera.R;
-import com.triestpa.cloudcamera.UploadStatusActivity;
+import com.triestpa.cloudcamera.Upload.UploadStatusActivity;
 import com.triestpa.cloudcamera.Utilities.DeviceUtilities;
 
 // Suppress warnings for the more compatible, deprecated Camera class

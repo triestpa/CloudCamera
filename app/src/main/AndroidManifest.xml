@@ -46,7 +46,7 @@
                 android:value=".Gallery.GalleryActivity" />
         </activity>
         <activity android:name=".Gallery.VideoGallery.VideoViewActivity" />
-        <activity android:name=".UploadStatusActivity" >
+        <activity android:name=".Upload.UploadStatusActivity" >
         </activity>
     </application>
 

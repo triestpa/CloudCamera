@@ -1,4 +1,4 @@
-package com.triestpa.cloudcamera.Utilities;
+package com.triestpa.cloudcamera.Upload;
 
 import java.util.ArrayList;
 
@@ -25,4 +25,7 @@ public class UploadManager {
     public void addUpload(Upload upload) {
         mUploads.add(upload);
     }
+
+
+
 }

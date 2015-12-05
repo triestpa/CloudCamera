@@ -1,4 +1,4 @@
-package com.triestpa.cloudcamera.Utilities;
+package com.triestpa.cloudcamera.Upload;
 
 import com.parse.ParseFile;
 

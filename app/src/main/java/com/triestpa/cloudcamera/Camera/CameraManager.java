@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.Surface;
 import android.widget.FrameLayout;
 
-import com.triestpa.cloudcamera.Utilities.UploadUtilities;
+import com.triestpa.cloudcamera.Upload.UploadUtilities;
 
 import java.io.File;
 import java.io.IOException;
