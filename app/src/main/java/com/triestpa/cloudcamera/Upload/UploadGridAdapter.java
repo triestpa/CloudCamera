@@ -51,7 +51,16 @@ public class UploadGridAdapter extends RecyclerView.Adapter<UploadGridAdapter.Up
     public void onBindViewHolder(UploadViewHolder holder, int position) {
 
         final Upload thisUpload = mUploads.get(position);
-        holder.mStatusText.setText(thisUpload.getProgress() + "%");
+
+        if (thisUpload.isAborted()) {
+            holder.mStatusText.setText("Aborted");
+        }
+        else if (thisUpload.isCompleted()) {
+            holder.mStatusText.setText("Completed");
+        }
+        else {
+            holder.mStatusText.setText(thisUpload.getProgress() + "%");
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)

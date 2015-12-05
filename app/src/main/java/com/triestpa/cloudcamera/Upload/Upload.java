@@ -6,17 +6,13 @@ public class Upload {
     private ParseFile parseFile;
     private int progress;
     private boolean completed;
-
-    public Upload() {
-        this.parseFile = null;
-        this.progress = 0;
-        this.completed = false;
-    }
+    private boolean aborted;
 
     public Upload(ParseFile parseFile) {
         this.parseFile = parseFile;
         this.progress = 0;
         this.completed = false;
+        this.aborted = false;
     }
 
     public ParseFile getParseFile() {
@@ -41,5 +37,13 @@ public class Upload {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public boolean isAborted() {
+        return aborted;
+    }
+
+    public void setAborted(boolean aborted) {
+        this.aborted = aborted;
     }
 }

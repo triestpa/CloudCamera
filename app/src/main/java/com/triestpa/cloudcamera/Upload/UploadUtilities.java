@@ -44,6 +44,7 @@ public class UploadUtilities {
                                              thisUpload.setCompleted(true);
                                          } else {
                                              Log.e(TAG, e.getMessage());
+                                             thisUpload.setAborted(true);
                                          }
                                      }
                                  }, new ProgressCallback() {
@@ -103,6 +104,7 @@ public class UploadUtilities {
                                              saveThumbnail(vidFile, thumbnailFile);
                                          } else {
                                              Log.e(TAG, e.getMessage());
+                                             thisUpload.setAborted(true);
                                          }
                                      }
                                  }, new ProgressCallback() {
