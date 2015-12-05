@@ -79,8 +79,9 @@ public class VideoGridFragment extends Fragment {
         return v;
     }
 
-    protected void playVideo() {
+    protected void playVideo(String url) {
         Intent videoIntent = new Intent(getActivity(), VideoViewActivity.class);
+        videoIntent.putExtra(VideoViewActivity.VIDEO_URL, url);
         ActivityCompat.startActivity(getActivity(), videoIntent, null);
     }
 

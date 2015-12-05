@@ -74,7 +74,7 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Imag
         holder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFragment.playVideo();
+                mFragment.playVideo(thisVideo.getVideo().getUrl());
             }
         });
 
