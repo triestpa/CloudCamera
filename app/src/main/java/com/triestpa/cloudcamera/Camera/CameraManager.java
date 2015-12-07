@@ -65,7 +65,10 @@ public class CameraManager {
 
             Camera.Parameters params = mCamera.getParameters();
             params.setRotation(rotate);
-            params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+
+            if (params.getFlashMode() != null) {
+                params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+            }
 
             mCamera.setParameters(params);
 
@@ -89,9 +92,7 @@ public class CameraManager {
     public static Camera getCameraInstance(int camID) {
         Camera c;
         try {
-            if (android.os.Build.VERSION.SDK_INT >= 9)
-                c = Camera.open(camID);
-            else c = Camera.open();
+            c = Camera.open(camID);
             Log.d(TAG, "camera opened");
         } catch (Exception e) {
             // Camera is not available (in use or does not exist)
@@ -146,7 +147,18 @@ public class CameraManager {
         mMediaRecorder.setOrientationHint(mRotate);
 
         // Always use low-quality videos - Parse does not accept if they are larger than 10mb
-        mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_LOW));
+        if (CamcorderProfile.hasProfile(cameraID, CamcorderProfile.QUALITY_720P)) {
+            mMediaRecorder.setProfile(CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_720P));
+        }
+        else if (CamcorderProfile.hasProfile(cameraID, CamcorderProfile.QUALITY_480P)) {
+            mMediaRecorder.setProfile(CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_480P));
+        }
+        else if (CamcorderProfile.hasProfile(cameraID, CamcorderProfile.QUALITY_LOW)) {
+            mMediaRecorder.setProfile(CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_LOW));
+        }
+        else {
+            mMediaRecorder.setProfile(CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_HIGH));
+        }
 
         // Set output file
         File videoFile = UploadUtilities.getOutputMediaFile(UploadUtilities.MEDIA_TYPE_VIDEO);
@@ -204,8 +216,16 @@ public class CameraManager {
             params.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
             flashStatus = Camera.Parameters.FLASH_MODE_ON;
         }
-        // set Camera parameters
-        mCamera.setParameters(params);
+
+        try {
+            // set Camera parameters
+            mCamera.setParameters(params);
+        }
+        catch (RuntimeException e) {
+            Log.e(TAG, e.getMessage());
+            return false;
+        }
+
 
         if (flashStatus == Camera.Parameters.FLASH_MODE_ON) {
             return true;
@@ -215,25 +235,29 @@ public class CameraManager {
     }
 
     public boolean swapCamera(FrameLayout preview, Activity activity) {
-        // must remove view before swapping it
-        stopPreview(preview);
-        releaseCamera();
+        if (Camera.getNumberOfCameras() >= 2) {
+            // must remove view before swapping it
+            stopPreview(preview);
+            releaseCamera();
+            if (cameraID == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                // switch to front facing camera
+                cameraInit(Camera.CameraInfo.CAMERA_FACING_FRONT, activity, preview);
 
-        if (cameraID == Camera.CameraInfo.CAMERA_FACING_BACK) {
-            // switch to front facing camera
-            cameraInit(Camera.CameraInfo.CAMERA_FACING_FRONT, activity, preview);
+                // the flash is disabled if front camera is in use
+                flashStatus = Camera.Parameters.FLASH_MODE_OFF;
+            } else {
+                // switch to back facing camera
+                cameraInit(Camera.CameraInfo.CAMERA_FACING_BACK, activity, preview);
+            }
 
-            // the flash is disabled if front camera is in use
-            flashStatus = Camera.Parameters.FLASH_MODE_OFF;
-        } else {
-            // switch to back facing camera
-            cameraInit(Camera.CameraInfo.CAMERA_FACING_BACK, activity, preview);
+            if (cameraID == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                return true;
+            } else {
+                return false;
+            }
         }
-
-        if (cameraID == Camera.CameraInfo.CAMERA_FACING_BACK) {
+        else {
             return true;
-        } else {
-            return false;
         }
     }
 

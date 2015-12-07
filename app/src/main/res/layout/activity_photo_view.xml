@@ -9,9 +9,8 @@
         android:id="@+id/fullsize_image"
         android:layout_centerInParent="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:transitionName="@string/transition_picture" />
-
 
     <ImageButton
         android:id="@+id/back_button"
@@ -31,26 +30,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:src="@drawable/ic_delete_white_24dp"
-        android:background="@null"/>
-
-    <ImageButton
-        android:id="@+id/download_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="15dp"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/ic_cloud_download_white_24dp"
-        android:layout_toLeftOf="@+id/delete_button"
-        android:background="@null"/>
-
-    <ImageButton
-        android:id="@+id/share_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="15dp"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/ic_share_white_24dp"
-        android:layout_toLeftOf="@+id/download_button"
         android:background="@null"/>
 
 </RelativeLayout>

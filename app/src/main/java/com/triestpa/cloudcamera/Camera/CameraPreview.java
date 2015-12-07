@@ -59,9 +59,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             return;
         }
 
-        try {
-            setPreviewSize();
+        setPreviewSize();
 
+        try {
             mCamera.setPreviewDisplay(holder);
             mCamera.startPreview();
         } catch (IOException e) {
@@ -92,10 +92,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             // ignore: tried to stop a non-existent preview
         }
 
+        setPreviewSize();
+
         // start preview with new settings
         try {
-            setPreviewSize();
-
             mCamera.setPreviewDisplay(mHolder);
             mCamera.startPreview();
         } catch (Exception e) {

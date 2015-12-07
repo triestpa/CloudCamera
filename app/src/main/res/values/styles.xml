@@ -2,10 +2,9 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
         <item name="android:windowBackground">@color/md_black_1000</item>
         <item name="android:colorBackground">@color/md_black_1000</item>
     </style>
@@ -45,22 +44,22 @@
         <item name="fab_showAnimation">@anim/jump_from_down</item>
         <item name="fab_hideAnimation">@anim/jump_to_down</item>
         <item name="fab_shadowColor">#444</item>
-        <item name="fab_colorNormal">#FFB805</item>
-        <item name="fab_colorPressed">#F2AB00</item>
-        <item name="fab_colorRipple">#D99200</item>
+        <item name="fab_colorNormal">@color/md_green_600</item>
+        <item name="fab_colorPressed">@color/md_green_800</item>
+        <item name="fab_colorRipple">@color/md_green_900</item>
     </style>
 
     <style name="MenuButtonsSmall">
         <item name="fab_size">mini</item>
-        <item name="fab_colorNormal">#1565C0</item>
-        <item name="fab_colorPressed">#2272CD</item>
-        <item name="fab_colorRipple">#62B2FF</item>
+        <item name="fab_colorNormal">@color/md_blue_600</item>
+        <item name="fab_colorPressed">@color/md_blue_800</item>
+        <item name="fab_colorRipple">@color/md_blue_900</item>
     </style>
 
     <style name="MenuButtonsSmall.Green">
-        <item name="fab_colorNormal">#43A047</item>
-        <item name="fab_colorPressed">#2E7D32</item>
-        <item name="fab_colorRipple">#1B5E20</item>
+        <item name="fab_colorNormal">@color/md_green_600</item>
+        <item name="fab_colorPressed">@color/md_green_800</item>
+        <item name="fab_colorRipple">@color/md_green_900</item>
     </style>
 
     <style name="AppTheme.NoActionBar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

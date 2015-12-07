@@ -104,8 +104,7 @@ public class CameraActivity extends AppCompatActivity {
                     mModeButton.setImageResource(R.drawable.ic_switch_camera_white_24dp);
                     mModeButton.setLabelText(getString(R.string.camera_mode_photo));
                     mCaptureButton.setImageResource(R.drawable.ic_videocam_white_24dp);
-                }
-                else {
+                } else {
                     mMode = MODE_PICTURE;
                     mModeButton.setImageResource(R.drawable.ic_switch_video_white_24dp);
                     mModeButton.setLabelText(getString(R.string.camera_mode_video));
@@ -162,8 +161,7 @@ public class CameraActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!DeviceUtilities.isOnline(CameraActivity.this)) {
                     Snackbar.make(findViewById(android.R.id.content), "No Internet Connection Detected, Gallery View Unavailable", Snackbar.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     Intent galleryIntent = new Intent(getApplicationContext(), GalleryActivity.class);
                     startActivity(galleryIntent);
                 }

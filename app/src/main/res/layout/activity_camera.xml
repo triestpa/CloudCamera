@@ -20,9 +20,9 @@
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="20dp"
         fab:menu_labels_position="right"
-        fab:menu_colorNormal="@color/colorPrimary"
-        fab:menu_colorPressed="@color/colorPrimaryDark"
-        fab:menu_colorRipple="@color/colorAccent"
+        fab:menu_colorNormal="@color/primary"
+        fab:menu_colorPressed="@color/primary_dark"
+        fab:menu_colorRipple="@color/accent"
         fab:menu_fab_size="normal"
         fab:menu_icon="@drawable/ic_settings_white_24dp">
 
@@ -67,9 +67,9 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
         android:src="@drawable/ic_photo_camera_white_24dp"
-        fab:fab_colorNormal="@color/colorPrimary"
-        fab:fab_colorPressed="@color/colorPrimaryDark"
-        fab:fab_colorRipple="@color/colorAccent"/>
+        fab:fab_colorNormal="@color/primary"
+        fab:fab_colorPressed="@color/primary_dark"
+        fab:fab_colorRipple="@color/accent"/>
 
 
     <com.github.clans.fab.FloatingActionButton
@@ -81,9 +81,9 @@
         android:layout_marginBottom="20dp"
         android:layout_marginRight="20dp"
         android:src="@drawable/ic_photo_library_white_24dp"
-        fab:fab_colorNormal="@color/colorPrimary"
-        fab:fab_colorPressed="@color/colorPrimaryDark"
-        fab:fab_colorRipple="@color/colorAccent"/>
+        fab:fab_colorNormal="@color/primary"
+        fab:fab_colorPressed="@color/primary_dark"
+        fab:fab_colorRipple="@color/accent"/>
 
 </RelativeLayout>
 

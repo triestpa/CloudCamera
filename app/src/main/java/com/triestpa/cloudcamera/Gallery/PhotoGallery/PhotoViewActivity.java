@@ -3,17 +3,21 @@ package com.triestpa.cloudcamera.Gallery.PhotoGallery;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Display;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.triestpa.cloudcamera.R;
+import com.triestpa.cloudcamera.Utilities.BitmapUtilities;
 
 import java.io.IOException;
 
@@ -29,11 +33,26 @@ public class PhotoViewActivity extends AppCompatActivity {
     private PhotoViewAttacher mAttacher;
 
     private String mFullsizeURL, mThumbnailURL;
+    private int mWidth, mHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_view);
+
+        ImageButton backButton = (ImageButton) findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        mWidth = size.x;
+        mHeight = size.y;
 
         Intent intent = getIntent();
         mFullsizeURL = intent.getStringExtra(EXTRA_FULLSIZE_URL);
@@ -41,12 +60,6 @@ public class PhotoViewActivity extends AppCompatActivity {
 
         byte[] thumbnailBytes = intent.getByteArrayExtra(EXTRA_THUMBNAIL_BYTES);
         Bitmap thumbnailBitmap = BitmapFactory.decodeByteArray(thumbnailBytes, 0, thumbnailBytes.length);
-
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
 
         mImageView = (ImageView) findViewById(R.id.fullsize_image);
         mImageView.setImageBitmap(thumbnailBitmap);
@@ -59,6 +72,7 @@ public class PhotoViewActivity extends AppCompatActivity {
 
         if (mImageView == null) {
             mImageView = (ImageView) findViewById(R.id.fullsize_image);
+            mAttacher = new PhotoViewAttacher(mImageView);
         }
 
         downloadImage(mFullsizeURL);
@@ -68,6 +82,7 @@ public class PhotoViewActivity extends AppCompatActivity {
     public void onTrimMemory(int level) {
         if (level == TRIM_MEMORY_UI_HIDDEN) {
             mImageView = null;
+            mAttacher = null;
             System.gc();
         }
         super.onTrimMemory(level);
@@ -78,12 +93,12 @@ public class PhotoViewActivity extends AppCompatActivity {
         handler.execute(url);
     }
 
-    public class ImageDownloadHandler extends AsyncTask<String, Void, byte[]> {
+    public class ImageDownloadHandler extends AsyncTask<String, Void, Bitmap> {
 
         OkHttpClient client = new OkHttpClient();
 
         @Override
-        protected byte[] doInBackground(String... params) {
+        protected Bitmap doInBackground(String... params) {
 
             Request.Builder builder = new Request.Builder();
             builder.url(params[0]);
@@ -91,9 +106,28 @@ public class PhotoViewActivity extends AppCompatActivity {
             Request request = builder.build();
 
             try {
-
                 Response response = client.newCall(request).execute();
-                return response.body().bytes();
+                byte[] bytes = response.body().bytes();
+
+                if (bytes != null && bytes.length > 0) {
+
+                    //http://developer.android.com/training/displaying-bitmaps/load-bitmap.html
+                    final BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+
+                    BitmapFactory.decodeByteArray(bytes, 0,
+                            bytes.length, options);
+
+                    // Calculate inSampleSize
+                    options.inSampleSize = BitmapUtilities.calculateInSampleSize(options, mWidth, mHeight);
+
+                    // Decode bitmap with inSampleSize set
+                    options.inJustDecodeBounds = false;
+                    return BitmapFactory.decodeByteArray(bytes, 0,
+                            bytes.length, options);
+                } else {
+                    return null;
+                }
 
             } catch (IOException e) {
                 Log.e(TAG, e.getMessage());
@@ -103,15 +137,14 @@ public class PhotoViewActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(byte[] bytes) {
-            if (bytes != null && bytes.length > 0) {
-
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0,
-                        bytes.length);
-                mImageView.setImageBitmap(bitmap);
+        protected void onPostExecute(Bitmap imageBm) {
+            if (imageBm != null) {
+                mImageView.setImageBitmap(imageBm);
                 mAttacher.update();
+            } else {
+                Log.e(TAG, "Error Loading Bitmap");
             }
-            super.onPostExecute(bytes);
+            super.onPostExecute(imageBm);
         }
     }
 }

@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
@@ -17,12 +19,20 @@ public class VideoViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_view);
-        VideoView videoView = (VideoView)findViewById(R.id.video_view);
+
+        ImageButton backButton = (ImageButton) findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         Intent intent = getIntent();
         String videoUrl = intent.getStringExtra(VIDEO_URL);
-
         Uri vidUri = Uri.parse(videoUrl);
+
+        VideoView videoView = (VideoView)findViewById(R.id.video_view);
         videoView.setVideoURI(vidUri);
 
         MediaController videoControl = new MediaController(this);
