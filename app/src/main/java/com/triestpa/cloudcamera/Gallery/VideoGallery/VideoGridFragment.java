@@ -79,9 +79,17 @@ public class VideoGridFragment extends Fragment {
         return v;
     }
 
-    protected void playVideo(String url) {
+    @Override
+    public void onResume() {
+        super.onResume();
+        mSwipeRefreshLayout.setRefreshing(true);
+        refreshVideos();
+    }
+
+    protected void playVideo(Video video) {
         Intent videoIntent = new Intent(getActivity(), VideoViewActivity.class);
-        videoIntent.putExtra(VideoViewActivity.VIDEO_URL, url);
+        videoIntent.putExtra(VideoViewActivity.VIDEO_ID, video.getObjectId());
+        videoIntent.putExtra(VideoViewActivity.VIDEO_URL, video.getVideo().getUrl());
         ActivityCompat.startActivity(getActivity(), videoIntent, null);
     }
 

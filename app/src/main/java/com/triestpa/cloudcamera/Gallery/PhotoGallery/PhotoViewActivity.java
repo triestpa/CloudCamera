@@ -1,24 +1,26 @@
 package com.triestpa.cloudcamera.Gallery.PhotoGallery;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.parse.DeleteCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.triestpa.cloudcamera.Model.Picture;
 import com.triestpa.cloudcamera.R;
 import com.triestpa.cloudcamera.Utilities.BitmapUtilities;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
@@ -29,6 +31,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class PhotoViewActivity extends AppCompatActivity {
     static final String TAG = PhotoViewActivity.class.getName();
+    public static final String EXTRA_PHOTO_ID = "PHOTO_ID";
     public static final String EXTRA_THUMBNAIL_URL = "THUMBNAIL_URL";
     public static final String EXTRA_THUMBNAIL_BYTES = "THUMBNAIL BYTES";
     public static final String EXTRA_FULLSIZE_URL = "FULLSIZE_URL";
@@ -36,7 +39,8 @@ public class PhotoViewActivity extends AppCompatActivity {
     private ImageView mImageView;
     private PhotoViewAttacher mAttacher;
 
-    private String mFullsizeURL, mThumbnailURL;
+    private String mFullsizeURL, mThumbnailURL, mPhotoID;
+    ;
     private int mWidth, mHeight;
 
     @Override
@@ -52,6 +56,14 @@ public class PhotoViewActivity extends AppCompatActivity {
             }
         });
 
+        ImageButton deleteButton = (ImageButton) findViewById(R.id.delete_button);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deletePhoto();
+            }
+        });
+
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -59,6 +71,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         mHeight = size.y;
 
         Intent intent = getIntent();
+        mPhotoID = intent.getStringExtra(EXTRA_PHOTO_ID);
         mFullsizeURL = intent.getStringExtra(EXTRA_FULLSIZE_URL);
         mThumbnailURL = intent.getStringExtra(EXTRA_THUMBNAIL_URL);
         byte[] thumbnailBytes = intent.getByteArrayExtra(EXTRA_THUMBNAIL_BYTES);
@@ -151,22 +164,31 @@ public class PhotoViewActivity extends AppCompatActivity {
             }
             super.onPostExecute(imageBm);
         }
+    }
 
-        public class PhotoViewPager extends ViewPager {
-
-            public PhotoViewPager(Context context) {
-                super(context);
-            }
-
-            @Override
-            public boolean onInterceptTouchEvent(MotionEvent ev) {
-                try {
-                    return super.onInterceptTouchEvent(ev);
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                    return false;
+    public void deletePhoto() {
+        ParseQuery<Picture> query = ParseQuery.getQuery(Picture.class);
+        query.getInBackground(mPhotoID, new GetCallback<Picture>() {
+            public void done(Picture picture, ParseException e) {
+                if (e == null) {
+                    picture.deleteInBackground(new DeleteCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                SystemUtilities.showToastMessage("Photo Deleted");
+                                PhotoViewActivity.this.onBackPressed();
+                            }
+                            else {
+                                Log.e(TAG, e.getMessage());
+                                SystemUtilities.showToastMessage("Error Deleting File: " + e.getMessage());
+                            }
+                        }
+                    });
+                } else {
+                    Log.e(TAG, e.getMessage());
+                    SystemUtilities.showToastMessage("Error Deleting File: " + e.getMessage());
                 }
             }
-        }
+        });
     }
 }

@@ -79,13 +79,17 @@ public class PhotoGridFragment extends Fragment {
             }
         });
 
-        mSwipeRefreshLayout.setRefreshing(true);
-        refreshPhotos();
-
         return v;
     }
 
-    public void showLargePhoto(View thumbnailView, String fullSizeURL, String thumbnailURL) {
+    @Override
+    public void onResume() {
+        super.onResume();
+        mSwipeRefreshLayout.setRefreshing(true);
+        refreshPhotos();
+    }
+
+    public void showLargePhoto(View thumbnailView, Picture picture) {
         Intent intent = new Intent(getActivity(), PhotoViewActivity.class);
 
         Bitmap thumbnailBitmap = ((BitmapDrawable)((ImageView)thumbnailView).getDrawable()).getBitmap();
@@ -93,8 +97,9 @@ public class PhotoGridFragment extends Fragment {
         thumbnailBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         byte[] bitmapdata = stream.toByteArray();
 
-        intent.putExtra(PhotoViewActivity.EXTRA_FULLSIZE_URL, fullSizeURL);
-        intent.putExtra(PhotoViewActivity.EXTRA_THUMBNAIL_URL, thumbnailURL);
+        intent.putExtra(PhotoViewActivity.EXTRA_PHOTO_ID, picture.getObjectId());
+        intent.putExtra(PhotoViewActivity.EXTRA_FULLSIZE_URL, picture.getPhoto().getUrl());
+        intent.putExtra(PhotoViewActivity.EXTRA_THUMBNAIL_URL, picture.getThumbnail().getUrl());
         intent.putExtra(PhotoViewActivity.EXTRA_THUMBNAIL_BYTES, bitmapdata);
 
         String transitionName = getString(R.string.transition_picture);
