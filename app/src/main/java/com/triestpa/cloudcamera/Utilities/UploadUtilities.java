@@ -1,4 +1,4 @@
-package com.triestpa.cloudcamera.Upload;
+package com.triestpa.cloudcamera.Utilities;
 
 
 import android.graphics.Bitmap;
@@ -12,6 +12,8 @@ import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
 import com.triestpa.cloudcamera.Model.Picture;
 import com.triestpa.cloudcamera.Model.Video;
+import com.triestpa.cloudcamera.Upload.Upload;
+import com.triestpa.cloudcamera.Upload.UploadManager;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,7 +23,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class UploadUtilities {
-
     final static String TAG = UploadUtilities.class.getName();
 
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -30,6 +31,7 @@ public class UploadUtilities {
     public static void uploadPhoto(byte[] picData) {
         if (picData.length > 1048576) {
             Log.e(TAG, "Photo File is Too Large, Must be 10mb or less");
+            SystemUtilities.showToastMessage("Photo File is Too Large, Must be 10mb or less");
             return;
         }
 
@@ -43,9 +45,12 @@ public class UploadUtilities {
                                          if (e == null) {
                                              savePhoto(picFile);
                                              thisUpload.setCompleted(true);
+                                             SystemUtilities.showToastMessage("Photo Upload Success");
                                          } else {
                                              Log.e(TAG, e.getMessage());
                                              thisUpload.setAborted(true);
+                                             SystemUtilities.showToastMessage("Photo Upload Failure " + e.getMessage());
+
                                          }
                                      }
                                  }, new ProgressCallback() {
@@ -57,19 +62,10 @@ public class UploadUtilities {
         );
     }
 
-    public static void savePhoto(ParseFile photoFile) {
+    private static void savePhoto(ParseFile photoFile) {
         Picture newPic = new Picture();
         newPic.setPhoto(photoFile);
-        newPic.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.d(TAG, "Picture Uploaded");
-                } else {
-                    Log.e(TAG, e.getMessage());
-                }
-            }
-        });
+        newPic.saveInBackground();
     }
 
     public static void uploadVideo(String filepath) {
@@ -88,15 +84,11 @@ public class UploadUtilities {
 
         if (videoBytes.length > 1048576) {
             Log.e(TAG, "Video File is Too Large, Must be 10mb or less");
+            SystemUtilities.showToastMessage("Video File is Too Large, Must be 10mb or less");
             return;
         }
 
-        Bitmap thumbnailImage = ThumbnailUtils.createVideoThumbnail(filepath, MediaStore.Images.Thumbnails.MINI_KIND);
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        thumbnailImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-        final ParseFile thumbnailFile = new ParseFile("thumbnail.jpeg", byteArray);
-
+        final ParseFile thumbnailFile = new ParseFile("thumbnail.jpeg", createVideoThumbnail(filepath));
         final ParseFile vidFile = new ParseFile("video.mp4", videoBytes);
         final Upload thisUpload = new Upload(vidFile, Upload.TYPE_VIDEO);
         UploadManager.getInstance().addUpload(thisUpload);
@@ -108,9 +100,11 @@ public class UploadUtilities {
                                              thisUpload.setCompleted(true);
                                              videoFile.delete();
                                              saveThumbnail(vidFile, thumbnailFile);
+                                             SystemUtilities.showToastMessage("Video Upload Success");
                                          } else {
                                              Log.e(TAG, e.getMessage());
                                              thisUpload.setAborted(true);
+                                             SystemUtilities.showToastMessage("Video Upload Failure: " + e.getMessage());
                                          }
                                      }
                                  }, new ProgressCallback() {
@@ -122,7 +116,15 @@ public class UploadUtilities {
         );
     }
 
-    public static void saveThumbnail(final ParseFile videoFile,final ParseFile thumbnailFile) {
+    private static byte[] createVideoThumbnail(String filepath) {
+        Bitmap thumbnailImage = ThumbnailUtils.createVideoThumbnail(filepath, MediaStore.Images.Thumbnails.MINI_KIND);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        thumbnailImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        return byteArray;
+    }
+
+    private static void saveThumbnail(final ParseFile videoFile,final ParseFile thumbnailFile) {
         thumbnailFile.saveInBackground(new SaveCallback() {
                                            @Override
                                            public void done(ParseException e) {
@@ -137,19 +139,10 @@ public class UploadUtilities {
         );
     }
 
-    public static void saveVideo(ParseFile videoFile, ParseFile thumbnailFile) {
+    private static void saveVideo(ParseFile videoFile, ParseFile thumbnailFile) {
         Video newVid = new Video();
         newVid.setVideo(videoFile);
         newVid.setThumbnail(thumbnailFile);
-        newVid.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Log.d(TAG, "Video Uploaded");
-                } else {
-                    Log.e(TAG, e.getMessage());
-                }
-            }
-        });
+        newVid.saveInBackground();
     }
 }

@@ -29,7 +29,7 @@ public class UploadStatusActivity extends AppCompatActivity {
             mAdapter.notifyDataSetChanged();
 
             // schedule next run
-            mHandler.postDelayed(this, 500); // set time here to refresh views
+            mHandler.postDelayed(this, 250); // set time here to refresh views
         }
     };
 

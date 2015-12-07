@@ -17,9 +17,8 @@
     <string name="camera_rear">Use Rear Camera</string>
     <string name="view_uploads">View Uploads</string>
 
-    <string name="title_activity_video_view_fullscreen">VideoViewFullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="upload_success">Completed</string>
+    <string name="upload_fail">Failed</string>
 
 
 </resources>

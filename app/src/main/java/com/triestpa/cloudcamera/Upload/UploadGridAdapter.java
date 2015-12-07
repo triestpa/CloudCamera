@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.triestpa.cloudcamera.CloudCameraApplication;
 import com.triestpa.cloudcamera.R;
 
 import java.util.ArrayList;
@@ -67,10 +68,10 @@ public class UploadGridAdapter extends RecyclerView.Adapter<UploadGridAdapter.Up
         }
 
         if (thisUpload.isAborted()) {
-            holder.mStatusText.setText("Aborted");
+            holder.mStatusText.setText(CloudCameraApplication.getAppContext().getString(R.string.upload_fail));
         }
         else if (thisUpload.isCompleted()) {
-            holder.mStatusText.setText("Completed");
+            holder.mStatusText.setText(CloudCameraApplication.getAppContext().getString(R.string.upload_success));
         }
         else {
             holder.mStatusText.setText(thisUpload.getProgress() + "%");

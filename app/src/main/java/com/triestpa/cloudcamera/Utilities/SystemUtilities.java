@@ -12,7 +12,6 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.triestpa.cloudcamera.CloudCameraApplication;
-import com.triestpa.cloudcamera.Upload.UploadUtilities;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
