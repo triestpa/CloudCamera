@@ -2,10 +2,13 @@ package com.triestpa.cloudcamera.Camera;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.triestpa.cloudcamera.Gallery.GalleryActivity;
@@ -23,7 +26,39 @@ public class CameraActivity extends AppCompatActivity {
     private final static int MODE_VIDEO = 1;
     int mMode = MODE_PICTURE;
 
-    FloatingActionButton mFlashButton, mCaptureButton, mSwapButton, mModeButton, mGalleryButton, mUploadViewButton;
+    private FloatingActionButton mFlashButton, mCaptureButton, mSwapButton, mModeButton, mGalleryButton, mUploadViewButton;
+    private RelativeLayout mVideoIndicator;
+    private TextView mVideoTime;
+    private Boolean mRecording;
+    private int mRecordingSeconds;
+    private int mRecordingMinutes;
+
+    Handler mRecordingTimeHandler = new Handler();
+    Runnable mRecordingTimeUpdater = new Runnable() {
+        @Override
+        public void run() {
+            // check if still recording
+            if (!mRecording) return;
+
+            if (++mRecordingSeconds >= 60) {
+                mRecordingSeconds = 0;
+                ++mRecordingMinutes;
+            }
+
+            String newTime;
+            if (mRecordingSeconds >= 10) {
+                newTime = mRecordingMinutes + ":" + mRecordingSeconds;
+            }
+            else {
+                newTime = mRecordingMinutes + ":0" + mRecordingSeconds;
+            }
+
+            mVideoTime.setText(newTime);
+
+            // update again in a second
+            mRecordingTimeHandler.postDelayed(this, 1000);
+        }
+    };
 
     /**
      * ----- Activity Lifecycle Events -----
@@ -54,6 +89,9 @@ public class CameraActivity extends AppCompatActivity {
         mGalleryButton = (FloatingActionButton) findViewById(R.id.button_gallery);
         mUploadViewButton = (FloatingActionButton) findViewById(R.id.button_upload_view);
 
+        mVideoIndicator = (RelativeLayout) findViewById(R.id.recording_indicator);
+        mVideoTime = (TextView) findViewById(R.id.recording_time);
+
         setCaptureButton();
         setCameraSwapButton();
         setFlashButton();
@@ -70,6 +108,13 @@ public class CameraActivity extends AppCompatActivity {
         mCameraManager.stopPreview(preview);
         mCameraManager.releaseMediaRecorder(); // if you are using MediaRecorder, release it first
         mCameraManager.releaseCamera();
+
+        mFlashButton = null;
+        mCaptureButton = null;
+        mSwapButton = null;
+        mModeButton = null;
+        mGalleryButton = null;
+        mUploadViewButton = null;
     }
 
     /**
@@ -86,7 +131,16 @@ public class CameraActivity extends AppCompatActivity {
                 } else {
                     if (mCameraManager.toggleRecording()) {
                         DeviceUtilities.lockOrientation(CameraActivity.this);
+                        mRecordingSeconds = 0;
+                        mRecordingMinutes = 0;
+                        mRecording = true;
+                        mVideoIndicator.setVisibility(View.VISIBLE);
+                        mCaptureButton.setImageResource(R.drawable.ic_stop_white_24dp);
+                        mRecordingTimeHandler.post(mRecordingTimeUpdater);
                     } else {
+                        mRecording = false;
+                        mVideoIndicator.setVisibility(View.INVISIBLE);
+                        mCaptureButton.setImageResource(R.drawable.ic_videocam_white_24dp);
                         DeviceUtilities.unlockOrientation(CameraActivity.this);
                     }
                 }

@@ -147,17 +147,12 @@ public class CameraManager {
         mMediaRecorder.setOrientationHint(mRotate);
 
         // Always use low-quality videos - Parse does not accept if they are larger than 10mb
-        if (CamcorderProfile.hasProfile(cameraID, CamcorderProfile.QUALITY_720P)) {
-            mMediaRecorder.setProfile(CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_720P));
-        }
-        else if (CamcorderProfile.hasProfile(cameraID, CamcorderProfile.QUALITY_480P)) {
-            mMediaRecorder.setProfile(CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_480P));
-        }
-        else if (CamcorderProfile.hasProfile(cameraID, CamcorderProfile.QUALITY_LOW)) {
+        if (CamcorderProfile.hasProfile(cameraID, CamcorderProfile.QUALITY_LOW)) {
             mMediaRecorder.setProfile(CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_LOW));
         }
         else {
-            mMediaRecorder.setProfile(CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_HIGH));
+            Log.e(TAG, "Error Setting Camcorder Profile");
+            return false;
         }
 
         // Set output file
@@ -294,7 +289,7 @@ public class CameraManager {
             releaseMediaRecorder(); // release the MediaRecorder object
             mCamera.lock();         // take camera access back from MediaRecorder
             isRecording = false;
-            Log.i("TAG", "Video Recorded");
+            Log.i(TAG, "Video Recorded");
             UploadUtilities.uploadVideo(mVideoOutputFilePath);
         } else {
             // initialize video camera
