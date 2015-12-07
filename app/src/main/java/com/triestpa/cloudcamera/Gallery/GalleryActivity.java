@@ -86,11 +86,11 @@ public class GalleryActivity extends AppCompatActivity {
 
             switch(position) {
                 case 0:
-                    return new PhotoGridFragment();
+                    return PhotoGridFragment.newInstance();
                 case 1:
-                    return new VideoGridFragment();
+                    return VideoGridFragment.newInstance();
                 default:
-                    return new PhotoGridFragment();
+                    return PhotoGridFragment.newInstance();
             }
         }
 

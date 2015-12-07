@@ -38,7 +38,7 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Imag
     public VideoGridAdapter(List<Video> videos, int imgDimens, VideoGridFragment fragment) {
         mVideos = (ArrayList<Video>) videos;
         this.imgDimens = imgDimens;
-        this.mFragment = (VideoGridFragment) fragment;
+        this.mFragment = fragment;
 
         Picasso.Builder picassoBuilder = new Picasso.Builder(fragment.getContext());
         picassoInstance = picassoBuilder.build();

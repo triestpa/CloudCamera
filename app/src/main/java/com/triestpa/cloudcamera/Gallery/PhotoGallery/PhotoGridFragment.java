@@ -31,17 +31,16 @@ import java.util.List;
 
 public class PhotoGridFragment extends Fragment {
     private final static String TAG = PhotoGridFragment.class.getName();
-    RecyclerView mImageGrid;
-    PhotoGridAdapter mAdapter;
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    private RecyclerView mImageGrid;
+    private PhotoGridAdapter mAdapter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public PhotoGridFragment() {
         // Required empty public constructor
     }
 
     public static PhotoGridFragment newInstance() {
-        PhotoGridFragment fragment = new PhotoGridFragment();
-        return fragment;
+        return new PhotoGridFragment();
     }
 
     @Override
@@ -112,7 +111,7 @@ public class PhotoGridFragment extends Fragment {
         ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
     }
 
-    protected void refreshPhotos() {
+    private void refreshPhotos() {
         ParseQuery<Picture> query = ParseQuery.getQuery(Picture.class);
         query.setLimit(1000);
         query.findInBackground(new FindCallback<Picture>() {

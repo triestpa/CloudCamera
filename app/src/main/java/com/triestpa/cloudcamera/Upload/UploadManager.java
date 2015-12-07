@@ -7,8 +7,8 @@ public class UploadManager {
 
     private ArrayList<Upload> mUploads;
 
-    protected UploadManager() {
-        mUploads = new ArrayList<Upload>();
+    private UploadManager() {
+        mUploads = new ArrayList<>();
     }
 
     public static UploadManager getInstance() {

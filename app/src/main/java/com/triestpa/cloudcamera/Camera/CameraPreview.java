@@ -14,15 +14,14 @@ import java.util.List;
 /* A basic Camera preview class
  * This is a SurfaceView that controls how the camera view is displayed.
  * Must coordinate with CameraActivity to handle lifecycle events*/
+@SuppressWarnings("deprecation")
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
-    protected String TAG = CameraPreview.class.getName();
+    private String TAG = CameraPreview.class.getName();
     private SurfaceHolder mHolder;
     private Camera mCamera;
     private List<Camera.Size> mSupportedPreviewSizes;
     private Camera.Size mPreviewSize;
     private int mWidth, mHeight;
-
-    //protected int parentWidth, parentHeight;
 
     public CameraPreview(Context context, Camera camera, int rotation) {
         super(context);

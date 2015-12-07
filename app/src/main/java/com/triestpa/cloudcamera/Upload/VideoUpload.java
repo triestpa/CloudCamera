@@ -16,11 +16,11 @@ public class VideoUpload extends Upload {
         this.thumbnailFile = thumbnailFile;
     }
 
-    public ParseFile getThumbnailFile() {
+    private ParseFile getThumbnailFile() {
         return thumbnailFile;
     }
 
-    public void setThumbnailFile(ParseFile thumbnailFile) {
+    private void setThumbnailFile(ParseFile thumbnailFile) {
         this.thumbnailFile = thumbnailFile;
     }
 
@@ -45,7 +45,7 @@ public class VideoUpload extends Upload {
         );
     }
 
-    public void saveThumbnail(final ParseFile videoFile,final ParseFile thumbnailFile) {
+    private void saveThumbnail(final ParseFile videoFile, final ParseFile thumbnailFile) {
         thumbnailFile.saveInBackground(new SaveCallback() {
                                            @Override
                                            public void done(ParseException e) {

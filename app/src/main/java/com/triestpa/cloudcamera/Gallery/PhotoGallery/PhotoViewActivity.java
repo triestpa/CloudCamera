@@ -32,7 +32,7 @@ import java.io.IOException;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class PhotoViewActivity extends AppCompatActivity {
-    static final String TAG = PhotoViewActivity.class.getName();
+    private static final String TAG = PhotoViewActivity.class.getName();
     public static final String EXTRA_PHOTO_ID = "PHOTO_ID";
     public static final String EXTRA_THUMBNAIL_URL = "THUMBNAIL_URL";
     public static final String EXTRA_THUMBNAIL_BYTES = "THUMBNAIL BYTES";
@@ -42,7 +42,7 @@ public class PhotoViewActivity extends AppCompatActivity {
     private PhotoViewAttacher mAttacher;
 
     private String mFullsizeURL, mThumbnailURL, mPhotoID;
-    ;
+
     private int mWidth, mHeight;
 
     @Override
@@ -113,7 +113,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         super.onTrimMemory(level);
     }
 
-    public void downloadImage(String url) {
+    private void downloadImage(String url) {
         ImageDownloadHandler handler = new ImageDownloadHandler();
         handler.execute(url);
     }
@@ -176,7 +176,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         }
     }
 
-    public void deletePhoto() {
+    private void deletePhoto() {
         ParseQuery<Picture> query = ParseQuery.getQuery(Picture.class);
         query.getInBackground(mPhotoID, new GetCallback<Picture>() {
             public void done(Picture picture, ParseException e) {

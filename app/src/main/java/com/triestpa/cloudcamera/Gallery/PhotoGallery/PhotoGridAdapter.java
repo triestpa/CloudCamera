@@ -38,7 +38,7 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
     public PhotoGridAdapter(List<Picture> photos, int imgDimens, PhotoGridFragment fragment) {
         mPhotos = (ArrayList<Picture>) photos;
         this.imgDimens = imgDimens;
-        this.mFragment = (PhotoGridFragment) fragment;
+        this.mFragment = fragment;
 
         Picasso.Builder picassoBuilder = new Picasso.Builder(fragment.getContext());
         picassoInstance = picassoBuilder.build();

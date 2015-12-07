@@ -19,7 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class UploadUtilities {
-    final static String TAG = UploadUtilities.class.getName();
+    private final static String TAG = UploadUtilities.class.getName();
 
     public static PhotoUpload preparePhotoUpload(byte[] picData) {
         if (picData.length > 10485760) {
@@ -67,7 +67,7 @@ public class UploadUtilities {
         return thisUpload;
     }
 
-    public static byte[] createVideoThumbnail(String filepath) {
+    private static byte[] createVideoThumbnail(String filepath) {
         Bitmap thumbnailImage = ThumbnailUtils.createVideoThumbnail(filepath, MediaStore.Images.Thumbnails.MINI_KIND);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         thumbnailImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);

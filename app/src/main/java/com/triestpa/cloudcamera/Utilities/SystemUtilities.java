@@ -104,7 +104,7 @@ public class SystemUtilities {
 
         // Start download
         Context context = CloudCameraApplication.getAppContext();
-        DownloadManager dm = (DownloadManager) context.getSystemService(context.DOWNLOAD_SERVICE);
+        DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         dm.enqueue(r);
     }
 }

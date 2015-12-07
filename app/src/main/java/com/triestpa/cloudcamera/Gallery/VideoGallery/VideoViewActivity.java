@@ -71,7 +71,7 @@ public class VideoViewActivity extends AppCompatActivity {
         videoView.start();
     }
 
-    public void deleteVideo() {
+    private void deleteVideo() {
         ParseQuery<Video> query = ParseQuery.getQuery(Video.class);
         query.getInBackground(mVideoId, new GetCallback<Video>() {
             public void done(Video video, ParseException e) {

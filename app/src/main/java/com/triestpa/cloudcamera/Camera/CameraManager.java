@@ -16,7 +16,8 @@ import com.triestpa.cloudcamera.Utilities.UploadUtilities;
 import java.io.File;
 import java.io.IOException;
 
-public class CameraManager {
+@SuppressWarnings("deprecation")
+class CameraManager {
     private final static String TAG = CameraManager.class.getName();
 
     private Camera mCamera;
@@ -94,7 +95,7 @@ public class CameraManager {
     }
 
     // A safe way to get an instance of the Camera object.
-    public static Camera getCameraInstance(int camID) {
+    private static Camera getCameraInstance(int camID) {
         Camera c;
         try {
             c = Camera.open(camID);
@@ -233,7 +234,7 @@ public class CameraManager {
         }
 
 
-        if (flashStatus == Camera.Parameters.FLASH_MODE_ON) {
+        if (flashStatus.contentEquals(Camera.Parameters.FLASH_MODE_ON)) {
             return true;
         } else {
             return false;
@@ -290,7 +291,10 @@ public class CameraManager {
             mCamera.startPreview();
             preview_active = true;
             PhotoUpload photoUpload = UploadUtilities.preparePhotoUpload(picData);
-            photoUpload.uploadPhoto();
+
+            if (photoUpload != null) {
+                photoUpload.uploadPhoto();
+            }
         }
     };
 

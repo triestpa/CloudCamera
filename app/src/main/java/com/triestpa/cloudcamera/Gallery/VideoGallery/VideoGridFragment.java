@@ -25,17 +25,16 @@ import java.util.List;
 
 public class VideoGridFragment extends Fragment {
     private final static String TAG = VideoGridFragment.class.getName();
-    RecyclerView mImageGrid;
-    VideoGridAdapter mAdapter;
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    private RecyclerView mImageGrid;
+    private VideoGridAdapter mAdapter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public VideoGridFragment() {
         // Required empty public constructor
     }
 
     public static VideoGridFragment newInstance() {
-        VideoGridFragment fragment = new VideoGridFragment();
-        return fragment;
+        return new VideoGridFragment();
     }
 
     @Override
@@ -86,14 +85,14 @@ public class VideoGridFragment extends Fragment {
         refreshVideos();
     }
 
-    protected void playVideo(Video video) {
+    void playVideo(Video video) {
         Intent videoIntent = new Intent(getActivity(), VideoViewActivity.class);
         videoIntent.putExtra(VideoViewActivity.VIDEO_ID, video.getObjectId());
         videoIntent.putExtra(VideoViewActivity.VIDEO_URL, video.getVideo().getUrl());
         ActivityCompat.startActivity(getActivity(), videoIntent, null);
     }
 
-    protected void refreshVideos() {
+    private void refreshVideos() {
         ParseQuery<Video> query = ParseQuery.getQuery(Video.class);
         query.setLimit(1000);
         query.findInBackground(new FindCallback<Video>() {

@@ -15,13 +15,12 @@ import java.util.ArrayList;
 public class UploadGridActivity extends AppCompatActivity {
     final static String TAG = UploadGridActivity.class.getName();
 
-    private RecyclerView mUploadGrid;
-    private UploadGridAdapter mAdapter;
     private boolean mRunning;
+    private UploadGridAdapter mAdapter;
 
-    Handler mHandler = new Handler();
+    private Handler mHandler = new Handler();
 
-    Runnable mUpdater = new Runnable() {
+    private Runnable mUpdater = new Runnable() {
         @Override
         public void run() {
             // check if still in focus
@@ -44,20 +43,19 @@ public class UploadGridActivity extends AppCompatActivity {
         }
 
         ArrayList<Upload> uploads = UploadManager.getInstance().getUploads();
-
-        mUploadGrid = (RecyclerView) findViewById(R.id.upload_grid);
+        RecyclerView uploadGrid = (RecyclerView) findViewById(R.id.upload_grid);
 
         if (uploads == null || uploads.isEmpty()) {
-            mUploadGrid.setVisibility(View.GONE);
+            uploadGrid.setVisibility(View.GONE);
         }
         else {
-            mUploadGrid.setVisibility(View.VISIBLE);
-            mUploadGrid.setHasFixedSize(true);
+            uploadGrid.setVisibility(View.VISIBLE);
+            uploadGrid.setHasFixedSize(true);
             RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
-            mUploadGrid.setLayoutManager(layoutManager);
+            uploadGrid.setLayoutManager(layoutManager);
 
             mAdapter = new UploadGridAdapter(uploads, this);
-            mUploadGrid.setAdapter(mAdapter);
+            uploadGrid.setAdapter(mAdapter);
 
             mRunning = true;
             // start first run by hand

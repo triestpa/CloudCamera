@@ -18,11 +18,11 @@ import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
 public class CameraActivity extends AppCompatActivity {
     protected final static String TAG = CameraActivity.class.getName();
-    CameraManager mCameraManager;
+    private CameraManager mCameraManager;
 
     private final static int MODE_PICTURE = 0;
     private final static int MODE_VIDEO = 1;
-    int mMode = MODE_PICTURE;
+    private int mMode = MODE_PICTURE;
 
     private FloatingActionButton mFlashButton, mCaptureButton, mSwapButton, mModeButton, mGalleryButton, mUploadViewButton;
     private RelativeLayout mVideoIndicator;
@@ -31,8 +31,8 @@ public class CameraActivity extends AppCompatActivity {
     private int mRecordingSeconds;
     private int mRecordingMinutes;
 
-    Handler mRecordingTimeHandler = new Handler();
-    Runnable mRecordingTimeUpdater = new Runnable() {
+    private Handler mRecordingTimeHandler = new Handler();
+    private Runnable mRecordingTimeUpdater = new Runnable() {
         @Override
         public void run() {
             // check if still recording
@@ -120,7 +120,7 @@ public class CameraActivity extends AppCompatActivity {
     /**
      * ----- Set UI Listeners -----
      */
-    public void setCaptureButton() {
+    private void setCaptureButton() {
         // Add a listener to the Capture button
         mCaptureButton.setOnClickListener(new View.OnClickListener() {
 
@@ -149,7 +149,7 @@ public class CameraActivity extends AppCompatActivity {
         });
     }
 
-    public void setModeButton() {
+    private void setModeButton() {
         mModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,7 +169,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     //Set a button to flip the camera to front-facing/back-facing
-    public void setCameraSwapButton() {
+    private void setCameraSwapButton() {
         // Add a listener to the Capture button
         mSwapButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,7 +193,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     //Toggle the camera flash
-    public void setFlashButton() {
+    private void setFlashButton() {
         // Add a listener to the Capture button
         mFlashButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -209,7 +209,7 @@ public class CameraActivity extends AppCompatActivity {
         });
     }
 
-    public void setGalleryButton() {
+    private void setGalleryButton() {
         mGalleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -223,7 +223,7 @@ public class CameraActivity extends AppCompatActivity {
         });
     }
 
-    public void setUploadViewButton() {
+    private void setUploadViewButton() {
         mUploadViewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
