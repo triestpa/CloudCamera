@@ -1,11 +1,13 @@
 package com.triestpa.cloudcamera.Gallery.PhotoGallery;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
@@ -60,7 +62,15 @@ public class PhotoViewActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deletePhoto();
+                buildDeleteDialog();
+            }
+        });
+
+        ImageButton downloadButton = (ImageButton) findViewById(R.id.download_button);
+        downloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buildDownloadDialog();
             }
         });
 
@@ -177,8 +187,7 @@ public class PhotoViewActivity extends AppCompatActivity {
                             if (e == null) {
                                 SystemUtilities.showToastMessage("Photo Deleted");
                                 PhotoViewActivity.this.onBackPressed();
-                            }
-                            else {
+                            } else {
                                 Log.e(TAG, e.getMessage());
                                 SystemUtilities.showToastMessage("Error Deleting File: " + e.getMessage());
                             }
@@ -190,5 +199,49 @@ public class PhotoViewActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void buildDeleteDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage("Delete Photo From Cloud?");
+        builder.setIcon(R.drawable.ic_delete_white_24dp);
+
+        // Add the buttons
+        builder.setPositiveButton(R.string.delete_dialog_ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                deletePhoto();
+            }
+        });
+        builder.setNegativeButton(R.string.delete_dialog_canel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+                dialog.cancel();
+            }
+        });
+        // Create the AlertDialog
+        builder.create().show();
+    }
+
+    private void buildDownloadDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage("Download Photo From Cloud?");
+        builder.setIcon(R.drawable.ic_delete_white_24dp);
+
+        // Add the buttons
+        builder.setPositiveButton(R.string.download_dialog_ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                SystemUtilities.downloadFile(mFullsizeURL, mPhotoID, SystemUtilities.MEDIA_TYPE_IMAGE);
+            }
+        });
+        builder.setNegativeButton(R.string.download_dialog_canel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+                dialog.cancel();
+            }
+        });
+        // Create the AlertDialog
+        builder.create().show();
     }
 }

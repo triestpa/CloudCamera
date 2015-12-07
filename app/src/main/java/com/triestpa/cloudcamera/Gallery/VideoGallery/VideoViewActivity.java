@@ -1,8 +1,10 @@
 package com.triestpa.cloudcamera.Gallery.VideoGallery;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -23,16 +25,16 @@ public class VideoViewActivity extends AppCompatActivity {
     public final static String VIDEO_ID = "VIDEO_ID";
     public final static String VIDEO_URL = "VIDEO_URL";
 
+    private String mVideoId, mVideoUrl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_view);
 
         Intent intent = getIntent();
-        final String videoID = intent.getStringExtra(VIDEO_ID);
-        final String videoUrl = intent.getStringExtra(VIDEO_URL);
-        Uri vidUri = Uri.parse(videoUrl);
-
+        mVideoId = intent.getStringExtra(VIDEO_ID);
+        mVideoUrl = intent.getStringExtra(VIDEO_URL);
 
         ImageButton backButton = (ImageButton) findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -46,11 +48,20 @@ public class VideoViewActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteVideo(videoID);
+                buildDeleteDialog();
             }
         });
 
-        VideoView videoView = (VideoView)findViewById(R.id.video_view);
+        ImageButton downloadButton = (ImageButton) findViewById(R.id.download_button);
+        downloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buildDownloadDialog();
+            }
+        });
+
+        VideoView videoView = (VideoView) findViewById(R.id.video_view);
+        Uri vidUri = Uri.parse(mVideoUrl);
         videoView.setVideoURI(vidUri);
 
         MediaController videoControl = new MediaController(this);
@@ -60,10 +71,9 @@ public class VideoViewActivity extends AppCompatActivity {
         videoView.start();
     }
 
-
-    public void deleteVideo(String videoID) {
+    public void deleteVideo() {
         ParseQuery<Video> query = ParseQuery.getQuery(Video.class);
-        query.getInBackground(videoID, new GetCallback<Video>() {
+        query.getInBackground(mVideoId, new GetCallback<Video>() {
             public void done(Video video, ParseException e) {
                 if (e == null) {
                     video.deleteInBackground(new DeleteCallback() {
@@ -72,8 +82,7 @@ public class VideoViewActivity extends AppCompatActivity {
                             if (e == null) {
                                 SystemUtilities.showToastMessage("Video Deleted");
                                 VideoViewActivity.this.onBackPressed();
-                            }
-                            else {
+                            } else {
                                 Log.e(TAG, e.getMessage());
                                 SystemUtilities.showToastMessage("Error Deleting File: " + e.getMessage());
                             }
@@ -86,4 +95,50 @@ public class VideoViewActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void buildDeleteDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage("Delete Video From Cloud?");
+        builder.setIcon(R.drawable.ic_delete_white_24dp);
+
+        // Add the buttons
+        builder.setPositiveButton(R.string.delete_dialog_ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                deleteVideo();
+            }
+        });
+        builder.setNegativeButton(R.string.delete_dialog_canel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+                dialog.cancel();
+            }
+        });
+        // Create the AlertDialog
+        builder.create().show();
+    }
+
+    private void buildDownloadDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage("Download Photo From Cloud?");
+        builder.setIcon(R.drawable.ic_delete_white_24dp);
+
+        // Add the buttons
+        builder.setPositiveButton(R.string.download_dialog_ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                SystemUtilities.downloadFile(mVideoUrl, mVideoId, SystemUtilities.MEDIA_TYPE_VIDEO);
+            }
+        });
+        builder.setNegativeButton(R.string.download_dialog_canel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+                dialog.cancel();
+            }
+        });
+        // Create the AlertDialog
+        builder.create().show();
+    }
+
+
 }

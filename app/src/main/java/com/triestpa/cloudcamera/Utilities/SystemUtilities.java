@@ -1,10 +1,12 @@
 package com.triestpa.cloudcamera.Utilities;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Surface;
@@ -118,5 +120,28 @@ public class SystemUtilities {
     public static void showToastMessage(String message) {
         Toast.makeText(CloudCameraApplication.getAppContext(), message, Toast.LENGTH_SHORT).show();
 
+    }
+
+    public static void downloadFile(String url, String id, int mediatype) {
+        Uri videoUri = Uri.parse(url);
+        DownloadManager.Request r = new DownloadManager.Request(videoUri);
+
+        // This put the download in the same Download dir the browser uses
+        if (mediatype == MEDIA_TYPE_IMAGE) {
+            r.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, id + ".jpeg");
+        }
+        else {
+            r.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, id + ".mp4");
+        }
+
+        r.allowScanningByMediaScanner();
+
+        // Notify user when download is completed
+        r.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+        // Start download
+        Context context = CloudCameraApplication.getAppContext();
+        DownloadManager dm = (DownloadManager) context.getSystemService(context.DOWNLOAD_SERVICE);
+        dm.enqueue(r);
     }
 }

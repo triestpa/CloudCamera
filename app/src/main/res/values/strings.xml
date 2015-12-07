@@ -24,6 +24,11 @@
     <string name="no_photos">No Photos Available</string>
     <string name="no_uploads">No Uploads To Show</string>
 
+    <string name="delete_dialog_ok">Delete</string>
+    <string name="delete_dialog_canel">Cancel</string>
+
+    <string name="download_dialog_ok">Download</string>
+    <string name="download_dialog_canel">Cancel</string>
 
 </resources>
 
