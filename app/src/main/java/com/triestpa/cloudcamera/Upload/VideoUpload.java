@@ -69,11 +69,19 @@ public class VideoUpload extends Upload {
             public void done(ParseException e) {
                 if (e == null) {
                     VideoUpload.this.showSuccess("Video Upload Success");
+                    VideoUpload.this.setParseFile(null);
+                    VideoUpload.this.setThumbnailFile(null);
                 }
                 else {
                     VideoUpload.this.showError(e, "Video Upload Failure: ");
                 }
             }
         });
+    }
+
+    @Override
+    public void retryUpload() {
+        super.retryUpload();
+        uploadVideo();
     }
 }

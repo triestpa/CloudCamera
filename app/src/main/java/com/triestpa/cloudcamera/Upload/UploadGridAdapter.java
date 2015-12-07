@@ -54,10 +54,9 @@ public class UploadGridAdapter extends RecyclerView.Adapter<UploadGridAdapter.Up
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(UploadViewHolder holder, int position) {
+    public void onBindViewHolder(final UploadViewHolder holder, int position) {
 
         final Upload thisUpload = mUploads.get(position);
-
 
         if (thisUpload.getClass() == PhotoUpload.class) {
             holder.mLayout.setBackgroundColor(mContext.getResources().getColor(R.color.md_blue_500));
@@ -71,6 +70,15 @@ public class UploadGridAdapter extends RecyclerView.Adapter<UploadGridAdapter.Up
         if (thisUpload.isAborted()) {
             holder.mLayout.setBackgroundColor(mContext.getResources().getColor(R.color.md_red_500));
             holder.mStatusText.setText(CloudCameraApplication.getAppContext().getString(R.string.upload_fail));
+            holder.mLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    thisUpload.retryUpload();
+                    thisUpload.setAborted(false);
+                    holder.mStatusText.setText("Retrying...");
+                    holder.mLayout.setOnClickListener(null);
+                }
+            });
         }
         else if (thisUpload.isCompleted()) {
             holder.mStatusText.setText(CloudCameraApplication.getAppContext().getString(R.string.upload_success));

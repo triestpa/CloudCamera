@@ -121,7 +121,7 @@ public class VideoViewActivity extends AppCompatActivity {
     private void buildDownloadDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setMessage("Download Photo From Cloud?");
+        builder.setMessage("Download Video From Cloud?");
         builder.setIcon(R.drawable.ic_delete_white_24dp);
 
         // Add the buttons

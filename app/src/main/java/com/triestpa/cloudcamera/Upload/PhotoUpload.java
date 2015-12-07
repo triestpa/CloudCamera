@@ -41,6 +41,7 @@ public class PhotoUpload extends Upload {
                                     public void done(ParseException e) {
                                         if (e == null) {
                                             PhotoUpload.this.showSuccess("Photo Upload Success");
+                                            PhotoUpload.this.setParseFile(null);
                                         } else {
                                             PhotoUpload.this.showError(e, "Photo Upload Failure ");
                                         }
@@ -48,5 +49,11 @@ public class PhotoUpload extends Upload {
                                 }
 
         );
+    }
+
+    @Override
+    public void retryUpload() {
+        super.retryUpload();
+        uploadPhoto();
     }
 }

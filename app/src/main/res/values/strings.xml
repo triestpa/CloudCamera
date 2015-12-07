@@ -18,7 +18,7 @@
     <string name="view_uploads">View Uploads</string>
 
     <string name="upload_success">Completed</string>
-    <string name="upload_fail">Failed</string>
+    <string name="upload_fail">Failed: Tap To Retry</string>
 
     <string name="no_videos">No Videos Available</string>
     <string name="no_photos">No Photos Available</string>

@@ -62,4 +62,8 @@ public class Upload {
         this.setCompleted(true);
         SystemUtilities.showToastMessage(message);
     }
+
+    public void retryUpload() {
+
+    }
 }
