@@ -9,6 +9,7 @@ import android.view.Surface;
 import android.widget.FrameLayout;
 
 import com.triestpa.cloudcamera.Upload.UploadUtilities;
+import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,6 +86,8 @@ public class CameraManager {
         }
         else {
             Log.e(TAG, "Camera Instance Failed");
+            SystemUtilities.showToastMessage("Camera Instance Failed");
+
         }
     }
 
@@ -97,6 +100,7 @@ public class CameraManager {
         } catch (Exception e) {
             // Camera is not available (in use or does not exist)
             Log.e(TAG, "camera unavailable");
+            SystemUtilities.showToastMessage("Camera Not Available");
             return null;
         }
 
@@ -152,14 +156,16 @@ public class CameraManager {
         }
         else {
             Log.e(TAG, "Error Setting Camcorder Profile");
+            SystemUtilities.showToastMessage("Error Setting Up Video Recorder");
             return false;
         }
 
         // Set output file
-        File videoFile = UploadUtilities.getOutputMediaFile(UploadUtilities.MEDIA_TYPE_VIDEO);
+        File videoFile = SystemUtilities.getOutputMediaFile(UploadUtilities.MEDIA_TYPE_VIDEO);
 
         if (videoFile == null) {
             Log.e(TAG, "Error Creating Video File");
+            SystemUtilities.showToastMessage("Error Creating Video File");
             releaseMediaRecorder();
             return false;
         }
@@ -175,10 +181,12 @@ public class CameraManager {
             mMediaRecorder.prepare();
         } catch (IllegalStateException e) {
             Log.e(TAG, "IllegalStateException preparing MediaRecorder: " + e.getMessage());
+            SystemUtilities.showToastMessage("Error Preparing Media Recorder");
             releaseMediaRecorder();
             return false;
         } catch (IOException e) {
             Log.e(TAG, "IOException preparing MediaRecorder: " + e.getMessage());
+            SystemUtilities.showToastMessage("Error Preparing Media Recorder");
             releaseMediaRecorder();
             return false;
         }
@@ -200,6 +208,7 @@ public class CameraManager {
         // Check if device has flash
         if (params.getFlashMode() == null) {
             Log.d(TAG, "Device Does Not Have Flash");
+            SystemUtilities.showToastMessage("Device Does Not Have Flash");
             return false;
         } else if (params.getFlashMode()
                 .contentEquals(Camera.Parameters.FLASH_MODE_ON)) {
@@ -252,6 +261,7 @@ public class CameraManager {
             }
         }
         else {
+            SystemUtilities.showToastMessage("Device Does Not Have Second Camera");
             return true;
         }
     }
@@ -277,7 +287,6 @@ public class CameraManager {
             mCamera.stopPreview();
             mCamera.startPreview();
             preview_active = true;
-
             UploadUtilities.uploadPhoto(picData);
         }
     };

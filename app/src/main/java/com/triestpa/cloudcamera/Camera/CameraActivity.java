@@ -14,9 +14,8 @@ import com.github.clans.fab.FloatingActionButton;
 import com.triestpa.cloudcamera.Gallery.GalleryActivity;
 import com.triestpa.cloudcamera.R;
 import com.triestpa.cloudcamera.Upload.UploadStatusActivity;
-import com.triestpa.cloudcamera.Utilities.DeviceUtilities;
+import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
-// Suppress warnings for the more compatible, deprecated Camera class
 public class CameraActivity extends AppCompatActivity {
     protected final static String TAG = CameraActivity.class.getName();
     CameraManager mCameraManager;
@@ -74,7 +73,7 @@ public class CameraActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (!DeviceUtilities.isOnline(this)) {
+        if (!SystemUtilities.isOnline(this)) {
             Snackbar.make(findViewById(android.R.id.content), "No Internet Connection Detected, Some Features May Not Be Available", Snackbar.LENGTH_SHORT).show();
         }
 
@@ -115,6 +114,8 @@ public class CameraActivity extends AppCompatActivity {
         mModeButton = null;
         mGalleryButton = null;
         mUploadViewButton = null;
+        mVideoIndicator = null;
+        mVideoTime = null;
     }
 
     /**
@@ -130,7 +131,7 @@ public class CameraActivity extends AppCompatActivity {
                     mCameraManager.takePicture();
                 } else {
                     if (mCameraManager.toggleRecording()) {
-                        DeviceUtilities.lockOrientation(CameraActivity.this);
+                        SystemUtilities.lockOrientation(CameraActivity.this);
                         mRecordingSeconds = 0;
                         mRecordingMinutes = 0;
                         mRecording = true;
@@ -141,7 +142,7 @@ public class CameraActivity extends AppCompatActivity {
                         mRecording = false;
                         mVideoIndicator.setVisibility(View.INVISIBLE);
                         mCaptureButton.setImageResource(R.drawable.ic_videocam_white_24dp);
-                        DeviceUtilities.unlockOrientation(CameraActivity.this);
+                        SystemUtilities.unlockOrientation(CameraActivity.this);
                     }
                 }
             }
@@ -213,7 +214,7 @@ public class CameraActivity extends AppCompatActivity {
         mGalleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!DeviceUtilities.isOnline(CameraActivity.this)) {
+                if (!SystemUtilities.isOnline(CameraActivity.this)) {
                     Snackbar.make(findViewById(android.R.id.content), "No Internet Connection Detected, Gallery View Unavailable", Snackbar.LENGTH_SHORT).show();
                 } else {
                     Intent galleryIntent = new Intent(getApplicationContext(), GalleryActivity.class);
