@@ -75,7 +75,6 @@ public class CameraActivity extends AppCompatActivity {
     /**
      * ----- Set UI Listeners -----
      */
-
     public void setCaptureButton() {
         // Add a listener to the Capture button
         mCaptureButton.setOnClickListener(new View.OnClickListener() {

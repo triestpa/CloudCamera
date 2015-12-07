@@ -26,6 +26,4 @@ public class UploadManager {
         mUploads.add(upload);
     }
 
-
-
 }

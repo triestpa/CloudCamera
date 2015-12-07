@@ -17,6 +17,8 @@ import com.triestpa.cloudcamera.R;
 
 import java.io.IOException;
 
+import uk.co.senab.photoview.PhotoViewAttacher;
+
 public class PhotoViewActivity extends AppCompatActivity {
     static final String TAG = PhotoViewActivity.class.getName();
     public static final String EXTRA_THUMBNAIL_URL = "THUMBNAIL_URL";
@@ -24,13 +26,14 @@ public class PhotoViewActivity extends AppCompatActivity {
     public static final String EXTRA_FULLSIZE_URL = "FULLSIZE_URL";
 
     private ImageView mImageView;
+    private PhotoViewAttacher mAttacher;
 
     private String mFullsizeURL, mThumbnailURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_view);
+        setContentView(R.layout.activity_photo_view);
 
         Intent intent = getIntent();
         mFullsizeURL = intent.getStringExtra(EXTRA_FULLSIZE_URL);
@@ -41,10 +44,13 @@ public class PhotoViewActivity extends AppCompatActivity {
 
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         mImageView = (ImageView) findViewById(R.id.fullsize_image);
         mImageView.setImageBitmap(thumbnailBitmap);
+        mAttacher = new PhotoViewAttacher(mImageView);
     }
 
     @Override
@@ -103,6 +109,7 @@ public class PhotoViewActivity extends AppCompatActivity {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0,
                         bytes.length);
                 mImageView.setImageBitmap(bitmap);
+                mAttacher.update();
             }
             super.onPostExecute(bytes);
         }

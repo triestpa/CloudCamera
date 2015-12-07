@@ -32,4 +32,5 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.6.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.clans:fab:1.6.2'
+    compile 'com.commit451:PhotoView:1.2.4'
 }

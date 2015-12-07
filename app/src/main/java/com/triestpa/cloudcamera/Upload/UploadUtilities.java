@@ -33,7 +33,6 @@ public class UploadUtilities {
     public static void uploadPhoto(byte[] picData) {
         final ParseFile picFile = new ParseFile("photo.jpeg", picData);
         final Upload thisUpload = new Upload(picFile, Upload.TYPE_PHOTO);
-
         UploadManager.getInstance().addUpload(thisUpload);
 
         picFile.saveInBackground(new SaveCallback() {
@@ -71,7 +70,7 @@ public class UploadUtilities {
         });
     }
 
-    public static void saveVideoFile(String filepath) {
+    public static void uploadVideo(String filepath) {
         final File videoFile = new File(filepath);
         int size = (int) videoFile.length();
         byte[] bytes = new byte[size];

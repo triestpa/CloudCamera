@@ -9,9 +9,8 @@
     <FrameLayout
         android:id="@+id/camera_preview"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1" />
-    
+        android:layout_height="fill_parent" />
+
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/camera_menu"
         android:layout_width="wrap_content"

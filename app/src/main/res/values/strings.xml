@@ -2,16 +2,12 @@
     <string name="app_name">CloudCamera</string>
     <string name="title_activity_gallery">Gallery</string>
     <string name="title_activity_image_view"></string>
+    <string name="title_activity_upload_status">Uploads</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_gallery">Gallery</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="transition_picture">Picture Zoom Transition</string>
-
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
 
     <string name="camera_flash_off">Disable Flash</string>
     <string name="camera_flash_on">Enable Flash</string>
@@ -21,8 +17,9 @@
     <string name="camera_rear">Use Rear Camera</string>
     <string name="view_uploads">View Uploads</string>
 
-
-    <string name="title_activity_upload_status">UploadStatusActivity</string>
+    <string name="title_activity_video_view_fullscreen">VideoViewFullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 
 </resources>

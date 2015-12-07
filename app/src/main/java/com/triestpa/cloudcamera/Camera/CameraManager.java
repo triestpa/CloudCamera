@@ -264,7 +264,6 @@ public class CameraManager {
     };
 
     public boolean toggleRecording() {
-
         if (isRecording) {
             // stop recording and release camera
             mMediaRecorder.stop();  // stop the recording
@@ -272,7 +271,7 @@ public class CameraManager {
             mCamera.lock();         // take camera access back from MediaRecorder
             isRecording = false;
             Log.i("TAG", "Video Recorded");
-            UploadUtilities.saveVideoFile(mVideoOutputFilePath);
+            UploadUtilities.uploadVideo(mVideoOutputFilePath);
         } else {
             // initialize video camera
             if (prepareVideoRecorder()) {
