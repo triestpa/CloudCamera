@@ -1,23 +1,23 @@
 package com.triestpa.cloudcamera.Upload;
 
+import android.util.Log;
+
 import com.parse.ParseFile;
+import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
 public class Upload {
-    public final static int TYPE_PHOTO = 0;
-    public final static int TYPE_VIDEO = 1;
+    private static String TAG = Upload.class.getName();
 
     private ParseFile parseFile;
     private int progress;
     private boolean completed;
     private boolean aborted;
-    private int type;
 
-    public Upload(ParseFile parseFile, int type) {
+    public Upload(ParseFile parseFile) {
         this.parseFile = parseFile;
         this.progress = 0;
         this.completed = false;
         this.aborted = false;
-        this.type = type;
     }
 
     public ParseFile getParseFile() {
@@ -52,11 +52,14 @@ public class Upload {
         this.aborted = aborted;
     }
 
-    public int getType() {
-        return type;
+    public void showError(com.parse.ParseException e, String message) {
+        Log.e(TAG, e.getMessage());
+        Upload.this.setAborted(true);
+        SystemUtilities.showToastMessage(message + e.getMessage());
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void showSuccess(String message) {
+        this.setCompleted(true);
+        SystemUtilities.showToastMessage(message);
     }
 }

@@ -58,7 +58,8 @@ public class UploadGridAdapter extends RecyclerView.Adapter<UploadGridAdapter.Up
 
         final Upload thisUpload = mUploads.get(position);
 
-        if (thisUpload.getType() == Upload.TYPE_PHOTO) {
+
+        if (thisUpload.getClass() == PhotoUpload.class) {
             holder.mLayout.setBackgroundColor(mContext.getResources().getColor(R.color.md_blue_500));
             holder.mMediaImage.setImageResource(R.drawable.ic_photo_camera_white_24dp);
         }
@@ -68,6 +69,7 @@ public class UploadGridAdapter extends RecyclerView.Adapter<UploadGridAdapter.Up
         }
 
         if (thisUpload.isAborted()) {
+            holder.mLayout.setBackgroundColor(mContext.getResources().getColor(R.color.md_red_500));
             holder.mStatusText.setText(CloudCameraApplication.getAppContext().getString(R.string.upload_fail));
         }
         else if (thisUpload.isCompleted()) {

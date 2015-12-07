@@ -20,7 +20,6 @@ public class CameraActivity extends AppCompatActivity {
     protected final static String TAG = CameraActivity.class.getName();
     CameraManager mCameraManager;
 
-
     private final static int MODE_PICTURE = 0;
     private final static int MODE_VIDEO = 1;
     int mMode = MODE_PICTURE;
@@ -186,7 +185,7 @@ public class CameraActivity extends AppCompatActivity {
                     mSwapButton.setImageResource(R.drawable.ic_camera_rear_white_24dp);
 
                     mFlashButton.setVisibility(View.GONE);
-                    mFlashButton.setImageResource(R.drawable.ic_flash_off_white_24dp);
+                    mFlashButton.setImageResource(R.drawable.ic_flash_on_white_24dp);
                     mFlashButton.setLabelText(getString(R.string.camera_flash_off));
                 }
             }

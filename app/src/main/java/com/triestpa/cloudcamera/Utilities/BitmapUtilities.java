@@ -4,6 +4,7 @@ import android.graphics.BitmapFactory;
 
 public class BitmapUtilities {
 
+    //http://developer.android.com/training/displaying-bitmaps/load-bitmap.html
     public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image

@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.triestpa.cloudcamera.Utilities.SystemUtilities;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -100,6 +102,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.startPreview();
         } catch (Exception e) {
             Log.d(TAG, "Error starting camera preview: " + e.getMessage());
+            SystemUtilities.showToastMessage("Error starting camera preview: " + e.getMessage());
         }
     }
 

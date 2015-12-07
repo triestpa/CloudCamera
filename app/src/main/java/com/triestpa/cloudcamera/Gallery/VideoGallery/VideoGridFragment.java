@@ -87,6 +87,7 @@ public class VideoGridFragment extends Fragment {
 
     protected void refreshVideos() {
         ParseQuery<Video> query = ParseQuery.getQuery(Video.class);
+        query.setLimit(1000);
         query.findInBackground(new FindCallback<Video>() {
             @Override
             public void done(List<Video> videos, ParseException e) {

@@ -107,6 +107,7 @@ public class PhotoGridFragment extends Fragment {
 
     protected void refreshPhotos() {
         ParseQuery<Picture> query = ParseQuery.getQuery(Picture.class);
+        query.setLimit(1000);
         query.findInBackground(new FindCallback<Picture>() {
             @Override
             public void done(List<Picture> pictures, ParseException e) {
