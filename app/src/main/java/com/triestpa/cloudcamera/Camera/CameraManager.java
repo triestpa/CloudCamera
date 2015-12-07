@@ -8,8 +8,10 @@ import android.util.Log;
 import android.view.Surface;
 import android.widget.FrameLayout;
 
-import com.triestpa.cloudcamera.Utilities.UploadUtilities;
+import com.triestpa.cloudcamera.Upload.PhotoUpload;
+import com.triestpa.cloudcamera.Upload.VideoUpload;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
+import com.triestpa.cloudcamera.Utilities.UploadUtilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -161,7 +163,7 @@ public class CameraManager {
         }
 
         // Set output file
-        File videoFile = SystemUtilities.getOutputMediaFile(UploadUtilities.MEDIA_TYPE_VIDEO);
+        File videoFile = SystemUtilities.getOutputMediaFile(SystemUtilities.MEDIA_TYPE_VIDEO);
 
         if (videoFile == null) {
             Log.e(TAG, "Error Creating Video File");
@@ -287,7 +289,8 @@ public class CameraManager {
             mCamera.stopPreview();
             mCamera.startPreview();
             preview_active = true;
-            UploadUtilities.uploadPhoto(picData);
+            PhotoUpload photoUpload = UploadUtilities.preparePhotoUpload(picData);
+            photoUpload.uploadPhoto();
         }
     };
 
@@ -299,7 +302,13 @@ public class CameraManager {
             mCamera.lock();         // take camera access back from MediaRecorder
             isRecording = false;
             Log.i(TAG, "Video Recorded");
-            UploadUtilities.uploadVideo(mVideoOutputFilePath);
+            VideoUpload videoUpload = UploadUtilities.prepareVideoUpload(mVideoOutputFilePath);
+            if (videoUpload != null) {
+                videoUpload.uploadVideo();
+            }
+            else {
+                Log.e(TAG, "Error Formatting Upload");
+            }
         } else {
             // initialize video camera
             if (prepareVideoRecorder()) {
