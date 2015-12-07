@@ -6,13 +6,14 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.triestpa.cloudcamera.R;
 
 import java.util.ArrayList;
 
-public class UploadStatusActivity extends AppCompatActivity {
-    final static String TAG = UploadStatusActivity.class.getName();
+public class UploadGridActivity extends AppCompatActivity {
+    final static String TAG = UploadGridActivity.class.getName();
 
     private RecyclerView mUploadGrid;
     private UploadGridAdapter mAdapter;
@@ -45,16 +46,23 @@ public class UploadStatusActivity extends AppCompatActivity {
         ArrayList<Upload> uploads = UploadManager.getInstance().getUploads();
 
         mUploadGrid = (RecyclerView) findViewById(R.id.upload_grid);
-        mUploadGrid.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
-        mUploadGrid.setLayoutManager(layoutManager);
 
-        mAdapter = new UploadGridAdapter(uploads, this);
-        mUploadGrid.setAdapter(mAdapter);
+        if (uploads == null || uploads.isEmpty()) {
+            mUploadGrid.setVisibility(View.GONE);
+        }
+        else {
+            mUploadGrid.setVisibility(View.VISIBLE);
+            mUploadGrid.setHasFixedSize(true);
+            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
+            mUploadGrid.setLayoutManager(layoutManager);
 
-        mRunning = true;
-        // start first run by hand
-        mHandler.post(mUpdater);
+            mAdapter = new UploadGridAdapter(uploads, this);
+            mUploadGrid.setAdapter(mAdapter);
+
+            mRunning = true;
+            // start first run by hand
+            mHandler.post(mUpdater);
+        }
     }
 
     @Override

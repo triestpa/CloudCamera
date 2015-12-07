@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.github.clans.fab.FloatingActionButton;
 import com.triestpa.cloudcamera.Gallery.GalleryActivity;
 import com.triestpa.cloudcamera.R;
-import com.triestpa.cloudcamera.Upload.UploadStatusActivity;
+import com.triestpa.cloudcamera.Upload.UploadGridActivity;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
 public class CameraActivity extends AppCompatActivity {
@@ -227,7 +227,7 @@ public class CameraActivity extends AppCompatActivity {
         mUploadViewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent uploadViewIntent = new Intent(CameraActivity.this, UploadStatusActivity.class);
+                Intent uploadViewIntent = new Intent(CameraActivity.this, UploadGridActivity.class);
                 startActivity(uploadViewIntent);
             }
         });

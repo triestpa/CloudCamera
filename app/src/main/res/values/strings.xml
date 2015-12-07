@@ -20,6 +20,10 @@
     <string name="upload_success">Completed</string>
     <string name="upload_fail">Failed</string>
 
+    <string name="no_videos">No Videos Available</string>
+    <string name="no_photos">No Photos Available</string>
+    <string name="no_uploads">No Uploads To Show</string>
+
 
 </resources>
 

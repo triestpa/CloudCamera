@@ -11,6 +11,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.triestpa.cloudcamera.Model.Picture;
 import com.triestpa.cloudcamera.R;
+import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -52,7 +54,7 @@ public class PhotoGridFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_photo_grid, container, false);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.image_grid_swipe_refresh_layout);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.photo_grid_swipe_refresh_layout);
         mImageGrid = (RecyclerView) v.findViewById(R.id.image_grid);
 
 
@@ -111,9 +113,22 @@ public class PhotoGridFragment extends Fragment {
         query.findInBackground(new FindCallback<Picture>() {
             @Override
             public void done(List<Picture> pictures, ParseException e) {
-                mAdapter.setData((ArrayList<Picture>) pictures);
-                mAdapter.notifyDataSetChanged();
-                mSwipeRefreshLayout.setRefreshing(false);
+                if (e == null) {
+                    if (pictures == null || pictures.isEmpty()) {
+                        mSwipeRefreshLayout.setVisibility(View.GONE);
+                    }
+                    else {
+                        mAdapter.setData((ArrayList<Picture>) pictures);
+                        mAdapter.notifyDataSetChanged();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+                    }
+                }
+                else {
+                    mSwipeRefreshLayout.setVisibility(View.GONE);
+                    Log.e(TAG, e.getMessage());
+                    SystemUtilities.showToastMessage("Error Loading Photos: " + e.getMessage());
+                }
             }
         });
     }

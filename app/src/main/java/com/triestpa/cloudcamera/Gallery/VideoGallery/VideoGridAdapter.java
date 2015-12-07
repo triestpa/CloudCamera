@@ -53,7 +53,7 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Imag
     public VideoGridAdapter.ImageViewHolder onCreateViewHolder(ViewGroup parent,
                                                                int viewType) {
         // create a new view
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_photo_grid, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_video_grid, parent, false);
         // set the view's size, margins, paddings and layout parameters
 
         ViewGroup.LayoutParams layoutParams = v.getLayoutParams();

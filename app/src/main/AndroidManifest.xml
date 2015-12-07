@@ -52,7 +52,7 @@
             android:name=".Gallery.VideoGallery.VideoViewActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Upload.UploadStatusActivity"
+            android:name=".Upload.UploadGridActivity"
             android:label="@string/title_activity_upload_status"
             android:parentActivityName=".Camera.CameraActivity">
             <meta-data

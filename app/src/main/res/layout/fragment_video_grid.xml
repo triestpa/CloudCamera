@@ -2,28 +2,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Gallery.PhotoGallery.PhotoGridFragment">
-
+    tools:context=".Gallery.VideoGallery.VideoGridFragment">
 
     <TextView
         android:id="@+id/empty_cloud_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/no_videos"
         android:layout_centerInParent="true"
-        android:text="@string/no_photos"
-        android:textColor="@color/md_white_1000" />
+        android:textColor="@color/md_white_1000"/>
 
     <ImageView
         android:id="@+id/empty_cloud_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:src="@drawable/ic_cloud_queue_white_48dp"
         android:layout_above="@id/empty_cloud_text"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_cloud_queue_white_48dp" />
-
+        />
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/photo_grid_swipe_refresh_layout"
+        android:id="@+id/video_grid_swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/md_black_1000"

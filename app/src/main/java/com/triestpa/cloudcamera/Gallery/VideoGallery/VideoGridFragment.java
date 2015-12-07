@@ -47,8 +47,8 @@ public class VideoGridFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_photo_grid, container, false);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.image_grid_swipe_refresh_layout);
+        View v = inflater.inflate(R.layout.fragment_video_grid, container, false);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.video_grid_swipe_refresh_layout);
         mImageGrid = (RecyclerView) v.findViewById(R.id.image_grid);
 
 
@@ -92,9 +92,15 @@ public class VideoGridFragment extends Fragment {
             @Override
             public void done(List<Video> videos, ParseException e) {
                 if (e == null) {
-                    mAdapter.setData((ArrayList<Video>) videos);
-                    mAdapter.notifyDataSetChanged();
-                    mSwipeRefreshLayout.setRefreshing(false);
+                    if (videos == null || videos.isEmpty()) {
+                        mSwipeRefreshLayout.setVisibility(View.GONE);
+                    }
+                    else {
+                        mAdapter.setData((ArrayList<Video>) videos);
+                        mAdapter.notifyDataSetChanged();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                        mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+                    }
                 }
                 else {
                     Log.e(TAG, e.getMessage());
