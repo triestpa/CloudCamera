@@ -24,6 +24,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.triestpa.cloudcamera.Model.Picture;
 import com.triestpa.cloudcamera.Model.Video;
 import com.triestpa.cloudcamera.R;
@@ -237,6 +238,7 @@ public class GalleryGridFragment extends Fragment {
 
     private void refreshPhotos() {
         ParseQuery<Picture> query = ParseQuery.getQuery(Picture.class);
+        query.whereEqualTo("user", ParseUser.getCurrentUser());
         query.setLimit(1000);
         query.findInBackground(new FindCallback<Picture>() {
             @Override
@@ -269,6 +271,7 @@ public class GalleryGridFragment extends Fragment {
 
     private void refreshVideos() {
         ParseQuery<Video> query = ParseQuery.getQuery(Video.class);
+        query.whereEqualTo("user", ParseUser.getCurrentUser());
         query.setLimit(1000);
         query.findInBackground(new FindCallback<Video>() {
             @Override

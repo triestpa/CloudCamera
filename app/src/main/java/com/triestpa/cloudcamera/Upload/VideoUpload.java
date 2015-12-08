@@ -1,8 +1,10 @@
 package com.triestpa.cloudcamera.Upload;
 
 
+import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseUser;
 import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
 import com.triestpa.cloudcamera.Model.Video;
@@ -64,6 +66,11 @@ public class VideoUpload extends Upload {
         Video newVid = new Video();
         newVid.setVideo(videoFile);
         newVid.setThumbnail(thumbnailFile);
+
+        ParseUser thisUser = ParseUser.getCurrentUser();
+        newVid.setParseUser(thisUser);
+        newVid.setACL(new ParseACL(thisUser));
+
         newVid.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {

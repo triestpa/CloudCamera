@@ -3,6 +3,7 @@ package com.triestpa.cloudcamera.Model;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 @ParseClassName("Video")
 public class Video extends ParseObject {
@@ -22,4 +23,13 @@ public class Video extends ParseObject {
         put("videoThumbnail", thumbnail);
     }
 
+
+    public ParseUser getUser() {
+        return getParseUser("user");
+    }
+
+    public void setParseUser(ParseUser user)
+    {
+        put("user", user);
+    }
 }
