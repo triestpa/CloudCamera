@@ -28,6 +28,7 @@ public class GalleryActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+    FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +51,8 @@ public class GalleryActivity extends AppCompatActivity {
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.camera_fab_button);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mFab = (FloatingActionButton) findViewById(R.id.camera_fab_button);
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
@@ -117,7 +118,7 @@ public class GalleryActivity extends AppCompatActivity {
         GalleryGridFragment currentPage = (GalleryGridFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" + mViewPager.getCurrentItem());
         // based on the current position you can then cast the page to the correct
         // class and call the method:
-        if (mViewPager.getCurrentItem() == 0 && currentPage != null) {
+        if (currentPage != null) {
             if (currentPage.numSelected > 0) {
                 currentPage.clearSelected();
                 return;

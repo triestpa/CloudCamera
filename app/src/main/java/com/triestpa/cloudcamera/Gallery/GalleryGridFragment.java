@@ -220,6 +220,7 @@ public class GalleryGridFragment extends Fragment {
                 mSelectionSnackbar.setAction("Delete", snackbackClickListener);
                 mSelectionSnackbar.setActionTextColor(getResources().getColor(R.color.md_red_500));
                 mSelectionSnackbar.show();
+                ((GalleryActivity) getActivity()).mFab.setVisibility(View.GONE);
             } else {
                 mSelectionSnackbar.setText(numSelected + " Selected");
             }
@@ -244,6 +245,7 @@ public class GalleryGridFragment extends Fragment {
                 toggleItemSelected(object);
             }
         }
+        ((GalleryActivity) getActivity()).mFab.setVisibility(View.VISIBLE);
         mAdapter.notifyDataSetChanged();
     }
 
