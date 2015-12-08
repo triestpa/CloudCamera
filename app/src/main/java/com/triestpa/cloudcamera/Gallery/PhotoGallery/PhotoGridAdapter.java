@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 import com.triestpa.cloudcamera.Model.Picture;
 import com.triestpa.cloudcamera.R;
+import com.triestpa.cloudcamera.Utilities.ResizeAnimation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +57,7 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_photo_grid, parent, false);
         // set the view's size, margins, paddings and layout parameters
 
+
         ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
         layoutParams.width = imgDimens;
         layoutParams.height = imgDimens;
@@ -67,23 +69,63 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ImageViewHolder holder, int position) {
+    public void onBindViewHolder(final ImageViewHolder holder, int position) {
 
         final Picture thisPic = mPhotos.get(position);
 
         holder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFragment.showLargePhoto(v, thisPic);
+                if (mFragment.numSelected == 0) {
+                    mFragment.showLargePhoto(v, thisPic);
+                } else {
+                    if (mFragment.togglePictureSelected(thisPic)) {
+                        ResizeAnimation animation = new ResizeAnimation(holder.mImage, imgDimens, imgDimens, imgDimens / 2, imgDimens / 2);
+                        holder.mImage.startAnimation(animation);
+                    } else {
+                        ResizeAnimation animation = new ResizeAnimation(holder.mImage, imgDimens / 2, imgDimens / 2, imgDimens, imgDimens);
+                        holder.mImage.startAnimation(animation);
+                    }
+                }
             }
         });
 
+        holder.mImage.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (mFragment.togglePictureSelected(thisPic)) {
+                    ResizeAnimation animation = new ResizeAnimation(holder.mImage, imgDimens, imgDimens, imgDimens / 2, imgDimens / 2);
+                    holder.mImage.startAnimation(animation);
+                } else {
+                    ResizeAnimation animation = new ResizeAnimation(holder.mImage, imgDimens / 2, imgDimens / 2, imgDimens, imgDimens);
+                    holder.mImage.startAnimation(animation);
+                }
+
+                return false;
+            }
+        });
+
+        ViewGroup.LayoutParams imageParams = holder.mImage.getLayoutParams();
+        if (mFragment.mGridSelectionMap.get(thisPic.getObjectId())) {
+            imageParams.height = imgDimens / 2;
+            imageParams.width = imgDimens / 2;
+
+        } else {
+            imageParams.height = imgDimens;
+            imageParams.width = imgDimens;
+        }
+
+        holder.mImage.setLayoutParams(imageParams);
+
         picassoInstance.load(thisPic.getThumbnail().getUrl()).resize(imgDimens, imgDimens).centerCrop().into(holder.mImage);
     }
+
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return mPhotos.size();
     }
+
+
 }

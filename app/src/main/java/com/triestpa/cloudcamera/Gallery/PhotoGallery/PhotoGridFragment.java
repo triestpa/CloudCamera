@@ -26,6 +26,7 @@ import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -34,6 +35,8 @@ public class PhotoGridFragment extends Fragment {
     private RecyclerView mImageGrid;
     private PhotoGridAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    protected HashMap<String, Boolean> mGridSelectionMap;
+    protected int numSelected;
 
     public PhotoGridFragment() {
         // Required empty public constructor
@@ -56,7 +59,6 @@ public class PhotoGridFragment extends Fragment {
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.photo_grid_swipe_refresh_layout);
         mImageGrid = (RecyclerView) v.findViewById(R.id.image_grid);
 
-
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mImageGrid.setHasFixedSize(true);
@@ -70,6 +72,8 @@ public class PhotoGridFragment extends Fragment {
         mAdapter = new PhotoGridAdapter(new ArrayList<Picture>(), imageDimensions, this);
 
         mImageGrid.setAdapter(mAdapter);
+
+        mGridSelectionMap = new HashMap<>();
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -111,6 +115,20 @@ public class PhotoGridFragment extends Fragment {
         ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
     }
 
+    public boolean togglePictureSelected(Picture picture) {
+        boolean isToggled = false;
+        if (mGridSelectionMap.get(picture.getObjectId())) {
+            mGridSelectionMap.put(picture.getObjectId(), false);
+            --numSelected;
+        }
+        else {
+            mGridSelectionMap.put(picture.getObjectId(), true);
+            ++numSelected;
+            isToggled = true;
+        }
+        return isToggled;
+    }
+
     private void refreshPhotos() {
         ParseQuery<Picture> query = ParseQuery.getQuery(Picture.class);
         query.setLimit(1000);
@@ -123,6 +141,10 @@ public class PhotoGridFragment extends Fragment {
                     }
                     else {
                         mAdapter.setData((ArrayList<Picture>) pictures);
+                        for (Picture picture : pictures) {
+                            mGridSelectionMap.put(picture.getObjectId(), false);
+                        }
+                        numSelected = 0;
                         mAdapter.notifyDataSetChanged();
                         mSwipeRefreshLayout.setRefreshing(false);
                         mSwipeRefreshLayout.setVisibility(View.VISIBLE);
