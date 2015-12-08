@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CloudCamera</string>
+    <string name="app_name">Cloud Camera</string>
     <string name="title_activity_gallery">Gallery</string>
     <string name="title_activity_image_view"></string>
     <string name="title_activity_upload_status">Uploads</string>
@@ -16,7 +16,8 @@
     <string name="camera_mode_video">Switch to Video Mode</string>
     <string name="camera_front">Use Front Camera</string>
     <string name="camera_rear">Use Rear Camera</string>
-    <string name="view_uploads">View Uploads</string>
+    <string name="view_uploads">Monitor Uploads</string>
+    <string name="view_gallery">View Gallery</string>
 
     <string name="upload_success">Completed</string>
     <string name="upload_fail">Failed: Tap To Retry</string>
@@ -27,6 +28,24 @@
 
     <string name="dialog_ok">Confirm</string>
     <string name="dialog_canel">Cancel</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_confirm_password">Confirm Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_up">New Account</string>
+    <string name="action_create_account">Create Account</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_password_match">Passwords Must Match</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="title_activity_create_account">Create Account</string>
 
 </resources>
 

@@ -11,14 +11,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.parse.ParseUser;
 import com.triestpa.cloudcamera.Gallery.GalleryActivity;
 import com.triestpa.cloudcamera.R;
 import com.triestpa.cloudcamera.Upload.UploadGridActivity;
+import com.triestpa.cloudcamera.User.LoginActivity;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
 public class CameraActivity extends AppCompatActivity {
     protected final static String TAG = CameraActivity.class.getName();
-    private CameraManager mCameraManager;
 
     private final static int MODE_PICTURE = 0;
     private final static int MODE_VIDEO = 1;
@@ -27,6 +28,9 @@ public class CameraActivity extends AppCompatActivity {
     private FloatingActionButton mFlashButton, mCaptureButton, mSwapButton, mModeButton, mGalleryButton, mUploadViewButton;
     private RelativeLayout mVideoIndicator;
     private TextView mVideoTime;
+
+    private CameraManager mCameraManager;
+
     private Boolean mRecording;
     private int mRecordingSeconds;
     private int mRecordingMinutes;
@@ -64,6 +68,14 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        if (ParseUser.getCurrentUser() == null) {
+            Intent i = new Intent(this, LoginActivity.class);
+            i.setFlags(i.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
+            startActivity(i);
+        }
+
         setContentView(R.layout.activity_camera);
         mCameraManager = new CameraManager();
     }

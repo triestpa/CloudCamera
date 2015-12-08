@@ -23,7 +23,7 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
     private int imgSmallDimens;
     private Picasso picassoInstance;
 
-    Animation.AnimationListener resizeListener = new Animation.AnimationListener() {
+    private Animation.AnimationListener resizeListener = new Animation.AnimationListener() {
         @Override
         public void onAnimationStart(Animation animation) {}
 
@@ -38,9 +38,6 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
         }
     };
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
     public static class ImageViewHolder extends RecyclerView.ViewHolder {
         public View mLayout;
         public ImageView mImage;
@@ -67,14 +64,10 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
         mPhotos = pictures;
     }
 
-    // Create new views (invoked by the layout manager)
     @Override
     public PhotoGridAdapter.ImageViewHolder onCreateViewHolder(ViewGroup parent,
                                                                int viewType) {
-        // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_photo_grid, parent, false);
-        // set the view's size, margins, paddings and layout parameters
-
 
         ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
         layoutParams.width = imgDimens;

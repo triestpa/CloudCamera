@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
@@ -215,10 +216,12 @@ public class GalleryGridFragment extends Fragment {
     }
 
     private void deleteObjects(ArrayList<ParseObject> selectedObjects) {
+        Toast.makeText(getActivity(), "Deleting Items", Toast.LENGTH_SHORT).show();
         ParseObject.deleteAllInBackground(selectedObjects, new DeleteCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
+                    Toast.makeText(getActivity(), "Deletion Complete", Toast.LENGTH_SHORT).show();
                     if (mType == TYPE_PHOTO_GRID) {
                         refreshPhotos();
                     } else {

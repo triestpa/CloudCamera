@@ -64,8 +64,8 @@ public class SystemUtilities {
     }
 
     /*
-   * Create a File for saving an image or video
-   */
+    * Create a File for saving an image or video
+    */
     public static File getOutputMediaFile(int type) {
 
         File mediaCacheDir = CloudCameraApplication.getAppContext().getCacheDir();

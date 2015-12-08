@@ -23,7 +23,7 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Imag
     private int imgSmallDimens;
     private Picasso picassoInstance;
 
-    Animation.AnimationListener resizeListener = new Animation.AnimationListener() {
+    private Animation.AnimationListener resizeListener = new Animation.AnimationListener() {
         @Override
         public void onAnimationStart(Animation animation) {}
 
@@ -38,9 +38,6 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Imag
         }
     };
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
     public static class ImageViewHolder extends RecyclerView.ViewHolder {
         public View mLayout;
         public ImageView mImage;
