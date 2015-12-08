@@ -65,7 +65,12 @@ public class PhotoViewActivity extends AppCompatActivity {
             public void onClick(View v) {
                 SystemUtilities.buildDialog(PhotoViewActivity.this, "Delete Photo From Cloud?", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        deletePhoto();
+                        if (SystemUtilities.isOnline(PhotoViewActivity.this)) {
+                            deletePhoto();
+                        }
+                        else {
+                            SystemUtilities.reportError(TAG, "Error Deleting Image: Device is Offline");
+                        }
                     }
                 }).show();
             }
@@ -109,7 +114,12 @@ public class PhotoViewActivity extends AppCompatActivity {
             mAttacher = new PhotoViewAttacher(mImageView);
         }
 
-        downloadImage(mFullsizeURL);
+        if (SystemUtilities.isOnline(this)) {
+            downloadImage(mFullsizeURL);
+        }
+        else {
+            SystemUtilities.reportError(TAG, "Error Downloading Fullsize Image: Device is Offline");
+        }
     }
 
     @Override

@@ -50,8 +50,7 @@ public class CameraActivity extends AppCompatActivity {
             String newTime;
             if (mRecordingSeconds >= 10) {
                 newTime = mRecordingMinutes + ":" + mRecordingSeconds;
-            }
-            else {
+            } else {
                 newTime = mRecordingMinutes + ":0" + mRecordingSeconds;
             }
 
@@ -226,12 +225,8 @@ public class CameraActivity extends AppCompatActivity {
         mGalleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!SystemUtilities.isOnline(CameraActivity.this)) {
-                    Snackbar.make(findViewById(android.R.id.content), "No Internet Connection Detected, Gallery View Unavailable", Snackbar.LENGTH_SHORT).show();
-                } else {
-                    Intent galleryIntent = new Intent(getApplicationContext(), GalleryActivity.class);
-                    startActivity(galleryIntent);
-                }
+                Intent galleryIntent = new Intent(getApplicationContext(), GalleryActivity.class);
+                startActivity(galleryIntent);
             }
         });
     }

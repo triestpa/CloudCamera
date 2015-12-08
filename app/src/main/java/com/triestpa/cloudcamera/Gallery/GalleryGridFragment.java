@@ -42,6 +42,9 @@ public class GalleryGridFragment extends Fragment {
     final static int TYPE_PHOTO_GRID = 0;
     final static int TYPE_VIDEO_GRID = 1;
 
+    final static String PIN_LABEL_PHOTO = "PHOTOS";
+    final static String PIN_LABEL_VIDEO = "VIDEOS";
+
     private int mType;
 
     private RecyclerView mMediaGrid;
@@ -94,8 +97,7 @@ public class GalleryGridFragment extends Fragment {
         if (mType == TYPE_PHOTO_GRID) {
             v = inflater.inflate(R.layout.fragment_photo_grid, container, false);
             mAdapter = new PhotoGridAdapter(new ArrayList<Picture>(), imageDimensions, this);
-        }
-        else {
+        } else {
             v = inflater.inflate(R.layout.fragment_video_grid, container, false);
             mAdapter = new VideoGridAdapter(new ArrayList<Video>(), imageDimensions, this);
         }
@@ -135,42 +137,55 @@ public class GalleryGridFragment extends Fragment {
     }
 
     private void refresh() {
+        if (!SystemUtilities.isOnline(getActivity())) {
+            Snackbar.make(getActivity().findViewById(android.R.id.content), "No Internet Connection Detected, Loading Cached Results", Snackbar.LENGTH_SHORT).show();
+        }
+
         if (mType == TYPE_PHOTO_GRID) {
             refreshPhotos();
-        }
-        else {
+        } else {
             refreshVideos();
         }
     }
 
     public void showLargePhoto(View thumbnailView, Picture picture) {
-        Intent intent = new Intent(getActivity(), PhotoViewActivity.class);
+        if (SystemUtilities.isOnline(getActivity())) {
+            Intent intent = new Intent(getActivity(), PhotoViewActivity.class);
+            Bitmap thumbnailBitmap = ((BitmapDrawable) ((ImageView) thumbnailView).getDrawable()).getBitmap();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            thumbnailBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] bitmapdata = stream.toByteArray();
 
-        Bitmap thumbnailBitmap = ((BitmapDrawable)((ImageView)thumbnailView).getDrawable()).getBitmap();
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        thumbnailBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] bitmapdata = stream.toByteArray();
+            intent.putExtra(PhotoViewActivity.EXTRA_PHOTO_ID, picture.getObjectId());
+            intent.putExtra(PhotoViewActivity.EXTRA_FULLSIZE_URL, picture.getPhoto().getUrl());
+            intent.putExtra(PhotoViewActivity.EXTRA_THUMBNAIL_URL, picture.getThumbnail().getUrl());
+            intent.putExtra(PhotoViewActivity.EXTRA_THUMBNAIL_BYTES, bitmapdata);
 
-        intent.putExtra(PhotoViewActivity.EXTRA_PHOTO_ID, picture.getObjectId());
-        intent.putExtra(PhotoViewActivity.EXTRA_FULLSIZE_URL, picture.getPhoto().getUrl());
-        intent.putExtra(PhotoViewActivity.EXTRA_THUMBNAIL_URL, picture.getThumbnail().getUrl());
-        intent.putExtra(PhotoViewActivity.EXTRA_THUMBNAIL_BYTES, bitmapdata);
+            String transitionName = getString(R.string.transition_picture);
+            ActivityOptionsCompat options =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                            thumbnailView,   // The view which starts the transition
+                            transitionName    // The transitionName of the view we’re transitioning to
+                    );
 
-        String transitionName = getString(R.string.transition_picture);
-        ActivityOptionsCompat options =
-                ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
-                        thumbnailView,   // The view which starts the transition
-                        transitionName    // The transitionName of the view we’re transitioning to
-                );
-
-        ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+        }
+        else {
+            Snackbar.make(getActivity().findViewById(android.R.id.content), "No Internet Connection Detected, Cannot Download Fullsize Image", Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     void playVideo(Video video) {
-        Intent videoIntent = new Intent(getActivity(), VideoViewActivity.class);
-        videoIntent.putExtra(VideoViewActivity.VIDEO_ID, video.getObjectId());
-        videoIntent.putExtra(VideoViewActivity.VIDEO_URL, video.getVideo().getUrl());
-        ActivityCompat.startActivity(getActivity(), videoIntent, null);
+
+        if (SystemUtilities.isOnline(getActivity())) {
+            Intent videoIntent = new Intent(getActivity(), VideoViewActivity.class);
+            videoIntent.putExtra(VideoViewActivity.VIDEO_ID, video.getObjectId());
+            videoIntent.putExtra(VideoViewActivity.VIDEO_URL, video.getVideo().getUrl());
+            ActivityCompat.startActivity(getActivity(), videoIntent, null);
+        }
+        else {
+            Snackbar.make(getActivity().findViewById(android.R.id.content), "No Internet Connection Detected, Cannot Stream Video", Snackbar.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -182,12 +197,10 @@ public class GalleryGridFragment extends Fragment {
 
             if (numSelected == 0) {
                 mSelectionSnackbar.dismiss();
-            }
-            else {
+            } else {
                 mSelectionSnackbar.setText(numSelected + " Selected");
             }
-        }
-        else {
+        } else {
             mGridSelectionMap.put(object.getObjectId(), true);
             ++numSelected;
             isToggled = true;
@@ -197,8 +210,7 @@ public class GalleryGridFragment extends Fragment {
                 mSelectionSnackbar.setAction("Delete", snackbackClickListener);
                 mSelectionSnackbar.setActionTextColor(getResources().getColor(R.color.md_red_500));
                 mSelectionSnackbar.show();
-            }
-            else {
+            } else {
                 mSelectionSnackbar.setText(numSelected + " Selected");
             }
         }
@@ -208,7 +220,7 @@ public class GalleryGridFragment extends Fragment {
     private ArrayList<ParseObject> getAllSelected() {
         ArrayList<ParseObject> selectedObjects = new ArrayList<>();
 
-        for(ParseObject object : mDisplayedMedia) {
+        for (ParseObject object : mDisplayedMedia) {
             if (mGridSelectionMap.get(object.getObjectId())) {
                 selectedObjects.add(object);
             }
@@ -217,36 +229,43 @@ public class GalleryGridFragment extends Fragment {
     }
 
     private void deleteObjects(ArrayList<ParseObject> selectedObjects) {
-        Toast.makeText(getActivity(), "Deleting Items", Toast.LENGTH_SHORT).show();
-        ParseObject.deleteAllInBackground(selectedObjects, new DeleteCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Toast.makeText(getActivity(), "Deletion Complete", Toast.LENGTH_SHORT).show();
-                    if (mType == TYPE_PHOTO_GRID) {
-                        refreshPhotos();
+        if (SystemUtilities.isOnline(getActivity())) {
+            Toast.makeText(getActivity(), "Deleting Items", Toast.LENGTH_SHORT).show();
+            ParseObject.deleteAllInBackground(selectedObjects, new DeleteCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        Toast.makeText(getActivity(), "Deletion Complete", Toast.LENGTH_SHORT).show();
+                        if (mType == TYPE_PHOTO_GRID) {
+                            refreshPhotos();
+                        } else {
+                            refreshVideos();
+                        }
                     } else {
-                        refreshVideos();
+                        String errorReport = "Error Deleting: " + e.getMessage();
+                        SystemUtilities.reportError(TAG, errorReport);
                     }
-                } else {
-                    String errorReport = "Error Deleting: " + e.getMessage();
-                    SystemUtilities.reportError(TAG, errorReport);
                 }
-            }
-        });
+            });
+        }
+        else {
+            Snackbar.make(getActivity().findViewById(android.R.id.content), "No Internet Connection Detected, Cannot Delete Items", Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     private void refreshPhotos() {
         ParseQuery<Picture> query = ParseQuery.getQuery(Picture.class);
         query.whereEqualTo("user", ParseUser.getCurrentUser());
         query.setLimit(1000);
+
         query.findInBackground(new FindCallback<Picture>() {
             @Override
-            public void done(List<Picture> pictures, ParseException e) {
+            public void done(final List<Picture> pictures, ParseException e) {
                 if (e == null) {
                     if (pictures == null || pictures.isEmpty()) {
                         mSwipeRefreshLayout.setVisibility(View.GONE);
                     } else {
+                        // Remove the previously cached results.
                         mDisplayedMedia.clear();
                         mGridSelectionMap.clear();
                         for (Picture picture : pictures) {
@@ -259,6 +278,14 @@ public class GalleryGridFragment extends Fragment {
                         mAdapter.notifyDataSetChanged();
                         mSwipeRefreshLayout.setRefreshing(false);
                         mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+
+
+                        ParseObject.unpinAllInBackground(PIN_LABEL_PHOTO, new DeleteCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                ParseObject.pinAllInBackground(PIN_LABEL_PHOTO, pictures);
+                            }
+                        });
                     }
                 } else {
                     mSwipeRefreshLayout.setVisibility(View.GONE);
@@ -275,7 +302,7 @@ public class GalleryGridFragment extends Fragment {
         query.setLimit(1000);
         query.findInBackground(new FindCallback<Video>() {
             @Override
-            public void done(List<Video> videos, ParseException e) {
+            public void done(final List<Video> videos, ParseException e) {
                 if (e == null) {
                     if (videos == null || videos.isEmpty()) {
                         mSwipeRefreshLayout.setVisibility(View.GONE);
@@ -292,6 +319,13 @@ public class GalleryGridFragment extends Fragment {
                         mAdapter.notifyDataSetChanged();
                         mSwipeRefreshLayout.setRefreshing(false);
                         mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+
+                        ParseObject.unpinAllInBackground(PIN_LABEL_VIDEO, new DeleteCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                ParseObject.pinAllInBackground(PIN_LABEL_VIDEO, videos);
+                            }
+                        });
                     }
                 } else {
                     mSwipeRefreshLayout.setVisibility(View.GONE);

@@ -71,6 +71,7 @@ public class VideoUpload extends Upload {
         newVid.setParseUser(thisUser);
         newVid.setACL(new ParseACL(thisUser));
 
+        newVid.pinInBackground();
         newVid.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {

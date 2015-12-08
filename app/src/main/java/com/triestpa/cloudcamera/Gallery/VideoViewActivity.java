@@ -51,7 +51,12 @@ public class VideoViewActivity extends AppCompatActivity {
             public void onClick(View v) {
                 SystemUtilities.buildDialog(VideoViewActivity.this, "Delete Video From Cloud?", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        deleteVideo();
+                        if (SystemUtilities.isOnline(VideoViewActivity.this)) {
+                            deleteVideo();
+                        }
+                        else {
+                            SystemUtilities.reportError(TAG, "Error Deleting Video: Device is Offline");
+                        }
                     }
                 }).show();
             }
@@ -63,20 +68,24 @@ public class VideoViewActivity extends AppCompatActivity {
             public void onClick(View v) {
                 SystemUtilities.buildDialog(VideoViewActivity.this, "Download Video From Cloud?", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        SystemUtilities.downloadFile(mVideoUrl, mVideoId, SystemUtilities.MEDIA_TYPE_VIDEO);
+                        if (SystemUtilities.isOnline(VideoViewActivity.this)) {
+                            SystemUtilities.downloadFile(mVideoUrl, mVideoId, SystemUtilities.MEDIA_TYPE_VIDEO);
+                        }
+                        else {
+                            SystemUtilities.reportError(TAG, "Error Downloading Video: Device is Offline");
+                        }
                     }
                 }).show();
             }
         });
 
+
         VideoView videoView = (VideoView) findViewById(R.id.video_view);
         Uri vidUri = Uri.parse(mVideoUrl);
         videoView.setVideoURI(vidUri);
-
         MediaController videoControl = new MediaController(this);
         videoControl.setAnchorView(videoView);
         videoView.setMediaController(videoControl);
-
         videoView.start();
     }
 
