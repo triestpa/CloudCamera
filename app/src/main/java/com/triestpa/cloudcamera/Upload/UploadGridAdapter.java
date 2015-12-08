@@ -74,7 +74,6 @@ public class UploadGridAdapter extends RecyclerView.Adapter<UploadGridAdapter.Up
                 @Override
                 public void onClick(View v) {
                     thisUpload.retryUpload();
-                    thisUpload.setAborted(false);
                     holder.mStatusText.setText("Retrying...");
                     holder.mLayout.setOnClickListener(null);
                 }

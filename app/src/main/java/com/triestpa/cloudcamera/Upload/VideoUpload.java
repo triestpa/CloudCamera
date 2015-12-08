@@ -7,7 +7,9 @@ import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
+import com.triestpa.cloudcamera.CloudCameraApplication;
 import com.triestpa.cloudcamera.Model.Video;
+import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
 public class VideoUpload extends Upload {
     final static String TAG = VideoUpload.class.getName();
@@ -27,6 +29,12 @@ public class VideoUpload extends Upload {
     }
 
     public void uploadVideo() {
+        if (!SystemUtilities.isOnline(CloudCameraApplication.getAppContext())) {
+            SystemUtilities.reportError(TAG, "Cannot upload photo without internet connection. Visit upload screen to retry.");
+            this.setAborted(true);
+            return;
+        }
+
         final ParseFile vidFile = this.getParseFile();
         final ParseFile thumbnailFile = this.getThumbnailFile();
         vidFile.saveInBackground(new SaveCallback() {
@@ -89,7 +97,6 @@ public class VideoUpload extends Upload {
 
     @Override
     public void retryUpload() {
-        super.retryUpload();
         uploadVideo();
     }
 }

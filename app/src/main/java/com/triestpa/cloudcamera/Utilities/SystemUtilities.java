@@ -28,11 +28,13 @@ public class SystemUtilities {
     public final static int MEDIA_TYPE_IMAGE = 1;
     public final static int MEDIA_TYPE_VIDEO = 2;
 
-    public static boolean isOnline(Activity activity) {
+    public static boolean isOnlineResult = false;
+    public static boolean isOnline(Context context) {
         ConnectivityManager cm =
-                (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
+        isOnlineResult = netInfo != null && netInfo.isConnectedOrConnecting();
+        return isOnlineResult;
     }
 
     public static void lockOrientation(Activity activity) {

@@ -7,7 +7,10 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 import com.triestpa.cloudcamera.Model.Picture;
 import com.triestpa.cloudcamera.R;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
@@ -58,6 +61,7 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
         this.imgSmallDimens = (int) Math.floor((double) imgDimens * .75);
 
         Picasso.Builder picassoBuilder = new Picasso.Builder(fragment.getContext());
+        picassoBuilder.downloader(new OkHttpDownloader(mFragment.getContext()));
         picassoInstance = picassoBuilder.build();
     }
 
@@ -126,8 +130,13 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
         holder.mImage.setLayoutParams(imageParams);
 
 
-        picassoInstance.load(thisPic.getThumbnail().getUrl()).resize(imgDimens, imgDimens).centerCrop().into(holder.mImage);
-
+        RequestCreator thisPictureRequest = picassoInstance.load(thisPic.getThumbnail().getUrl()).resize(imgDimens, imgDimens).centerCrop();
+        if (SystemUtilities.isOnlineResult) {
+            thisPictureRequest.into(holder.mImage);
+        }
+        else {
+            thisPictureRequest.networkPolicy(NetworkPolicy.OFFLINE).into(holder.mImage);
+        }
     }
 
 

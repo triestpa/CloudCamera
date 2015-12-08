@@ -3,7 +3,6 @@ package com.triestpa.cloudcamera.Camera;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -83,10 +82,6 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (!SystemUtilities.isOnline(this)) {
-            Snackbar.make(findViewById(android.R.id.content), "No Internet Connection Detected, Some Features May Not Be Available", Snackbar.LENGTH_SHORT).show();
-        }
 
         // Reinitialize the camera and preview on resume
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);

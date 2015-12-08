@@ -7,7 +7,7 @@ import com.parse.ParseFile;
 import com.triestpa.cloudcamera.CloudCameraApplication;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
-class Upload {
+abstract class Upload {
     private static String TAG = Upload.class.getName();
 
     private ParseFile parseFile;
@@ -34,7 +34,7 @@ class Upload {
         return progress;
     }
 
-    void setProgress(int progress) {
+    public void setProgress(int progress) {
         this.progress = progress;
     }
 
@@ -65,7 +65,5 @@ class Upload {
         Toast.makeText(CloudCameraApplication.getAppContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    public void retryUpload() {
-
-    }
+    public abstract void retryUpload();
 }
