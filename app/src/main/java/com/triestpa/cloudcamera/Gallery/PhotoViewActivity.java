@@ -82,7 +82,12 @@ public class PhotoViewActivity extends AppCompatActivity {
             public void onClick(View v) {
                 SystemUtilities.buildDialog(PhotoViewActivity.this, "Downlaod Photo From Cloud?", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        SystemUtilities.downloadFile(mFullsizeURL, mPhotoID, SystemUtilities.MEDIA_TYPE_IMAGE);
+                        if (SystemUtilities.isOnline(PhotoViewActivity.this)) {
+                            SystemUtilities.downloadFile(mFullsizeURL, mPhotoID, SystemUtilities.MEDIA_TYPE_IMAGE);
+                        }
+                        else {
+                            SystemUtilities.reportError(TAG, "Error Downloading Image: Device is Offline");
+                        }
                     }
                 }).show();
             }

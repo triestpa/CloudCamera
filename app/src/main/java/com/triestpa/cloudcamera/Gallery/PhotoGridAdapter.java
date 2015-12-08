@@ -61,8 +61,9 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
         picassoInstance = picassoBuilder.build();
     }
 
-    public void setData(ArrayList<Picture> pictures) {
-        mPhotos = pictures;
+    public void setData(List<Picture> pictures) {
+        mPhotos.clear();
+        mPhotos.addAll(pictures);
     }
 
     @Override

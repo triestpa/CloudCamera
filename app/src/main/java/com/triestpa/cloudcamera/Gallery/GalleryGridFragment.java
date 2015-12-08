@@ -137,14 +137,16 @@ public class GalleryGridFragment extends Fragment {
     }
 
     private void refresh() {
+        boolean fromCache = false;
         if (!SystemUtilities.isOnline(getActivity())) {
             Snackbar.make(getActivity().findViewById(android.R.id.content), "No Internet Connection Detected, Loading Cached Results", Snackbar.LENGTH_SHORT).show();
+            fromCache = true;
         }
 
         if (mType == TYPE_PHOTO_GRID) {
-            refreshPhotos();
+            refreshPhotos(fromCache);
         } else {
-            refreshVideos();
+            refreshVideos(fromCache);
         }
     }
 
@@ -176,7 +178,6 @@ public class GalleryGridFragment extends Fragment {
     }
 
     void playVideo(Video video) {
-
         if (SystemUtilities.isOnline(getActivity())) {
             Intent videoIntent = new Intent(getActivity(), VideoViewActivity.class);
             videoIntent.putExtra(VideoViewActivity.VIDEO_ID, video.getObjectId());
@@ -228,19 +229,16 @@ public class GalleryGridFragment extends Fragment {
         return selectedObjects;
     }
 
-    private void deleteObjects(ArrayList<ParseObject> selectedObjects) {
+    private void deleteObjects(final ArrayList<ParseObject> selectedObjects) {
         if (SystemUtilities.isOnline(getActivity())) {
             Toast.makeText(getActivity(), "Deleting Items", Toast.LENGTH_SHORT).show();
             ParseObject.deleteAllInBackground(selectedObjects, new DeleteCallback() {
                 @Override
                 public void done(ParseException e) {
                     if (e == null) {
+                        ParseObject.unpinAllInBackground(selectedObjects);
                         Toast.makeText(getActivity(), "Deletion Complete", Toast.LENGTH_SHORT).show();
-                        if (mType == TYPE_PHOTO_GRID) {
-                            refreshPhotos();
-                        } else {
-                            refreshVideos();
-                        }
+                        refresh();
                     } else {
                         String errorReport = "Error Deleting: " + e.getMessage();
                         SystemUtilities.reportError(TAG, errorReport);
@@ -253,10 +251,14 @@ public class GalleryGridFragment extends Fragment {
         }
     }
 
-    private void refreshPhotos() {
+    private void refreshPhotos(final boolean fromCache) {
         ParseQuery<Picture> query = ParseQuery.getQuery(Picture.class);
         query.whereEqualTo("user", ParseUser.getCurrentUser());
         query.setLimit(1000);
+
+        if (fromCache) {
+            query.fromLocalDatastore();
+        }
 
         query.findInBackground(new FindCallback<Picture>() {
             @Override
@@ -274,18 +276,19 @@ public class GalleryGridFragment extends Fragment {
                         }
                         numSelected = 0;
 
-                        ((PhotoGridAdapter) mAdapter).setData((ArrayList<Picture>) pictures);
+                        ((PhotoGridAdapter) mAdapter).setData(pictures);
                         mAdapter.notifyDataSetChanged();
                         mSwipeRefreshLayout.setRefreshing(false);
                         mSwipeRefreshLayout.setVisibility(View.VISIBLE);
 
-
-                        ParseObject.unpinAllInBackground(PIN_LABEL_PHOTO, new DeleteCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                ParseObject.pinAllInBackground(PIN_LABEL_PHOTO, pictures);
-                            }
-                        });
+                        if (!fromCache) {
+                            ParseObject.unpinAllInBackground(PIN_LABEL_PHOTO, new DeleteCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    ParseObject.pinAllInBackground(PIN_LABEL_PHOTO, pictures);
+                                }
+                            });
+                        }
                     }
                 } else {
                     mSwipeRefreshLayout.setVisibility(View.GONE);
@@ -296,10 +299,15 @@ public class GalleryGridFragment extends Fragment {
     }
 
 
-    private void refreshVideos() {
+    private void refreshVideos(final boolean fromCache) {
         ParseQuery<Video> query = ParseQuery.getQuery(Video.class);
         query.whereEqualTo("user", ParseUser.getCurrentUser());
         query.setLimit(1000);
+
+        if (fromCache) {
+            query.fromLocalDatastore();
+        }
+
         query.findInBackground(new FindCallback<Video>() {
             @Override
             public void done(final List<Video> videos, ParseException e) {
@@ -315,17 +323,19 @@ public class GalleryGridFragment extends Fragment {
                         }
                         numSelected = 0;
 
-                        ((VideoGridAdapter) mAdapter).setData((ArrayList<Video>) videos);
+                        ((VideoGridAdapter) mAdapter).setData(videos);
                         mAdapter.notifyDataSetChanged();
                         mSwipeRefreshLayout.setRefreshing(false);
                         mSwipeRefreshLayout.setVisibility(View.VISIBLE);
 
-                        ParseObject.unpinAllInBackground(PIN_LABEL_VIDEO, new DeleteCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                ParseObject.pinAllInBackground(PIN_LABEL_VIDEO, videos);
-                            }
-                        });
+                        if (!fromCache) {
+                            ParseObject.unpinAllInBackground(PIN_LABEL_VIDEO, new DeleteCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    ParseObject.pinAllInBackground(PIN_LABEL_VIDEO, videos);
+                                }
+                            });
+                        }
                     }
                 } else {
                     mSwipeRefreshLayout.setVisibility(View.GONE);

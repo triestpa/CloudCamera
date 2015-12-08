@@ -60,8 +60,9 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Imag
         picassoInstance = picassoBuilder.build();
     }
 
-    public void setData(ArrayList<Video> videos) {
-        mVideos = videos;
+    public void setData(List<Video> videos) {
+        mVideos.clear();
+        mVideos.addAll(videos);
     }
 
     // Create new views (invoked by the layout manager)
