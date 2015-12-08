@@ -88,9 +88,7 @@ class CameraManager {
             preview.addView(mPreview);
         }
         else {
-            Log.e(TAG, "Camera Instance Failed");
-            SystemUtilities.showToastMessage("Camera Instance Failed");
-
+            SystemUtilities.reportError(TAG, "Camera Instance Failed");
         }
     }
 
@@ -102,8 +100,7 @@ class CameraManager {
             Log.d(TAG, "camera opened");
         } catch (Exception e) {
             // Camera is not available (in use or does not exist)
-            Log.e(TAG, "camera unavailable");
-            SystemUtilities.showToastMessage("Camera Not Available");
+            SystemUtilities.reportError(TAG, "Camera Not Available");
             return null;
         }
 
@@ -158,8 +155,7 @@ class CameraManager {
             mMediaRecorder.setProfile(CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_LOW));
         }
         else {
-            Log.e(TAG, "Error Setting Camcorder Profile");
-            SystemUtilities.showToastMessage("Error Setting Up Video Recorder");
+            SystemUtilities.reportError(TAG, "Error Setting Up Video Recorder");
             return false;
         }
 
@@ -167,8 +163,7 @@ class CameraManager {
         File videoFile = SystemUtilities.getOutputMediaFile(SystemUtilities.MEDIA_TYPE_VIDEO);
 
         if (videoFile == null) {
-            Log.e(TAG, "Error Creating Video File");
-            SystemUtilities.showToastMessage("Error Creating Video File");
+            SystemUtilities.reportError(TAG, "Error Creating Video File");
             releaseMediaRecorder();
             return false;
         }
@@ -183,13 +178,11 @@ class CameraManager {
         try {
             mMediaRecorder.prepare();
         } catch (IllegalStateException e) {
-            Log.e(TAG, "IllegalStateException preparing MediaRecorder: " + e.getMessage());
-            SystemUtilities.showToastMessage("Error Preparing Media Recorder");
+            SystemUtilities.reportError(TAG, "Error Preparing Media Recorder");
             releaseMediaRecorder();
             return false;
         } catch (IOException e) {
-            Log.e(TAG, "IOException preparing MediaRecorder: " + e.getMessage());
-            SystemUtilities.showToastMessage("Error Preparing Media Recorder");
+            SystemUtilities.reportError(TAG , "Error Preparing Media Recorder");
             releaseMediaRecorder();
             return false;
         }
@@ -210,8 +203,7 @@ class CameraManager {
 
         // Check if device has flash
         if (params.getFlashMode() == null) {
-            Log.d(TAG, "Device Does Not Have Flash");
-            SystemUtilities.showToastMessage("Device Does Not Have Flash");
+            SystemUtilities.reportError(TAG, "Device Does Not Have Flash");
             return false;
         } else if (params.getFlashMode()
                 .contentEquals(Camera.Parameters.FLASH_MODE_ON)) {
@@ -264,7 +256,7 @@ class CameraManager {
             }
         }
         else {
-            SystemUtilities.showToastMessage("Device Does Not Have Second Camera");
+            SystemUtilities.reportError(TAG, "Device Does Not Have Second Camera");
             return true;
         }
     }

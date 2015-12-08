@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/image_view_content"
-    tools:context=".Gallery.PhotoGallery.PhotoViewActivity">
+    tools:context=".Gallery.PhotoViewActivity">
 
     <ImageView
         android:id="@+id/fullsize_image"

@@ -1,8 +1,10 @@
 package com.triestpa.cloudcamera.Upload;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.parse.ParseFile;
+import com.triestpa.cloudcamera.CloudCameraApplication;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
 class Upload {
@@ -55,12 +57,12 @@ class Upload {
     void showError(com.parse.ParseException e, String message) {
         Log.e(TAG, e.getMessage());
         Upload.this.setAborted(true);
-        SystemUtilities.showToastMessage(message + e.getMessage());
+        SystemUtilities.reportError(TAG, message + e.getMessage());
     }
 
     void showSuccess(String message) {
         this.setCompleted(true);
-        SystemUtilities.showToastMessage(message);
+        Toast.makeText(CloudCameraApplication.getAppContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     public void retryUpload() {

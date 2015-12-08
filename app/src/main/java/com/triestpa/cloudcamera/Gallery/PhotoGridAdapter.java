@@ -1,9 +1,10 @@
-package com.triestpa.cloudcamera.Gallery.PhotoGallery;
+package com.triestpa.cloudcamera.Gallery;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -17,9 +18,25 @@ import java.util.List;
 public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.ImageViewHolder> {
     final static String TAG = PhotoGridAdapter.class.getName();
     private ArrayList<Picture> mPhotos;
-    private PhotoGridFragment mFragment;
+    private GalleryGridFragment mFragment;
     private int imgDimens;
+    private int imgSmallDimens;
     private Picasso picassoInstance;
+
+    Animation.AnimationListener resizeListener = new Animation.AnimationListener() {
+        @Override
+        public void onAnimationStart(Animation animation) {}
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+    };
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -36,10 +53,11 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
         }
     }
 
-    public PhotoGridAdapter(List<Picture> photos, int imgDimens, PhotoGridFragment fragment) {
+    public PhotoGridAdapter(List<Picture> photos, int imgDimens, GalleryGridFragment fragment) {
         mPhotos = (ArrayList<Picture>) photos;
         this.imgDimens = imgDimens;
         this.mFragment = fragment;
+        this.imgSmallDimens = (int) Math.floor((double) imgDimens * .75);
 
         Picasso.Builder picassoBuilder = new Picasso.Builder(fragment.getContext());
         picassoInstance = picassoBuilder.build();
@@ -79,12 +97,10 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
                 if (mFragment.numSelected == 0) {
                     mFragment.showLargePhoto(v, thisPic);
                 } else {
-                    if (mFragment.togglePictureSelected(thisPic)) {
-                        ResizeAnimation animation = new ResizeAnimation(holder.mImage, imgDimens, imgDimens, imgDimens / 2, imgDimens / 2);
-                        holder.mImage.startAnimation(animation);
+                    if (mFragment.toggleItemSelected(thisPic)) {
+                        zoomSmall(holder.mImage);
                     } else {
-                        ResizeAnimation animation = new ResizeAnimation(holder.mImage, imgDimens / 2, imgDimens / 2, imgDimens, imgDimens);
-                        holder.mImage.startAnimation(animation);
+                        zoomFull(holder.mImage);
                     }
                 }
             }
@@ -93,22 +109,19 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
         holder.mImage.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (mFragment.togglePictureSelected(thisPic)) {
-                    ResizeAnimation animation = new ResizeAnimation(holder.mImage, imgDimens, imgDimens, imgDimens / 2, imgDimens / 2);
-                    holder.mImage.startAnimation(animation);
+                if (mFragment.toggleItemSelected(thisPic)) {
+                    zoomSmall(holder.mImage);
                 } else {
-                    ResizeAnimation animation = new ResizeAnimation(holder.mImage, imgDimens / 2, imgDimens / 2, imgDimens, imgDimens);
-                    holder.mImage.startAnimation(animation);
+                    zoomFull(holder.mImage);
                 }
-
                 return false;
             }
         });
 
         ViewGroup.LayoutParams imageParams = holder.mImage.getLayoutParams();
         if (mFragment.mGridSelectionMap.get(thisPic.getObjectId())) {
-            imageParams.height = imgDimens / 2;
-            imageParams.width = imgDimens / 2;
+            imageParams.height = imgSmallDimens;
+            imageParams.width = imgSmallDimens;
 
         } else {
             imageParams.height = imgDimens;
@@ -125,6 +138,18 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
     @Override
     public int getItemCount() {
         return mPhotos.size();
+    }
+
+    public void zoomSmall(final ImageView imageView) {
+        ResizeAnimation animation = new ResizeAnimation(imageView, imgDimens, imgDimens, imgSmallDimens, imgSmallDimens);
+        animation.setAnimationListener(resizeListener);
+        imageView.startAnimation(animation);
+    }
+
+    public void zoomFull(final ImageView imageView) {
+        ResizeAnimation animation = new ResizeAnimation(imageView, imgSmallDimens, imgSmallDimens, imgDimens, imgDimens);
+        animation.setAnimationListener(resizeListener);
+        imageView.startAnimation(animation);
     }
 
 

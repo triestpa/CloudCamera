@@ -4,6 +4,7 @@
     <string name="title_activity_image_view"></string>
     <string name="title_activity_upload_status">Uploads</string>
 
+    <string name="action_delete_selected">Delete Selected</string>
     <string name="action_settings">Settings</string>
     <string name="action_gallery">Gallery</string>
     <string name="section_format">Hello World from section: %1$d</string>
@@ -24,11 +25,8 @@
     <string name="no_photos">No Photos Available</string>
     <string name="no_uploads">No Uploads To Show</string>
 
-    <string name="delete_dialog_ok">Delete</string>
-    <string name="delete_dialog_canel">Cancel</string>
-
-    <string name="download_dialog_ok">Download</string>
-    <string name="download_dialog_canel">Cancel</string>
+    <string name="dialog_ok">Confirm</string>
+    <string name="dialog_canel">Cancel</string>
 
 </resources>
 

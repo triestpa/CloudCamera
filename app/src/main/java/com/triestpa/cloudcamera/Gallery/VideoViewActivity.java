@@ -1,21 +1,22 @@
-package com.triestpa.cloudcamera.Gallery.VideoGallery;
+package com.triestpa.cloudcamera.Gallery;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.MediaController;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.parse.DeleteCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.triestpa.cloudcamera.CloudCameraApplication;
 import com.triestpa.cloudcamera.Model.Video;
 import com.triestpa.cloudcamera.R;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
@@ -48,7 +49,11 @@ public class VideoViewActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buildDeleteDialog();
+                SystemUtilities.buildDialog(VideoViewActivity.this, "Delete Video From Cloud?", R.drawable.ic_delete_white_24dp, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        deleteVideo();
+                    }
+                }).show();
             }
         });
 
@@ -56,7 +61,11 @@ public class VideoViewActivity extends AppCompatActivity {
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buildDownloadDialog();
+                SystemUtilities.buildDialog(VideoViewActivity.this, "Download Video From Cloud?", R.drawable.ic_cloud_download_white_24dp, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        SystemUtilities.downloadFile(mVideoUrl, mVideoId, SystemUtilities.MEDIA_TYPE_VIDEO);
+                    }
+                }).show();
             }
         });
 
@@ -80,65 +89,18 @@ public class VideoViewActivity extends AppCompatActivity {
                         @Override
                         public void done(ParseException e) {
                             if (e == null) {
-                                SystemUtilities.showToastMessage("Video Deleted");
+                                Toast.makeText(CloudCameraApplication.getAppContext(), "Video Deleted", Toast.LENGTH_SHORT).show();
                                 VideoViewActivity.this.onBackPressed();
                             } else {
-                                Log.e(TAG, e.getMessage());
-                                SystemUtilities.showToastMessage("Error Deleting File: " + e.getMessage());
+                                SystemUtilities.reportError(TAG, "Error Deleting File: " + e.getMessage());
                             }
                         }
                     });
                 } else {
                     Log.e(TAG, e.getMessage());
-                    SystemUtilities.showToastMessage("Error Deleting File: " + e.getMessage());
+                    SystemUtilities.reportError(TAG, "Error Deleting File: " + e.getMessage());
                 }
             }
         });
     }
-
-    private void buildDeleteDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setMessage("Delete Video From Cloud?");
-        builder.setIcon(R.drawable.ic_delete_white_24dp);
-
-        // Add the buttons
-        builder.setPositiveButton(R.string.delete_dialog_ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                deleteVideo();
-            }
-        });
-        builder.setNegativeButton(R.string.delete_dialog_canel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
-                dialog.cancel();
-            }
-        });
-        // Create the AlertDialog
-        builder.create().show();
-    }
-
-    private void buildDownloadDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setMessage("Download Video From Cloud?");
-        builder.setIcon(R.drawable.ic_delete_white_24dp);
-
-        // Add the buttons
-        builder.setPositiveButton(R.string.download_dialog_ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                SystemUtilities.downloadFile(mVideoUrl, mVideoId, SystemUtilities.MEDIA_TYPE_VIDEO);
-            }
-        });
-        builder.setNegativeButton(R.string.download_dialog_canel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
-                dialog.cancel();
-            }
-        });
-        // Create the AlertDialog
-        builder.create().show();
-    }
-
-
 }

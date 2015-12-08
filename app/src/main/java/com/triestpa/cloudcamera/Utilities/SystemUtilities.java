@@ -3,24 +3,26 @@ package com.triestpa.cloudcamera.Utilities;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Surface;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.triestpa.cloudcamera.CloudCameraApplication;
+import com.triestpa.cloudcamera.R;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class SystemUtilities {
-    final static String TAG = SystemUtilities.class.getName();
-
     public final static int MEDIA_TYPE_IMAGE = 1;
     public final static int MEDIA_TYPE_VIDEO = 2;
 
@@ -81,9 +83,10 @@ public class SystemUtilities {
         return mediaFile;
     }
 
-    public static void showToastMessage(String message) {
-        Toast.makeText(CloudCameraApplication.getAppContext(), message, Toast.LENGTH_SHORT).show();
 
+    public static void reportError(String TAG, String message) {
+        Log.e(TAG, message);
+        Toast.makeText(CloudCameraApplication.getAppContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     public static void downloadFile(String url, String id, int mediatype) {
@@ -106,5 +109,23 @@ public class SystemUtilities {
         Context context = CloudCameraApplication.getAppContext();
         DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         dm.enqueue(r);
+    }
+
+    public static AlertDialog buildDialog(Activity activity, String message, int icon, DialogInterface.OnClickListener positiveButtonListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+        builder.setMessage(message);
+        builder.setIcon(icon);
+
+        // Add the buttons
+        builder.setPositiveButton(R.string.dialog_ok,positiveButtonListener);
+        builder.setNegativeButton(R.string.dialog_canel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+                dialog.cancel();
+            }
+        });
+        // Create the AlertDialog
+        return builder.create();
     }
 }

@@ -12,8 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 
-import com.triestpa.cloudcamera.Gallery.PhotoGallery.PhotoGridFragment;
-import com.triestpa.cloudcamera.Gallery.VideoGallery.VideoGridFragment;
 import com.triestpa.cloudcamera.R;
 
 public class GalleryActivity extends AppCompatActivity {
@@ -86,11 +84,11 @@ public class GalleryActivity extends AppCompatActivity {
 
             switch(position) {
                 case 0:
-                    return PhotoGridFragment.newInstance();
+                    return GalleryGridFragment.newInstance(GalleryGridFragment.TYPE_PHOTO_GRID);
                 case 1:
-                    return VideoGridFragment.newInstance();
+                    return GalleryGridFragment.newInstance(GalleryGridFragment.TYPE_VIDEO_GRID);
                 default:
-                    return PhotoGridFragment.newInstance();
+                    return GalleryGridFragment.newInstance(GalleryGridFragment.TYPE_PHOTO_GRID);
             }
         }
 

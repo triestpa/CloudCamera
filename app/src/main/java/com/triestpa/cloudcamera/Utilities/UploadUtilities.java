@@ -4,7 +4,6 @@ package com.triestpa.cloudcamera.Utilities;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.parse.ParseFile;
 import com.triestpa.cloudcamera.Upload.PhotoUpload;
@@ -23,8 +22,7 @@ public class UploadUtilities {
 
     public static PhotoUpload preparePhotoUpload(byte[] picData) {
         if (picData.length > 10485760) {
-            Log.e(TAG, "Photo File is Too Large, Must be 10mb or less");
-            SystemUtilities.showToastMessage("Photo File is Too Large, Must be 10mb or less");
+            SystemUtilities.reportError(TAG, "Photo File is Too Large, Must be 10mb or less");
             return null;
         }
 
@@ -44,16 +42,13 @@ public class UploadUtilities {
             buf.read(videoBytes, 0, videoBytes.length);
             buf.close();
         } catch (FileNotFoundException e) {
-            Log.e(TAG, e.getMessage());
-            SystemUtilities.showToastMessage("Error Finding Video File: " + e.getMessage());
+            SystemUtilities.reportError(TAG, "Error Finding Video File: " + e.getMessage());
         } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-            SystemUtilities.showToastMessage("Error Reading From Video File: " + e.getMessage());
+            SystemUtilities.reportError(TAG, "Error Reading From Video File: " + e.getMessage());
         }
 
         if (videoBytes.length > 1048576) {
-            Log.e(TAG, "Video File is Too Large, Must be 10mb or less");
-            SystemUtilities.showToastMessage("Video File is Too Large, Must be 10mb or less");
+            SystemUtilities.reportError(TAG, "Video File is Too Large, Must be 10mb or less");
             return null;
         }
 

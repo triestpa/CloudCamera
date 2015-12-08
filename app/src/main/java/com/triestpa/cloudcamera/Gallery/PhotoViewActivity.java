@@ -1,4 +1,4 @@
-package com.triestpa.cloudcamera.Gallery.PhotoGallery;
+package com.triestpa.cloudcamera.Gallery;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,13 +7,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.parse.DeleteCallback;
 import com.parse.GetCallback;
@@ -22,6 +22,7 @@ import com.parse.ParseQuery;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.triestpa.cloudcamera.CloudCameraApplication;
 import com.triestpa.cloudcamera.Model.Picture;
 import com.triestpa.cloudcamera.R;
 import com.triestpa.cloudcamera.Utilities.BitmapUtilities;
@@ -62,7 +63,11 @@ public class PhotoViewActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buildDeleteDialog();
+                SystemUtilities.buildDialog(PhotoViewActivity.this, "Delete Photo From Cloud?", R.drawable.ic_delete_white_24dp, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        deletePhoto();
+                    }
+                }).show();
             }
         });
 
@@ -70,7 +75,11 @@ public class PhotoViewActivity extends AppCompatActivity {
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buildDownloadDialog();
+                SystemUtilities.buildDialog(PhotoViewActivity.this, "Downlaod Photo From Cloud?", R.drawable.ic_cloud_download_white_24dp, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        SystemUtilities.downloadFile(mFullsizeURL, mPhotoID, SystemUtilities.MEDIA_TYPE_IMAGE);
+                    }
+                }).show();
             }
         });
 
@@ -155,8 +164,7 @@ public class PhotoViewActivity extends AppCompatActivity {
                 }
 
             } catch (IOException e) {
-                Log.e(TAG, e.getMessage());
-                SystemUtilities.showToastMessage("Error Downloading Image: " + e.getMessage());
+                SystemUtilities.reportError(TAG, "Error Downloading Image: " + e.getMessage());
             }
 
             return null;
@@ -168,8 +176,7 @@ public class PhotoViewActivity extends AppCompatActivity {
                 mImageView.setImageBitmap(imageBm);
                 mAttacher.update();
             } else {
-                Log.e(TAG, "Error Loading Bitmap");
-                SystemUtilities.showToastMessage("Error Loading Image");
+                SystemUtilities.reportError(TAG, "Error Loading Image");
 
             }
             super.onPostExecute(imageBm);
@@ -185,63 +192,19 @@ public class PhotoViewActivity extends AppCompatActivity {
                         @Override
                         public void done(ParseException e) {
                             if (e == null) {
-                                SystemUtilities.showToastMessage("Photo Deleted");
+                                Toast.makeText(CloudCameraApplication.getAppContext(), "Photo Deleted", Toast.LENGTH_SHORT).show();
                                 PhotoViewActivity.this.onBackPressed();
                             } else {
                                 Log.e(TAG, e.getMessage());
-                                SystemUtilities.showToastMessage("Error Deleting File: " + e.getMessage());
+                                SystemUtilities.reportError(TAG, "Error Deleting File: " + e.getMessage());
                             }
                         }
                     });
                 } else {
                     Log.e(TAG, e.getMessage());
-                    SystemUtilities.showToastMessage("Error Deleting File: " + e.getMessage());
+                    SystemUtilities.reportError(TAG, "Error Deleting File: " + e.getMessage());
                 }
             }
         });
-    }
-
-    private void buildDeleteDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setMessage("Delete Photo From Cloud?");
-        builder.setIcon(R.drawable.ic_delete_white_24dp);
-
-        // Add the buttons
-        builder.setPositiveButton(R.string.delete_dialog_ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                deletePhoto();
-            }
-        });
-        builder.setNegativeButton(R.string.delete_dialog_canel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
-                dialog.cancel();
-            }
-        });
-        // Create the AlertDialog
-        builder.create().show();
-    }
-
-    private void buildDownloadDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setMessage("Download Photo From Cloud?");
-        builder.setIcon(R.drawable.ic_delete_white_24dp);
-
-        // Add the buttons
-        builder.setPositiveButton(R.string.download_dialog_ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                SystemUtilities.downloadFile(mFullsizeURL, mPhotoID, SystemUtilities.MEDIA_TYPE_IMAGE);
-            }
-        });
-        builder.setNegativeButton(R.string.download_dialog_canel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
-                dialog.cancel();
-            }
-        });
-        // Create the AlertDialog
-        builder.create().show();
     }
 }
