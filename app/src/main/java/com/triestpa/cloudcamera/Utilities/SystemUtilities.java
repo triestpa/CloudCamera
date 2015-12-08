@@ -113,11 +113,10 @@ public class SystemUtilities {
         dm.enqueue(r);
     }
 
-    public static AlertDialog buildDialog(Activity activity, String message, int icon, DialogInterface.OnClickListener positiveButtonListener) {
+    public static AlertDialog buildDialog(Activity activity, String message, DialogInterface.OnClickListener positiveButtonListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         builder.setMessage(message);
-        builder.setIcon(icon);
 
         // Add the buttons
         builder.setPositiveButton(R.string.dialog_ok,positiveButtonListener);

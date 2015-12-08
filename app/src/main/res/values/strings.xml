@@ -46,6 +46,7 @@
         completions."
     </string>
     <string name="title_activity_create_account">Create Account</string>
+    <string name="log_out">Log Out</string>
 
 </resources>
 

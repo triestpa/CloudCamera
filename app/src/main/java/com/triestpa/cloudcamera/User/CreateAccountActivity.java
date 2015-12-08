@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
+import com.triestpa.cloudcamera.Camera.CameraActivity;
 import com.triestpa.cloudcamera.R;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
@@ -119,7 +120,9 @@ public class CreateAccountActivity extends AppCompatActivity {
                 public void done(ParseException e) {
                     if (e == null) {
                         Toast.makeText(CreateAccountActivity.this, "Account Creation Successful", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(CreateAccountActivity.this, CreateAccountActivity.class);
+                        Intent intent = new Intent(CreateAccountActivity.this, CameraActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                     } else {
                         showProgress(false);

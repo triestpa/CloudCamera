@@ -49,7 +49,7 @@ public class VideoViewActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SystemUtilities.buildDialog(VideoViewActivity.this, "Delete Video From Cloud?", R.drawable.ic_delete_white_24dp, new DialogInterface.OnClickListener() {
+                SystemUtilities.buildDialog(VideoViewActivity.this, "Delete Video From Cloud?", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         deleteVideo();
                     }
@@ -61,7 +61,7 @@ public class VideoViewActivity extends AppCompatActivity {
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SystemUtilities.buildDialog(VideoViewActivity.this, "Download Video From Cloud?", R.drawable.ic_cloud_download_white_24dp, new DialogInterface.OnClickListener() {
+                SystemUtilities.buildDialog(VideoViewActivity.this, "Download Video From Cloud?", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         SystemUtilities.downloadFile(mVideoUrl, mVideoId, SystemUtilities.MEDIA_TYPE_VIDEO);
                     }

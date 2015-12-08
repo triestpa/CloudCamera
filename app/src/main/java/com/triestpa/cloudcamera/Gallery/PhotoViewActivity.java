@@ -63,7 +63,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SystemUtilities.buildDialog(PhotoViewActivity.this, "Delete Photo From Cloud?", R.drawable.ic_delete_white_24dp, new DialogInterface.OnClickListener() {
+                SystemUtilities.buildDialog(PhotoViewActivity.this, "Delete Photo From Cloud?", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         deletePhoto();
                     }
@@ -75,7 +75,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SystemUtilities.buildDialog(PhotoViewActivity.this, "Downlaod Photo From Cloud?", R.drawable.ic_cloud_download_white_24dp, new DialogInterface.OnClickListener() {
+                SystemUtilities.buildDialog(PhotoViewActivity.this, "Downlaod Photo From Cloud?", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         SystemUtilities.downloadFile(mFullsizeURL, mPhotoID, SystemUtilities.MEDIA_TYPE_IMAGE);
                     }

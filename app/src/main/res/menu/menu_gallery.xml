@@ -3,4 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".Gallery.GalleryActivity">
 
+    <item
+        android:id="@+id/action_log_out"
+        android:orderInCategory="100"
+        android:title="@string/log_out"
+        app:showAsAction="always" />
 </menu>

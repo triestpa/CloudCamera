@@ -54,7 +54,7 @@ public class GalleryGridFragment extends Fragment {
     private View.OnClickListener snackbackClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            SystemUtilities.buildDialog(getActivity(), "Delete From Cloud?", R.drawable.ic_cloud_download_white_24dp, new DialogInterface.OnClickListener() {
+            SystemUtilities.buildDialog(getActivity(), "Delete From Cloud?", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     deleteObjects(getAllSelected());
                 }

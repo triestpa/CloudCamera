@@ -72,7 +72,8 @@ public class CameraActivity extends AppCompatActivity {
 
         if (ParseUser.getCurrentUser() == null) {
             Intent i = new Intent(this, LoginActivity.class);
-            i.setFlags(i.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
         }
 

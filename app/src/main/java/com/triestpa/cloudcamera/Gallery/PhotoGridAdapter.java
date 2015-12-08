@@ -25,7 +25,8 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
 
     private Animation.AnimationListener resizeListener = new Animation.AnimationListener() {
         @Override
-        public void onAnimationStart(Animation animation) {}
+        public void onAnimationStart(Animation animation) {
+        }
 
         @Override
         public void onAnimationEnd(Animation animation) {
@@ -116,14 +117,16 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
             imageParams.height = imgSmallDimens;
             imageParams.width = imgSmallDimens;
 
+
         } else {
             imageParams.height = imgDimens;
             imageParams.width = imgDimens;
         }
-
         holder.mImage.setLayoutParams(imageParams);
 
+
         picassoInstance.load(thisPic.getThumbnail().getUrl()).resize(imgDimens, imgDimens).centerCrop().into(holder.mImage);
+
     }
 
 

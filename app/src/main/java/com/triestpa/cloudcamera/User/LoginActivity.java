@@ -16,6 +16,7 @@ import android.widget.EditText;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.triestpa.cloudcamera.Camera.CameraActivity;
 import com.triestpa.cloudcamera.R;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
@@ -97,8 +98,10 @@ public class LoginActivity extends AppCompatActivity {
             ParseUser.logInInBackground(username, password, new LogInCallback() {
                 public void done(ParseUser user, ParseException e) {
                     if (e == null) {
-                        Intent intent = new Intent(LoginActivity.this, CreateAccountActivity.class);
-                        startActivity(intent);
+                        Intent i = new Intent(LoginActivity.this, CameraActivity.class);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(i);
                     } else {
                         showProgress(false);
                         SystemUtilities.reportError(TAG, "Login Error: " + e.getMessage());
