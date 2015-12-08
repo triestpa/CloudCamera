@@ -13,6 +13,8 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Surface;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.triestpa.cloudcamera.CloudCameraApplication;
@@ -127,5 +129,12 @@ public class SystemUtilities {
         });
         // Create the AlertDialog
         return builder.create();
+    }
+
+
+    public static void zoomView(final ImageView imageView, int fromDimen, int toDimen, Animation.AnimationListener listener) {
+        ResizeAnimation animation = new ResizeAnimation(imageView, fromDimen, fromDimen, toDimen, toDimen);
+        animation.setAnimationListener(listener);
+        imageView.startAnimation(animation);
     }
 }

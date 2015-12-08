@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 import com.triestpa.cloudcamera.Model.Picture;
 import com.triestpa.cloudcamera.R;
-import com.triestpa.cloudcamera.Utilities.ResizeAnimation;
+import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,9 +98,9 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
                     mFragment.showLargePhoto(v, thisPic);
                 } else {
                     if (mFragment.toggleItemSelected(thisPic)) {
-                        zoomSmall(holder.mImage);
+                        SystemUtilities.zoomView(holder.mImage, imgDimens, imgSmallDimens, resizeListener);
                     } else {
-                        zoomFull(holder.mImage);
+                        SystemUtilities.zoomView(holder.mImage, imgSmallDimens, imgDimens, resizeListener);
                     }
                 }
             }
@@ -110,9 +110,9 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
             @Override
             public boolean onLongClick(View v) {
                 if (mFragment.toggleItemSelected(thisPic)) {
-                    zoomSmall(holder.mImage);
+                    SystemUtilities.zoomView(holder.mImage, imgDimens, imgSmallDimens, resizeListener);
                 } else {
-                    zoomFull(holder.mImage);
+                    SystemUtilities.zoomView(holder.mImage, imgSmallDimens, imgDimens, resizeListener);
                 }
                 return false;
             }
@@ -139,18 +139,4 @@ public class PhotoGridAdapter extends RecyclerView.Adapter<PhotoGridAdapter.Imag
     public int getItemCount() {
         return mPhotos.size();
     }
-
-    public void zoomSmall(final ImageView imageView) {
-        ResizeAnimation animation = new ResizeAnimation(imageView, imgDimens, imgDimens, imgSmallDimens, imgSmallDimens);
-        animation.setAnimationListener(resizeListener);
-        imageView.startAnimation(animation);
-    }
-
-    public void zoomFull(final ImageView imageView) {
-        ResizeAnimation animation = new ResizeAnimation(imageView, imgSmallDimens, imgSmallDimens, imgDimens, imgDimens);
-        animation.setAnimationListener(resizeListener);
-        imageView.startAnimation(animation);
-    }
-
-
 }
