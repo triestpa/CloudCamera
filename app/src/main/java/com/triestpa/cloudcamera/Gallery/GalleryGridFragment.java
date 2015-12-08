@@ -45,6 +45,8 @@ public class GalleryGridFragment extends Fragment {
     final static String PIN_LABEL_PHOTO = "PHOTOS";
     final static String PIN_LABEL_VIDEO = "VIDEOS";
 
+    static final float MINIMUM_SCROLL = 25;
+
     private int mType;
 
     private RecyclerView mMediaGrid;
@@ -136,10 +138,19 @@ public class GalleryGridFragment extends Fragment {
         super.onPause();
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (!isVisibleToUser && numSelected > 0) {
+            clearSelected();
+        }
+    }
+
     private void refresh() {
         boolean fromCache = false;
         if (!SystemUtilities.isOnline(getActivity())) {
-            Snackbar.make(getActivity().findViewById(android.R.id.content), "No Internet Connection Detected, Loading Cached Results", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(getActivity().findViewById(android.R.id.content), "No Internet Connection, Loading Cached Results.", Snackbar.LENGTH_SHORT).show();
             fromCache = true;
         }
 
@@ -171,9 +182,8 @@ public class GalleryGridFragment extends Fragment {
                     );
 
             ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
-        }
-        else {
-            Snackbar.make(getActivity().findViewById(android.R.id.content), "No Internet Connection Detected, Cannot Download Fullsize Image", Snackbar.LENGTH_SHORT).show();
+        } else {
+            Snackbar.make(getActivity().findViewById(android.R.id.content), "No Internet Connection, Cannot Download Image.", Snackbar.LENGTH_SHORT).show();
         }
     }
 
@@ -183,9 +193,8 @@ public class GalleryGridFragment extends Fragment {
             videoIntent.putExtra(VideoViewActivity.VIDEO_ID, video.getObjectId());
             videoIntent.putExtra(VideoViewActivity.VIDEO_URL, video.getVideo().getUrl());
             ActivityCompat.startActivity(getActivity(), videoIntent, null);
-        }
-        else {
-            Snackbar.make(getActivity().findViewById(android.R.id.content), "No Internet Connection Detected, Cannot Stream Video", Snackbar.LENGTH_SHORT).show();
+        } else {
+            Snackbar.make(getActivity().findViewById(android.R.id.content), "No Internet Connection, Cannot Stream Video.", Snackbar.LENGTH_SHORT).show();
         }
     }
 
@@ -229,6 +238,15 @@ public class GalleryGridFragment extends Fragment {
         return selectedObjects;
     }
 
+    public void clearSelected() {
+        for (ParseObject object : mDisplayedMedia) {
+            if (mGridSelectionMap.get(object.getObjectId())) {
+                toggleItemSelected(object);
+            }
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
     private void deleteObjects(final ArrayList<ParseObject> selectedObjects) {
         if (SystemUtilities.isOnline(getActivity())) {
             Toast.makeText(getActivity(), "Deleting Items", Toast.LENGTH_SHORT).show();
@@ -245,9 +263,9 @@ public class GalleryGridFragment extends Fragment {
                     }
                 }
             });
-        }
-        else {
-            Snackbar.make(getActivity().findViewById(android.R.id.content), "No Internet Connection Detected, Cannot Delete Items", Snackbar.LENGTH_SHORT).show();
+        } else {
+            clearSelected();
+            Snackbar.make(getActivity().findViewById(android.R.id.content), "No Internet Connection, Cannot Delete Item(s).", Snackbar.LENGTH_SHORT).show();
         }
     }
 

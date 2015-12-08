@@ -111,6 +111,22 @@ public class GalleryActivity extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    public void onBackPressed() {
+        GalleryGridFragment currentPage = (GalleryGridFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" + mViewPager.getCurrentItem());
+        // based on the current position you can then cast the page to the correct
+        // class and call the method:
+        if (mViewPager.getCurrentItem() == 0 && currentPage != null) {
+            if (currentPage.numSelected > 0) {
+                currentPage.clearSelected();
+                return;
+            }
+        }
+        super.onBackPressed();
+    }
+
+
     @Override
     public void onTrimMemory(int level) {
         if (level == TRIM_MEMORY_UI_HIDDEN) {
