@@ -9,7 +9,6 @@ import android.widget.ImageView;
 
 import com.parse.ParseObject;
 import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 import com.triestpa.cloudcamera.Model.Picture;
@@ -20,16 +19,19 @@ import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 import java.util.ArrayList;
 
 /**
- * VideoGridAdapter: RecyclerView Adapter to show a grid of videos
+ * Gallery Grid Adapter: RecyclerView Adapter to show a grid of videos or photos
  */
-public class GalleryGridAdapter extends RecyclerView.Adapter<GalleryGridAdapter.ImageViewHolder> {
+public class GalleryGridAdapter extends RecyclerView.Adapter<GalleryGridAdapter.MediaViewHolder> {
     final static String TAG = GalleryGridAdapter.class.getName();
-    private ArrayList<ParseObject> mMedia;
+    private ArrayList<ParseObject> mMedia; // Underlying dataset being displayed in grid
     private GalleryGridFragment mFragment;
-    private int imgDimens;
-    private int imgSmallDimens;
-    private Picasso picassoInstance;
 
+    private int imgDimens; // 1/3 of screen width
+    private int imgSmallDimens; // 3/12 of screen width
+
+    private Picasso picassoInstance; // For image loading and caching
+
+    // Listener to update dataset when resize animation finishes
     private Animation.AnimationListener resizeListener = new Animation.AnimationListener() {
         @Override
         public void onAnimationStart(Animation animation) {
@@ -46,18 +48,20 @@ public class GalleryGridAdapter extends RecyclerView.Adapter<GalleryGridAdapter.
         }
     };
 
-    public static class ImageViewHolder extends RecyclerView.ViewHolder {
+    // Grid view holder for media image
+    public static class MediaViewHolder extends RecyclerView.ViewHolder {
         public View mLayout;
         public ImageView mImage;
 
 
-        public ImageViewHolder(View v) {
+        public MediaViewHolder(View v) {
             super(v);
             mLayout = v;
             mImage = (ImageView) v.findViewById(R.id.gallery_image);
         }
     }
 
+    // Adapter constructor
     public GalleryGridAdapter(ArrayList<ParseObject> videos, int imgDimens, GalleryGridFragment fragment) {
         this.mMedia = videos;
         this.imgDimens = imgDimens;
@@ -65,15 +69,15 @@ public class GalleryGridAdapter extends RecyclerView.Adapter<GalleryGridAdapter.
         this.imgSmallDimens = (int) Math.floor((double) imgDimens * .75);
 
         Picasso.Builder picassoBuilder = new Picasso.Builder(fragment.getContext());
-        picassoBuilder.downloader(new OkHttpDownloader(mFragment.getContext()));
         picassoInstance = picassoBuilder.build();
     }
 
     // Create new views (invoked by the layout manager)
     @Override
-    public GalleryGridAdapter.ImageViewHolder onCreateViewHolder(ViewGroup parent,
-                                                               int viewType) {
+    public MediaViewHolder onCreateViewHolder(ViewGroup parent,
+                                              int viewType) {
         View view;
+        // Inflate view layout besed on fragment type
         if (mFragment.mType == GalleryGridFragment.TYPE_PHOTO_GRID) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_photo_grid, parent, false);
         } else {
@@ -85,26 +89,31 @@ public class GalleryGridAdapter extends RecyclerView.Adapter<GalleryGridAdapter.
         layoutParams.height = imgDimens;
         view.setLayoutParams(layoutParams);
 
-        ImageViewHolder vh = new ImageViewHolder(view);
+        MediaViewHolder vh = new MediaViewHolder(view);
         return vh;
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final ImageViewHolder holder, int position) {
+    public void onBindViewHolder(final MediaViewHolder holder, int position) {
 
         final ParseObject thisMedium = mMedia.get(position);
 
+        // Set on click listener
         holder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // If selection mode is off...
                 if (mFragment.numSelected == 0) {
                     if (mFragment.mType == GalleryGridFragment.TYPE_PHOTO_GRID) {
+                        // Show large photo if it is a photo grid
                         mFragment.showLargePhoto(holder.mImage, (Picture) thisMedium);
                     } else {
+                        // Play video if it is a video grid
                         mFragment.playVideo((Video) thisMedium);
                     }
                 } else {
+                    // Toggle selection of the item
                     if (mFragment.toggleItemSelected(thisMedium)) {
                         SystemUtilities.zoomView(holder.mImage, imgDimens, imgSmallDimens, resizeListener);
                     } else {
@@ -114,6 +123,7 @@ public class GalleryGridAdapter extends RecyclerView.Adapter<GalleryGridAdapter.
             }
         });
 
+        // Select item on long click
         holder.mImage.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -126,6 +136,7 @@ public class GalleryGridAdapter extends RecyclerView.Adapter<GalleryGridAdapter.
             }
         });
 
+        // Resize image based on whether it is selected
         ViewGroup.LayoutParams imageParams = holder.mImage.getLayoutParams();
         if (mFragment.mGridSelectionMap.get(thisMedium.getObjectId())) {
             imageParams.height = imgSmallDimens;
@@ -135,21 +146,22 @@ public class GalleryGridAdapter extends RecyclerView.Adapter<GalleryGridAdapter.
             imageParams.height = imgDimens;
             imageParams.width = imgDimens;
         }
-
         holder.mImage.setLayoutParams(imageParams);
 
+        // Get thumbnail url
         String thumbnailUrl;
         if (mFragment.mType == GalleryGridFragment.TYPE_PHOTO_GRID) {
-            thumbnailUrl = ((Picture)thisMedium).getThumbnail().getUrl();
+            thumbnailUrl = ((Picture) thisMedium).getThumbnail().getUrl();
         } else {
-            thumbnailUrl = ((Video)thisMedium).getThumbnail().getUrl();
+            thumbnailUrl = ((Video) thisMedium).getThumbnail().getUrl();
         }
 
+        // Display thumbnail
         RequestCreator thisPictureRequest = picassoInstance.load(thumbnailUrl).resize(imgDimens, imgDimens).centerCrop();
-
         if (SystemUtilities.isOnlineResult) {
             thisPictureRequest.into(holder.mImage);
         } else {
+            // Only use cache if offline
             thisPictureRequest.networkPolicy(NetworkPolicy.OFFLINE).into(holder.mImage);
         }
     }

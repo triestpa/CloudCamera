@@ -2,6 +2,9 @@ package com.triestpa.cloudcamera.Utilities;
 
 import android.graphics.BitmapFactory;
 
+/**
+ * Utilities to assist in dealing with bitmaps
+ */
 public class BitmapUtilities {
 
     //http://developer.android.com/training/displaying-bitmaps/load-bitmap.html

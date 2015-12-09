@@ -7,11 +7,14 @@ import com.parse.ParseFile;
 import com.triestpa.cloudcamera.CloudCameraApplication;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
+/**
+ * Abstract class to store media uploads
+ */
 public abstract class Upload {
     private static String TAG = Upload.class.getName();
 
-    private ParseFile parseFile;
-    private int progress;
+    private ParseFile parseFile; // The file to be uploaded
+    private int progress; // Upload progress percentage
     private boolean completed;
     private boolean aborted;
 

@@ -23,7 +23,7 @@ import com.triestpa.cloudcamera.R;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
 /**
- * A login screen that offers login via email/password.
+ * Create Account Activity: Input username and password to create account
  */
 public class CreateAccountActivity extends AppCompatActivity {
     final static String TAG = CreateAccountActivity.class.getName();
@@ -40,12 +40,13 @@ public class CreateAccountActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
 
+        // Setup action bar
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        // Set up the login form.
+        // Set up the account create form.
         mUsernameView = (EditText) findViewById(R.id.username);
         mPasswordView = (EditText) findViewById(R.id.password);
         mConfirmPasswordView = (EditText) findViewById(R.id.confirm_password);
@@ -62,6 +63,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         mProgressView = findViewById(R.id.login_progress);
     }
 
+    // Check fields and create account
     private void attemptCreateAccount() {
         // Reset errors.
         mUsernameView.setError(null);
@@ -89,6 +91,7 @@ public class CreateAccountActivity extends AppCompatActivity {
             cancel = true;
         }
 
+        // Check if passwords match
         if (!password.contentEquals(confirmPassword)) {
             mPasswordView.setError(getString(R.string.error_password_match));
             mConfirmPasswordView.setError(getString(R.string.error_password_match));
@@ -112,10 +115,12 @@ public class CreateAccountActivity extends AppCompatActivity {
             // perform the user login attempt.
             showProgress(true);
 
+            // Create new parse user
             ParseUser user = new ParseUser();
             user.setUsername(username);
             user.setPassword(password);
 
+            // Send new user to Parse database
             user.signUpInBackground(new SignUpCallback() {
                 public void done(ParseException e) {
                     if (e == null) {
@@ -123,7 +128,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                         Intent intent = new Intent(CreateAccountActivity.this, CameraActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
+                        startActivity(intent); // Start camera activity
                     } else {
                         showProgress(false);
                         SystemUtilities.reportError(TAG, "Error: " + e.getMessage());
@@ -133,8 +138,9 @@ public class CreateAccountActivity extends AppCompatActivity {
         }
     }
 
+    // Password must be at least 6 characters
     private boolean isPasswordValid(String password) {
-        return password.length() > 4;
+        return password.length() > 6;
     }
 
     /**

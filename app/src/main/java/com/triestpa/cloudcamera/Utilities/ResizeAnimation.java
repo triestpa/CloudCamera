@@ -6,11 +6,12 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
 /**
- * an animation for resizing the view.
- * http://stackoverflow.com/questions/8140571/resizing-layouts-programatically-as-animation
+ * Resize Animation: An animation for resizing the view.
+ * Addapted from http://stackoverflow.com/questions/8140571/resizing-layouts-programatically-as-animation
  */
 public class ResizeAnimation extends Animation {
     private View mView;
+
     private float mToHeight;
     private float mFromHeight;
 

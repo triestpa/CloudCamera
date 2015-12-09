@@ -13,24 +13,27 @@ import com.triestpa.cloudcamera.R;
 
 import java.util.ArrayList;
 
+/**
+ * Upload Grid Activity: Show a grid of ongoing and completed uploads for the current app session
+ */
 public class UploadGridActivity extends AppCompatActivity {
     final static String TAG = UploadGridActivity.class.getName();
 
-    private boolean mRunning;
     private UploadGridAdapter mAdapter;
 
+    private boolean mRunning; // If the auto-refresh runnable is running
     private Handler mHandler = new Handler();
-
     private Runnable mUpdater = new Runnable() {
         @Override
         public void run() {
-            // check if still in focus
+            // Check if still in focus
             if (!mRunning) return;
 
+            // Refresh the adapter views
             mAdapter.notifyDataSetChanged();
 
-            // schedule next run
-            mHandler.postDelayed(this, 250); // set time here to refresh views
+            // Refresh views again in .25 seconds
+            mHandler.postDelayed(this, 250);
         }
     };
 
@@ -38,11 +41,14 @@ public class UploadGridActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_status);
+
+        // Setup action bar
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        // Setup upload grid
         ArrayList<Upload> uploads = UploadManager.getInstance().getUploads();
         RecyclerView uploadGrid = (RecyclerView) findViewById(R.id.upload_grid);
 
@@ -57,16 +63,21 @@ public class UploadGridActivity extends AppCompatActivity {
 
             mAdapter = new UploadGridAdapter(uploads, this);
             uploadGrid.setAdapter(mAdapter);
-
-            mRunning = true;
-            // start first run by hand
-            mHandler.post(mUpdater);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // start grid auto-refresh
+        mRunning = true;
+        mHandler.post(mUpdater);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mRunning= false;
+        mRunning= false; // Stop auto-refresh on pause
     }
 }

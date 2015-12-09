@@ -32,18 +32,26 @@ import java.io.IOException;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
+/**
+ * Photo View Activity: Show a fullscreen, zoomable view of selected image
+ */
 public class PhotoViewActivity extends AppCompatActivity {
+
+    // Set constants
     private static final String TAG = PhotoViewActivity.class.getName();
     public static final String EXTRA_PHOTO_ID = "PHOTO_ID";
     public static final String EXTRA_THUMBNAIL_URL = "THUMBNAIL_URL";
     public static final String EXTRA_THUMBNAIL_BYTES = "THUMBNAIL BYTES";
     public static final String EXTRA_FULLSIZE_URL = "FULLSIZE_URL";
 
+    // UI references
     private ImageView mImageView;
     private PhotoViewAttacher mAttacher;
 
+    // Picture data
     private String mFullsizeURL, mThumbnailURL, mPhotoID;
 
+    // Screensize
     private int mWidth, mHeight;
 
     @Override
@@ -51,6 +59,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_view);
 
+        // Set back arrow button to emulate physical back button
         ImageButton backButton = (ImageButton) findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,14 +68,16 @@ public class PhotoViewActivity extends AppCompatActivity {
             }
         });
 
+        // Setup delete photo button
         ImageButton deleteButton = (ImageButton) findViewById(R.id.delete_button);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Show confirm dialog
                 SystemUtilities.buildDialog(PhotoViewActivity.this, "Delete Photo From Cloud?", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         if (SystemUtilities.isOnline(PhotoViewActivity.this)) {
-                            deletePhoto();
+                            deletePhoto();// Delete file if device is online
                         }
                         else {
                             SystemUtilities.reportError(TAG, "Error Deleting Image: Device is Offline");
@@ -76,13 +87,16 @@ public class PhotoViewActivity extends AppCompatActivity {
             }
         });
 
+        // Setup download photo button
         ImageButton downloadButton = (ImageButton) findViewById(R.id.download_button);
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Show confirm dialog
                 SystemUtilities.buildDialog(PhotoViewActivity.this, "Downlaod Photo From Cloud?", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         if (SystemUtilities.isOnline(PhotoViewActivity.this)) {
+                            // Download file if device is online
                             SystemUtilities.downloadFile(mFullsizeURL, mPhotoID, SystemUtilities.MEDIA_TYPE_IMAGE);
                         }
                         else {
@@ -93,55 +107,37 @@ public class PhotoViewActivity extends AppCompatActivity {
             }
         });
 
+        // Get window size
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         mWidth = size.x;
         mHeight = size.y;
 
+        // Get photo data from intent
         Intent intent = getIntent();
         mPhotoID = intent.getStringExtra(EXTRA_PHOTO_ID);
         mFullsizeURL = intent.getStringExtra(EXTRA_FULLSIZE_URL);
         mThumbnailURL = intent.getStringExtra(EXTRA_THUMBNAIL_URL);
+
+        // Show thumbnail in imageview
         byte[] thumbnailBytes = intent.getByteArrayExtra(EXTRA_THUMBNAIL_BYTES);
         Bitmap thumbnailBitmap = BitmapFactory.decodeByteArray(thumbnailBytes, 0, thumbnailBytes.length);
         mImageView = (ImageView) findViewById(R.id.fullsize_image);
         mImageView.setImageBitmap(thumbnailBitmap);
-        mAttacher = new PhotoViewAttacher(mImageView);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+        mAttacher = new PhotoViewAttacher(mImageView); // Make zoomable
 
-        if (mImageView == null) {
-            mImageView = (ImageView) findViewById(R.id.fullsize_image);
-            mAttacher = new PhotoViewAttacher(mImageView);
-        }
-
+        // Download fullsize image
         if (SystemUtilities.isOnline(this)) {
-            downloadImage(mFullsizeURL);
-        }
-        else {
+            ImageDownloadHandler handler = new ImageDownloadHandler();
+            handler.execute(mFullsizeURL);
+        } else {
             SystemUtilities.reportError(TAG, "Error Downloading Fullsize Image: Device is Offline");
         }
     }
 
-    @Override
-    public void onTrimMemory(int level) {
-        if (level == TRIM_MEMORY_UI_HIDDEN) {
-            mImageView = null;
-            mAttacher = null;
-            System.gc();
-        }
-        super.onTrimMemory(level);
-    }
-
-    private void downloadImage(String url) {
-        ImageDownloadHandler handler = new ImageDownloadHandler();
-        handler.execute(url);
-    }
-
+    // Async task to download image
     public class ImageDownloadHandler extends AsyncTask<String, Void, Bitmap> {
 
         OkHttpClient client = new OkHttpClient();
@@ -149,18 +145,22 @@ public class PhotoViewActivity extends AppCompatActivity {
         @Override
         protected Bitmap doInBackground(String... params) {
 
+            // Build HTTP request
             Request.Builder builder = new Request.Builder();
             builder.url(params[0]);
-
             Request request = builder.build();
 
             try {
+                // Execute request
                 Response response = client.newCall(request).execute();
+
+                // Read data from response
                 byte[] bytes = response.body().bytes();
 
                 if (bytes != null && bytes.length > 0) {
 
-                    //http://developer.android.com/training/displaying-bitmaps/load-bitmap.html
+                    // Decode bitmap to size that is optimal for the screen
+                    // Adapted from: http://developer.android.com/training/displaying-bitmaps/load-bitmap.html
                     final BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inJustDecodeBounds = true;
 
@@ -198,18 +198,26 @@ public class PhotoViewActivity extends AppCompatActivity {
         }
     }
 
+    // Delete the photo from Parse
     private void deletePhoto() {
         Toast.makeText(CloudCameraApplication.getAppContext(), "Deleting...", Toast.LENGTH_SHORT).show();
         ParseQuery<Picture> query = ParseQuery.getQuery(Picture.class);
+
+        // No need to use bandwidth to find photo, it must be cached
+        query.fromLocalDatastore();
+
+        // Find the photo by ID
         query.getInBackground(mPhotoID, new GetCallback<Picture>() {
-            public void done(Picture picture, ParseException e) {
+            public void done(final Picture picture, ParseException e) {
                 if (e == null) {
+                    // Delete photo
                     picture.deleteInBackground(new DeleteCallback() {
                         @Override
                         public void done(ParseException e) {
                             if (e == null) {
+                                picture.unpinInBackground();
                                 Toast.makeText(CloudCameraApplication.getAppContext(), "Photo Deleted", Toast.LENGTH_SHORT).show();
-                                PhotoViewActivity.this.onBackPressed();
+                                PhotoViewActivity.this.onBackPressed(); // Return to gallery
                             } else {
                                 Log.e(TAG, e.getMessage());
                                 SystemUtilities.reportError(TAG, "Error Deleting File: " + e.getMessage());

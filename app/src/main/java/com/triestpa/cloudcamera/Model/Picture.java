@@ -5,6 +5,9 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+/**
+ * ParseObject extension for Picture objects
+ */
 @ParseClassName("Picture")
 public class Picture extends ParseObject {
     public ParseFile getPhoto() {

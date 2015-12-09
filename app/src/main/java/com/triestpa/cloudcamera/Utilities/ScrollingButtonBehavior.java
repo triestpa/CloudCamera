@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 /**
+ * Coordinator Layout Behavior to make FAB scroll in sync with toolbar
  * Adapted from <https://mzgreen.github.io/2015/06/23/How-to-hideshow-Toolbar-when-list-is-scrolling%28part3%29/>
  */
 public class ScrollingButtonBehavior extends CoordinatorLayout.Behavior<FloatingActionButton> {
@@ -28,9 +29,9 @@ public class ScrollingButtonBehavior extends CoordinatorLayout.Behavior<Floating
         if (dependency instanceof AppBarLayout) {
             CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
             int fabBottomMargin = lp.bottomMargin;
-            int distanceToScroll = fab.getHeight() + fabBottomMargin;
-            float ratio = (float)dependency.getY()/(float)toolbarHeight;
-            fab.setTranslationY((distanceToScroll * ratio) + toolbarHeight - fabBottomMargin);
+            int distanceToScroll = fab.getHeight() + fabBottomMargin; // Scroll the full size of fab and distance to bottom
+            float ratio = (float)dependency.getY()/(float)toolbarHeight; // Scroll in sync with the toolbar
+            fab.setTranslationY((distanceToScroll * ratio) + toolbarHeight - fabBottomMargin); // Move FAB
         }
         return true;
     }

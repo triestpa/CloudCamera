@@ -9,6 +9,9 @@ import com.parse.SaveCallback;
 import com.triestpa.cloudcamera.CloudCameraApplication;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
+/**
+ * Extension of upload class for photo files
+ */
 public class PhotoUpload extends Upload {
     final static String TAG = PhotoUpload.class.getName();
 
@@ -16,6 +19,7 @@ public class PhotoUpload extends Upload {
         super(photoFile);
     }
 
+    // Upload the photo stored in this instance
     public void uploadPhoto() {
         if (!SystemUtilities.isOnline(CloudCameraApplication.getAppContext())) {
             SystemUtilities.reportError(TAG, "Cannot upload photo without internet connection. Visit upload screen to retry.");
@@ -23,6 +27,7 @@ public class PhotoUpload extends Upload {
             return;
         }
 
+        // First save the ParseFile
         final ParseFile picFile = this.getParseFile();
         picFile.saveInBackground(new SaveCallback() {
                                      @Override
@@ -42,12 +47,16 @@ public class PhotoUpload extends Upload {
         );
     }
 
+    // Save the Picture parse object once ParseFile is uploaded
     private void savePhoto(ParseFile photoFile) {
         Picture newPic = new Picture();
         newPic.setPhoto(photoFile);
 
+        // Associate Picture with the current user
         ParseUser thisUser = ParseUser.getCurrentUser();
         newPic.setParseUser(thisUser);
+
+        // Set permissions so that only current user can access
         newPic.setACL(new ParseACL(thisUser));
 
         newPic.saveInBackground(new SaveCallback() {

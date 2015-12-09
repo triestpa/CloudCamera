@@ -18,10 +18,14 @@ public class CloudCameraApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Start crashlytics
         Fabric.with(this, new Crashlytics());
 
+        // Store app context as static variable for use in utility classes
         CloudCameraApplication.context = getApplicationContext();
 
+        // Setup Parse
         ParseObject.registerSubclass(Picture.class);
         ParseObject.registerSubclass(Video.class);
         Parse.enableLocalDatastore(this);

@@ -25,10 +25,16 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * System Utilities: General utilities to provide system functions accross app
+ */
 public class SystemUtilities {
+
+    // Constants
     public final static int MEDIA_TYPE_IMAGE = 1;
     public final static int MEDIA_TYPE_VIDEO = 2;
 
+    // Keep track of whether app is online
     public static boolean isOnlineResult = false;
     public static boolean isOnline(Context context) {
         ConnectivityManager cm =
@@ -38,6 +44,7 @@ public class SystemUtilities {
         return isOnlineResult;
     }
 
+    // Lock the screen orientation
     public static void lockOrientation(Activity activity) {
         int orientation = activity.getRequestedOrientation();
         int rotation = ((WindowManager) activity.getSystemService(
@@ -62,13 +69,12 @@ public class SystemUtilities {
         activity.setRequestedOrientation(orientation);
     }
 
+    // Unlock the screen orientation
     public static void unlockOrientation(Activity activity) {
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
-    /*
-    * Create a File for saving an image or video
-    */
+    // Create a File for saving an image or video
     public static File getOutputMediaFile(int type) {
 
         File mediaCacheDir = CloudCameraApplication.getAppContext().getCacheDir();
@@ -89,11 +95,13 @@ public class SystemUtilities {
     }
 
 
+    // Log and display an error
     public static void reportError(String TAG, String message) {
         Log.e(TAG, message);
         Toast.makeText(CloudCameraApplication.getAppContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+    // Download a file to user directory using system download manager
     public static void downloadFile(String url, String id, int mediatype) {
         Uri videoUri = Uri.parse(url);
         DownloadManager.Request r = new DownloadManager.Request(videoUri);
@@ -116,6 +124,7 @@ public class SystemUtilities {
         dm.enqueue(r);
     }
 
+    // Shortcut for building a dialog with single action
     public static AlertDialog buildDialog(Activity activity, String message, DialogInterface.OnClickListener positiveButtonListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
@@ -134,12 +143,14 @@ public class SystemUtilities {
     }
 
 
+    // Zoom a view from one size to another
     public static void zoomView(final ImageView imageView, int fromDimen, int toDimen, Animation.AnimationListener listener) {
         ResizeAnimation animation = new ResizeAnimation(imageView, fromDimen, fromDimen, toDimen, toDimen);
         animation.setAnimationListener(listener);
         imageView.startAnimation(animation);
     }
 
+    // Get the height of the toolbar
     public static int getToolbarHeight(Context context) {
         final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
                 new int[]{R.attr.actionBarSize});

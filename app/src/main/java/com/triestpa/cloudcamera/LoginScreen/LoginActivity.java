@@ -95,13 +95,15 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
+
+            // Authenticate with Parse
             ParseUser.logInInBackground(username, password, new LogInCallback() {
                 public void done(ParseUser user, ParseException e) {
                     if (e == null) {
                         Intent i = new Intent(LoginActivity.this, CameraActivity.class);
                         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(i);
+                        startActivity(i); // Start camera activity
                     } else {
                         showProgress(false);
                         SystemUtilities.reportError(TAG, "Login Error: " + e.getMessage());
