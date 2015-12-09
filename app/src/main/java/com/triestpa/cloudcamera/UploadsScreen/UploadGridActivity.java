@@ -70,9 +70,11 @@ public class UploadGridActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // start grid auto-refresh
-        mRunning = true;
-        mHandler.post(mUpdater);
+        if (mAdapter != null) {
+            // start grid auto-refresh
+            mRunning = true;
+            mHandler.post(mUpdater);
+        }
     }
 
     @Override

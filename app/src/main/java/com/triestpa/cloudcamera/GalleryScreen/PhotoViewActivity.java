@@ -132,6 +132,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         if (SystemUtilities.isOnline(this)) {
             ImageDownloadHandler handler = new ImageDownloadHandler();
             handler.execute(mFullsizeURL);
+            Toast.makeText(this, "Downloading Full Image...", Toast.LENGTH_SHORT).show();
         } else {
             SystemUtilities.reportError(TAG, "Error Downloading Fullsize Image: Device is Offline");
         }
