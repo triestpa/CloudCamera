@@ -1,4 +1,4 @@
-package com.triestpa.cloudcamera.Camera;
+package com.triestpa.cloudcamera.CameraScreen;
 
 import android.content.Context;
 import android.hardware.Camera;
@@ -11,17 +11,21 @@ import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 import java.io.IOException;
 import java.util.List;
 
-/* A basic Camera preview class
+/**
+ *  A basic Camera preview class
  * This is a SurfaceView that controls how the camera view is displayed.
- * Must coordinate with CameraActivity to handle lifecycle events*/
+ * Must coordinate with CameraActivity to handle lifecycle events
+ */
 @SuppressWarnings("deprecation")
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private String TAG = CameraPreview.class.getName();
-    private SurfaceHolder mHolder;
-    private Camera mCamera;
-    private List<Camera.Size> mSupportedPreviewSizes;
-    private Camera.Size mPreviewSize;
-    private int mWidth, mHeight;
+
+    private SurfaceHolder mHolder; // SurfaceHolder to notify app when surface is created and destroyed
+    private Camera mCamera; // Camera rendering to the surface view
+
+    private List<Camera.Size> mSupportedPreviewSizes; // Preview sizes supported by camera
+    private Camera.Size mPreviewSize; // Optimized preview size
+    private int mWidth, mHeight; // Screen width and height
 
     public CameraPreview(Context context, Camera camera, int rotation) {
         super(context);
@@ -40,10 +44,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
+        // Store the screen width and height for using in claculating preview size
         mWidth = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
         mHeight = resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
         setMeasuredDimension(mWidth, mHeight);
 
+        // Calculate preview size
         if (mSupportedPreviewSizes != null) {
             mPreviewSize = getOptimalPreviewSize(mSupportedPreviewSizes, mWidth, mHeight);
         }
@@ -104,6 +110,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
     }
 
+    // Set the preview size to an optimal size for the screen and camera
     private void setPreviewSize() {
         mSupportedPreviewSizes = mCamera.getParameters().getSupportedPreviewSizes();
         mPreviewSize = getOptimalPreviewSize(mSupportedPreviewSizes, mWidth, mHeight);
@@ -112,7 +119,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mCamera.setParameters(parameters);
     }
 
-    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
+    // Get optimal preview size based on available sizes, adapted from <http://stackoverflow.com/a/19592492>
+    public static Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
         final double ASPECT_TOLERANCE = 0.1;
         double targetRatio=(double)h / w;
 

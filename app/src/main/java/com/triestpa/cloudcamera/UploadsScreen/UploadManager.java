@@ -1,4 +1,6 @@
-package com.triestpa.cloudcamera.Upload;
+package com.triestpa.cloudcamera.UploadsScreen;
+
+import com.triestpa.cloudcamera.Model.Upload;
 
 import java.util.ArrayList;
 

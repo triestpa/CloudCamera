@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Gallery.VideoGallery.VideoGridFragment">
+    tools:context=".GalleryScreen.VideoGallery.VideoGridFragment">
 
     <TextView
         android:id="@+id/empty_cloud_text"

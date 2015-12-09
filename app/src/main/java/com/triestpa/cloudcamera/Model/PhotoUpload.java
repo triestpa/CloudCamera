@@ -1,4 +1,4 @@
-package com.triestpa.cloudcamera.Upload;
+package com.triestpa.cloudcamera.Model;
 
 import com.parse.ParseACL;
 import com.parse.ParseException;
@@ -7,7 +7,6 @@ import com.parse.ParseUser;
 import com.parse.ProgressCallback;
 import com.parse.SaveCallback;
 import com.triestpa.cloudcamera.CloudCameraApplication;
-import com.triestpa.cloudcamera.Model.Picture;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
 public class PhotoUpload extends Upload {

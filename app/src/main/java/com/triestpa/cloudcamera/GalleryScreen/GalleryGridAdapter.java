@@ -1,4 +1,4 @@
-package com.triestpa.cloudcamera.Gallery;
+package com.triestpa.cloudcamera.GalleryScreen;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

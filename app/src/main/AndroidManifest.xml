@@ -12,11 +12,6 @@
 
     <uses-feature android:name="android.hardware.camera" />
 
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-
     <application
         android:name=".CloudCameraApplication"
         android:allowBackup="true"
@@ -25,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Camera.CameraActivity"
+            android:name=".CameraScreen.CameraActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -34,47 +29,47 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Gallery.GalleryActivity"
+            android:name=".GalleryScreen.GalleryActivity"
             android:label="@string/title_activity_gallery"
-            android:parentActivityName=".Camera.CameraActivity"
+            android:parentActivityName=".CameraScreen.CameraActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Camera.CameraActivity" />
+                android:value=".CameraScreen.CameraActivity" />
         </activity>
         <activity
-            android:name=".Gallery.PhotoViewActivity"
+            android:name=".GalleryScreen.PhotoViewActivity"
             android:label="@string/title_activity_image_view"
-            android:parentActivityName=".Gallery.GalleryActivity"
+            android:parentActivityName=".GalleryScreen.GalleryActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Gallery.GalleryActivity" />
+                android:value=".GalleryScreen.GalleryActivity" />
         </activity>
         <activity
-            android:name=".Gallery.VideoViewActivity"
+            android:name=".GalleryScreen.VideoViewActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Upload.UploadGridActivity"
+            android:name=".UploadsScreen.UploadGridActivity"
             android:label="@string/title_activity_upload_status"
-            android:parentActivityName=".Camera.CameraActivity">
+            android:parentActivityName=".CameraScreen.CameraActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Camera.CameraActivity" />
+                android:value=".CameraScreen.CameraActivity" />
             >
         </activity>
         <activity
-            android:name=".User.LoginActivity"
+            android:name=".LoginScreen.LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/LoginTheme.NoActionBar" />
         <activity
-            android:name=".User.CreateAccountActivity"
+            android:name=".LoginScreen.CreateAccountActivity"
             android:theme="@style/LoginTheme"
             android:label="@string/title_activity_create_account"
-            android:parentActivityName=".User.LoginActivity">
+            android:parentActivityName=".LoginScreen.LoginActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.triestpa.cloudcamera.User.LoginActivity" />
+                android:value="com.triestpa.cloudcamera.LoginScreen.LoginActivity" />
         </activity>
         <meta-data
             android:name="io.fabric.ApiKey"

@@ -1,4 +1,4 @@
-package com.triestpa.cloudcamera.Gallery;
+package com.triestpa.cloudcamera.GalleryScreen;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -199,6 +199,7 @@ public class PhotoViewActivity extends AppCompatActivity {
     }
 
     private void deletePhoto() {
+        Toast.makeText(CloudCameraApplication.getAppContext(), "Deleting...", Toast.LENGTH_SHORT).show();
         ParseQuery<Picture> query = ParseQuery.getQuery(Picture.class);
         query.getInBackground(mPhotoID, new GetCallback<Picture>() {
             public void done(Picture picture, ParseException e) {

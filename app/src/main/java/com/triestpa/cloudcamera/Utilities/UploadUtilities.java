@@ -6,9 +6,9 @@ import android.media.ThumbnailUtils;
 import android.provider.MediaStore;
 
 import com.parse.ParseFile;
-import com.triestpa.cloudcamera.Upload.PhotoUpload;
-import com.triestpa.cloudcamera.Upload.UploadManager;
-import com.triestpa.cloudcamera.Upload.VideoUpload;
+import com.triestpa.cloudcamera.Model.PhotoUpload;
+import com.triestpa.cloudcamera.UploadsScreen.UploadManager;
+import com.triestpa.cloudcamera.Model.VideoUpload;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;

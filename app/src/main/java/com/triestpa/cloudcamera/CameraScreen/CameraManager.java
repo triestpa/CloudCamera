@@ -1,4 +1,4 @@
-package com.triestpa.cloudcamera.Camera;
+package com.triestpa.cloudcamera.CameraScreen;
 
 import android.app.Activity;
 import android.hardware.Camera;
@@ -8,14 +8,18 @@ import android.util.Log;
 import android.view.Surface;
 import android.widget.FrameLayout;
 
-import com.triestpa.cloudcamera.Upload.PhotoUpload;
-import com.triestpa.cloudcamera.Upload.VideoUpload;
+import com.triestpa.cloudcamera.Model.PhotoUpload;
+import com.triestpa.cloudcamera.Model.VideoUpload;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 import com.triestpa.cloudcamera.Utilities.UploadUtilities;
 
 import java.io.File;
 import java.io.IOException;
 
+
+/**
+ * Camera Manager: Manage camera instance, settings, and preview.
+ */
 @SuppressWarnings("deprecation")
 class CameraManager {
     private final static String TAG = CameraManager.class.getName();
@@ -24,13 +28,14 @@ class CameraManager {
     private CameraPreview mPreview;
     private MediaRecorder mMediaRecorder;
 
-    private Boolean preview_active;
 
-    public int cameraID = Camera.CameraInfo.CAMERA_FACING_BACK;
-    private String flashStatus = Camera.Parameters.FLASH_MODE_OFF;
-    private boolean isRecording = false;
-    private String mVideoOutputFilePath;
+    // Set initial values for camera settings
     private int mRotate;
+    public int mCameraID = Camera.CameraInfo.CAMERA_FACING_BACK;
+    private String mFlashStatus = Camera.Parameters.FLASH_MODE_OFF;
+    private String mVideoOutputFilePath;
+    private boolean mIsPreviewActive;
+    private boolean mIsRecording = false;
 
     public CameraManager() {
     }
@@ -42,11 +47,11 @@ class CameraManager {
         mCamera = getCameraInstance(camID);
 
         if (mCamera != null) {
-            cameraID = camID;
+            mCameraID = camID;
 
             // Sync the device rotation to the camera rotation
             Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(cameraID, info);
+            Camera.getCameraInfo(mCameraID, info);
             int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
             int degrees = 0;
             switch (rotation) {
@@ -64,27 +69,27 @@ class CameraManager {
                     break;//Landscape right
             }
             int rotate = (info.orientation - degrees + 360) % 360;
-
             mRotate = rotate;
-
             Camera.Parameters params = mCamera.getParameters();
             params.setRotation(rotate);
 
+            // Set initial flash mode to off
             if (params.getFlashMode() != null) {
                 params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
             }
 
+            // Apply settings to camera
             mCamera.setParameters(params);
 
+            // Sync preview rotation to camera rotation
             int previewRotate = rotate;
-            if (cameraID == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                previewRotate = (rotate + 180) % 360;
+            if (mCameraID == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                previewRotate = (rotate + 180) % 360; // Rotate extra 180 degrees for front camera
             }
 
-            // Create our Preview view and set it as the content of our
-            // activity.
+            // Create our Preview view and set it as the content of our activity.
             mPreview = new CameraPreview(activity, mCamera, previewRotate);
-            preview_active = true;
+            mIsPreviewActive = true;
             preview.addView(mPreview);
         }
         else {
@@ -151,8 +156,8 @@ class CameraManager {
         mMediaRecorder.setOrientationHint(mRotate);
 
         // Always use low-quality videos - Parse does not accept if they are larger than 10mb
-        if (CamcorderProfile.hasProfile(cameraID, CamcorderProfile.QUALITY_LOW)) {
-            mMediaRecorder.setProfile(CamcorderProfile.get(cameraID, CamcorderProfile.QUALITY_LOW));
+        if (CamcorderProfile.hasProfile(mCameraID, CamcorderProfile.QUALITY_LOW)) {
+            mMediaRecorder.setProfile(CamcorderProfile.get(mCameraID, CamcorderProfile.QUALITY_LOW));
         }
         else {
             SystemUtilities.reportError(TAG, "Error Setting Up Video Recorder");
@@ -192,9 +197,11 @@ class CameraManager {
     /**
      * ----- Camera Customization Methods -----
      */
+
+    // Toggle the flash setting on the camera, return true if flash is on
     public boolean toggleFlash() {
         // Not applicable if front facing camera is selected
-        if (cameraID == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+        if (mCameraID == Camera.CameraInfo.CAMERA_FACING_FRONT) {
             return false;
         }
 
@@ -209,11 +216,11 @@ class CameraManager {
                 .contentEquals(Camera.Parameters.FLASH_MODE_ON)) {
             // turn flash off
             params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-            flashStatus = Camera.Parameters.FLASH_MODE_OFF;
+            mFlashStatus = Camera.Parameters.FLASH_MODE_OFF;
         } else {
             // turn flash on
             params.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
-            flashStatus = Camera.Parameters.FLASH_MODE_ON;
+            mFlashStatus = Camera.Parameters.FLASH_MODE_ON;
         }
 
         try {
@@ -225,31 +232,32 @@ class CameraManager {
             return false;
         }
 
-
-        if (flashStatus.contentEquals(Camera.Parameters.FLASH_MODE_ON)) {
+        // Return true if flash is on
+        if (mFlashStatus.contentEquals(Camera.Parameters.FLASH_MODE_ON)) {
             return true;
         } else {
             return false;
         }
     }
 
+    // Toggle front and back cameras, return true if back-facing camera is selected
     public boolean swapCamera(FrameLayout preview, Activity activity) {
         if (Camera.getNumberOfCameras() >= 2) {
             // must remove view before swapping it
             stopPreview(preview);
             releaseCamera();
-            if (cameraID == Camera.CameraInfo.CAMERA_FACING_BACK) {
+            if (mCameraID == Camera.CameraInfo.CAMERA_FACING_BACK) {
                 // switch to front facing camera
                 cameraInit(Camera.CameraInfo.CAMERA_FACING_FRONT, activity, preview);
 
                 // the flash is disabled if front camera is in use
-                flashStatus = Camera.Parameters.FLASH_MODE_OFF;
+                mFlashStatus = Camera.Parameters.FLASH_MODE_OFF;
             } else {
                 // switch to back facing camera
                 cameraInit(Camera.CameraInfo.CAMERA_FACING_BACK, activity, preview);
             }
 
-            if (cameraID == Camera.CameraInfo.CAMERA_FACING_BACK) {
+            if (mCameraID == Camera.CameraInfo.CAMERA_FACING_BACK) {
                 return true;
             } else {
                 return false;
@@ -264,11 +272,13 @@ class CameraManager {
     /**
      * ----- Media Capture Methods -----
      */
+
+    // Trigger taking a picture
     public void takePicture() {
-        if (preview_active) {
+        if (mIsPreviewActive) {
             // get an image from the camera
             mCamera.takePicture(null, null, mPicture);
-            preview_active = false;
+            mIsPreviewActive = false;
         }
     }
 
@@ -281,7 +291,7 @@ class CameraManager {
             // reset to preview to take another pic
             mCamera.stopPreview();
             mCamera.startPreview();
-            preview_active = true;
+            mIsPreviewActive = true;
             PhotoUpload photoUpload = UploadUtilities.preparePhotoUpload(picData);
 
             if (photoUpload != null) {
@@ -290,13 +300,14 @@ class CameraManager {
         }
     };
 
+    // Toggle recording a video
     public boolean toggleRecording() {
-        if (isRecording) {
+        if (mIsRecording) {
             // stop recording and release camera
             mMediaRecorder.stop();  // stop the recording
             releaseMediaRecorder(); // release the MediaRecorder object
             mCamera.lock();         // take camera access back from MediaRecorder
-            isRecording = false;
+            mIsRecording = false;
             Log.i(TAG, "Video Recorded");
             VideoUpload videoUpload = UploadUtilities.prepareVideoUpload(mVideoOutputFilePath);
             if (videoUpload != null) {
@@ -309,13 +320,13 @@ class CameraManager {
             // initialize video camera
             if (prepareVideoRecorder()) {
                 mMediaRecorder.start();
-                isRecording = true;
+                mIsRecording = true;
             } else {
                 // prepare didn't work, release the camera
                 releaseMediaRecorder();
                 Log.e(TAG, "Prepare Video Recorder Failed");
             }
         }
-        return isRecording;
+        return mIsRecording;
     }
 }

@@ -1,4 +1,4 @@
-package com.triestpa.cloudcamera.Upload;
+package com.triestpa.cloudcamera.UploadsScreen;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,6 +8,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.triestpa.cloudcamera.Model.Upload;
 import com.triestpa.cloudcamera.R;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.triestpa.cloudcamera.Gallery;
+package com.triestpa.cloudcamera.GalleryScreen;
 
 import android.content.DialogInterface;
 import android.content.Intent;

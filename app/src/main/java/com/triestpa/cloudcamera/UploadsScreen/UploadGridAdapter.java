@@ -1,4 +1,4 @@
-package com.triestpa.cloudcamera.Upload;
+package com.triestpa.cloudcamera.UploadsScreen;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.triestpa.cloudcamera.CloudCameraApplication;
+import com.triestpa.cloudcamera.Model.PhotoUpload;
+import com.triestpa.cloudcamera.Model.Upload;
 import com.triestpa.cloudcamera.R;
 
 import java.util.ArrayList;
