@@ -209,6 +209,8 @@ public class GalleryGridFragment extends Fragment {
                     }
                 } else {
                     mMediaGrid.setVisibility(View.INVISIBLE);
+                    ((GalleryActivity) getActivity()).mFab.setVisibility(View.GONE);
+
                     SystemUtilities.reportError(TAG, "Error Loading Photos: " + e.getMessage());
                 }
             }
@@ -219,6 +221,7 @@ public class GalleryGridFragment extends Fragment {
     private void setNewPhotos(List<Picture> pictures) {
         if (pictures == null || pictures.isEmpty()) {
             mMediaGrid.setVisibility(View.INVISIBLE);
+            ((GalleryActivity) getActivity()).mFab.setVisibility(View.GONE);
         } else {
             // Replace the previous dataset.
             mDisplayedMedia.clear();
@@ -230,12 +233,10 @@ public class GalleryGridFragment extends Fragment {
             numSelected = 0;
 
             // Update grid with new results
-            //((PhotoGridAdapter) mAdapter).setData(pictures);
             mAdapter.notifyDataSetChanged();
             mSwipeRefreshLayout.setRefreshing(false);
             mMediaGrid.setVisibility(View.VISIBLE);
-
-
+            ((GalleryActivity) getActivity()).mFab.setVisibility(View.VISIBLE);
         }
     }
 
@@ -266,6 +267,7 @@ public class GalleryGridFragment extends Fragment {
                                            }
                                        } else {
                                            mMediaGrid.setVisibility(View.INVISIBLE);
+                                           ((GalleryActivity) getActivity()).mFab.setVisibility(View.GONE);
                                            SystemUtilities.reportError(TAG, "Error Loading Videos: " + e.getMessage());
                                        }
                                    }
@@ -278,6 +280,7 @@ public class GalleryGridFragment extends Fragment {
     private void setNewVideos(List<Video> videos) {
         if (videos == null || videos.isEmpty()) {
             mMediaGrid.setVisibility(View.INVISIBLE);
+            ((GalleryActivity) getActivity()).mFab.setVisibility(View.GONE);
         } else {
             // Replace the previous dataset.
             mDisplayedMedia.clear();
@@ -289,10 +292,10 @@ public class GalleryGridFragment extends Fragment {
             numSelected = 0;
 
             // Update grid with new results
-            //((VideoGridAdapter) mAdapter).setData(videos);
             mAdapter.notifyDataSetChanged();
             mSwipeRefreshLayout.setRefreshing(false);
             mMediaGrid.setVisibility(View.VISIBLE);
+            ((GalleryActivity) getActivity()).mFab.setVisibility(View.VISIBLE);
         }
     }
 
