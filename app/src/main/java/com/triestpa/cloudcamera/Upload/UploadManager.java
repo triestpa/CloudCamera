@@ -26,4 +26,8 @@ public class UploadManager {
         mUploads.add(upload);
     }
 
+    public void clearUploads() {
+        mUploads.clear();
+    }
+
 }

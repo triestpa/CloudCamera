@@ -76,6 +76,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.triestpa.cloudcamera.User.LoginActivity" />
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="3a3d5bd61b394a629093e0c13abd0df4fe9b90bb" />
     </application>
 
 </manifest>

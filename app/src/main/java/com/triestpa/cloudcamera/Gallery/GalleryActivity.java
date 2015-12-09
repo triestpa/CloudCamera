@@ -20,6 +20,7 @@ import com.parse.LogOutCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.triestpa.cloudcamera.R;
+import com.triestpa.cloudcamera.Upload.UploadManager;
 import com.triestpa.cloudcamera.User.LoginActivity;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
@@ -79,6 +80,7 @@ public class GalleryActivity extends AppCompatActivity {
                             @Override
                             public void done(ParseException e) {
                                 if (e == null) {
+                                    UploadManager.getInstance().clearUploads();
                                     Toast.makeText(GalleryActivity.this, "Logged Out", Toast.LENGTH_SHORT).show();
                                     Intent i = new Intent(GalleryActivity.this, LoginActivity.class);
                                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -126,7 +128,6 @@ public class GalleryActivity extends AppCompatActivity {
         }
         super.onBackPressed();
     }
-
 
     @Override
     public void onTrimMemory(int level) {
