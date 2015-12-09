@@ -76,6 +76,7 @@ public class PhotoUpload extends Upload {
 
     @Override
     public void retryUpload() {
+        PhotoUpload.this.setAborted(false);
         uploadPhoto();
     }
 }

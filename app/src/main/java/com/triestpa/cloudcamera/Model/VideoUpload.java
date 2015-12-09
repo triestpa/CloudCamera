@@ -106,6 +106,7 @@ public class VideoUpload extends Upload {
 
     @Override
     public void retryUpload() {
+        VideoUpload.this.setAborted(false);
         uploadVideo();
     }
 }

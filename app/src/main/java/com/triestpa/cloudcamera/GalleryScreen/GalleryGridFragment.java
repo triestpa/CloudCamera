@@ -134,13 +134,14 @@ public class GalleryGridFragment extends Fragment {
             }
         });
 
+        refresh(); // Refresh
+
         return v;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        refresh(); // Refresh items on resume
     }
 
     @Override
