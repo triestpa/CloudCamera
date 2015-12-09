@@ -7,20 +7,24 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
+import com.parse.ParseObject;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
+import com.triestpa.cloudcamera.Model.Picture;
 import com.triestpa.cloudcamera.Model.Video;
 import com.triestpa.cloudcamera.R;
 import com.triestpa.cloudcamera.Utilities.SystemUtilities;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.ImageViewHolder> {
-    final static String TAG = VideoGridAdapter.class.getName();
-    private ArrayList<Video> mVideos;
+/**
+ * VideoGridAdapter: RecyclerView Adapter to show a grid of videos
+ */
+public class GalleryGridAdapter extends RecyclerView.Adapter<GalleryGridAdapter.ImageViewHolder> {
+    final static String TAG = GalleryGridAdapter.class.getName();
+    private ArrayList<ParseObject> mMedia;
     private GalleryGridFragment mFragment;
     private int imgDimens;
     private int imgSmallDimens;
@@ -28,7 +32,8 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Imag
 
     private Animation.AnimationListener resizeListener = new Animation.AnimationListener() {
         @Override
-        public void onAnimationStart(Animation animation) {}
+        public void onAnimationStart(Animation animation) {
+        }
 
         @Override
         public void onAnimationEnd(Animation animation) {
@@ -53,8 +58,8 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Imag
         }
     }
 
-    public VideoGridAdapter(List<Video> videos, int imgDimens, GalleryGridFragment fragment) {
-        mVideos = (ArrayList<Video>) videos;
+    public GalleryGridAdapter(ArrayList<ParseObject> videos, int imgDimens, GalleryGridFragment fragment) {
+        this.mMedia = videos;
         this.imgDimens = imgDimens;
         this.mFragment = fragment;
         this.imgSmallDimens = (int) Math.floor((double) imgDimens * .75);
@@ -64,25 +69,23 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Imag
         picassoInstance = picassoBuilder.build();
     }
 
-    public void setData(List<Video> videos) {
-        mVideos.clear();
-        mVideos.addAll(videos);
-    }
-
     // Create new views (invoked by the layout manager)
     @Override
-    public VideoGridAdapter.ImageViewHolder onCreateViewHolder(ViewGroup parent,
+    public GalleryGridAdapter.ImageViewHolder onCreateViewHolder(ViewGroup parent,
                                                                int viewType) {
-        // create a new view
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_video_grid, parent, false);
-        // set the view's size, margins, paddings and layout parameters
+        View view;
+        if (mFragment.mType == GalleryGridFragment.TYPE_PHOTO_GRID) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_photo_grid, parent, false);
+        } else {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_video_grid, parent, false);
+        }
 
-        ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
         layoutParams.width = imgDimens;
         layoutParams.height = imgDimens;
-        v.setLayoutParams(layoutParams);
+        view.setLayoutParams(layoutParams);
 
-        ImageViewHolder vh = new ImageViewHolder(v);
+        ImageViewHolder vh = new ImageViewHolder(view);
         return vh;
     }
 
@@ -90,22 +93,19 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Imag
     @Override
     public void onBindViewHolder(final ImageViewHolder holder, int position) {
 
-        final Video thisVideo = mVideos.get(position);
-
-        holder.mImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mFragment.playVideo(thisVideo);
-            }
-        });
+        final ParseObject thisMedium = mMedia.get(position);
 
         holder.mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mFragment.numSelected == 0) {
-                    mFragment.playVideo(thisVideo);
+                    if (mFragment.mType == GalleryGridFragment.TYPE_PHOTO_GRID) {
+                        mFragment.showLargePhoto(holder.mImage, (Picture) thisMedium);
+                    } else {
+                        mFragment.playVideo((Video) thisMedium);
+                    }
                 } else {
-                    if (mFragment.toggleItemSelected(thisVideo)) {
+                    if (mFragment.toggleItemSelected(thisMedium)) {
                         SystemUtilities.zoomView(holder.mImage, imgDimens, imgSmallDimens, resizeListener);
                     } else {
                         SystemUtilities.zoomView(holder.mImage, imgSmallDimens, imgDimens, resizeListener);
@@ -117,7 +117,7 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Imag
         holder.mImage.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (mFragment.toggleItemSelected(thisVideo)) {
+                if (mFragment.toggleItemSelected(thisMedium)) {
                     SystemUtilities.zoomView(holder.mImage, imgDimens, imgSmallDimens, resizeListener);
                 } else {
                     SystemUtilities.zoomView(holder.mImage, imgSmallDimens, imgDimens, resizeListener);
@@ -127,7 +127,7 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Imag
         });
 
         ViewGroup.LayoutParams imageParams = holder.mImage.getLayoutParams();
-        if (mFragment.mGridSelectionMap.get(thisVideo.getObjectId())) {
+        if (mFragment.mGridSelectionMap.get(thisMedium.getObjectId())) {
             imageParams.height = imgSmallDimens;
             imageParams.width = imgSmallDimens;
 
@@ -138,12 +138,18 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Imag
 
         holder.mImage.setLayoutParams(imageParams);
 
+        String thumbnailUrl;
+        if (mFragment.mType == GalleryGridFragment.TYPE_PHOTO_GRID) {
+            thumbnailUrl = ((Picture)thisMedium).getThumbnail().getUrl();
+        } else {
+            thumbnailUrl = ((Video)thisMedium).getThumbnail().getUrl();
+        }
 
-        RequestCreator thisPictureRequest = picassoInstance.load(thisVideo.getThumbnail().getUrl()).resize(imgDimens, imgDimens).centerCrop();
+        RequestCreator thisPictureRequest = picassoInstance.load(thumbnailUrl).resize(imgDimens, imgDimens).centerCrop();
+
         if (SystemUtilities.isOnlineResult) {
             thisPictureRequest.into(holder.mImage);
-        }
-        else {
+        } else {
             thisPictureRequest.networkPolicy(NetworkPolicy.OFFLINE).into(holder.mImage);
         }
     }
@@ -151,7 +157,7 @@ public class VideoGridAdapter extends RecyclerView.Adapter<VideoGridAdapter.Imag
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return mVideos.size();
+        return mMedia.size();
     }
 
 }
