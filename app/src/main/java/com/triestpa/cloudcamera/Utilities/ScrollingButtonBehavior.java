@@ -5,7 +5,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import com.triestpa.cloudcamera.R;
@@ -44,8 +43,7 @@ public class ScrollingButtonBehavior extends CoordinatorLayout.Behavior<Floating
 
 
             float ratio = currentY/(float)toolbarHeight; // Scroll in sync with the toolbar
-            Log.d("ScrollBehavior", "Ratio: " + ratio);
-            fab.setTranslationY(distanceToScroll - (distanceToScroll * ratio));// Move fab
+            fab.setTranslationY(-distanceToScroll * -ratio);// Move fab
         }
         return true;
     }

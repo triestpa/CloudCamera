@@ -59,6 +59,8 @@ public class PhotoViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_view);
 
+        mImageView = (ImageView) findViewById(R.id.fullsize_image);
+
         // Set back arrow button to emulate physical back button
         ImageButton backButton = (ImageButton) findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -122,9 +124,10 @@ public class PhotoViewActivity extends AppCompatActivity {
 
         // Show thumbnail in imageview
         byte[] thumbnailBytes = intent.getByteArrayExtra(EXTRA_THUMBNAIL_BYTES);
-        Bitmap thumbnailBitmap = BitmapFactory.decodeByteArray(thumbnailBytes, 0, thumbnailBytes.length);
-        mImageView = (ImageView) findViewById(R.id.fullsize_image);
-        mImageView.setImageBitmap(thumbnailBitmap);
+        if (thumbnailBytes != null) {
+            Bitmap thumbnailBitmap = BitmapFactory.decodeByteArray(thumbnailBytes, 0, thumbnailBytes.length);
+            mImageView.setImageBitmap(thumbnailBitmap);
+        }
 
         mAttacher = new PhotoViewAttacher(mImageView); // Make zoomable
 

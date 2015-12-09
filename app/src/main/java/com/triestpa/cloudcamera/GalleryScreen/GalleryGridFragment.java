@@ -208,7 +208,7 @@ public class GalleryGridFragment extends Fragment {
                         });
                     }
                 } else {
-                    mSwipeRefreshLayout.setVisibility(View.GONE);
+                    mMediaGrid.setVisibility(View.INVISIBLE);
                     SystemUtilities.reportError(TAG, "Error Loading Photos: " + e.getMessage());
                 }
             }
@@ -218,7 +218,7 @@ public class GalleryGridFragment extends Fragment {
     // Replace grid contents with updated photo list
     private void setNewPhotos(List<Picture> pictures) {
         if (pictures == null || pictures.isEmpty()) {
-            mSwipeRefreshLayout.setVisibility(View.GONE);
+            mMediaGrid.setVisibility(View.INVISIBLE);
         } else {
             // Replace the previous dataset.
             mDisplayedMedia.clear();
@@ -233,7 +233,7 @@ public class GalleryGridFragment extends Fragment {
             //((PhotoGridAdapter) mAdapter).setData(pictures);
             mAdapter.notifyDataSetChanged();
             mSwipeRefreshLayout.setRefreshing(false);
-            mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+            mMediaGrid.setVisibility(View.VISIBLE);
 
 
         }
@@ -265,7 +265,7 @@ public class GalleryGridFragment extends Fragment {
                                                });
                                            }
                                        } else {
-                                           mSwipeRefreshLayout.setVisibility(View.GONE);
+                                           mMediaGrid.setVisibility(View.INVISIBLE);
                                            SystemUtilities.reportError(TAG, "Error Loading Videos: " + e.getMessage());
                                        }
                                    }
@@ -277,7 +277,7 @@ public class GalleryGridFragment extends Fragment {
     // Replace grid contents with updated video list
     private void setNewVideos(List<Video> videos) {
         if (videos == null || videos.isEmpty()) {
-            mSwipeRefreshLayout.setVisibility(View.GONE);
+            mMediaGrid.setVisibility(View.INVISIBLE);
         } else {
             // Replace the previous dataset.
             mDisplayedMedia.clear();
@@ -292,7 +292,7 @@ public class GalleryGridFragment extends Fragment {
             //((VideoGridAdapter) mAdapter).setData(videos);
             mAdapter.notifyDataSetChanged();
             mSwipeRefreshLayout.setRefreshing(false);
-            mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+            mMediaGrid.setVisibility(View.VISIBLE);
         }
     }
 
@@ -306,16 +306,19 @@ public class GalleryGridFragment extends Fragment {
             Intent intent = new Intent(getActivity(), PhotoViewActivity.class);
 
             // Send the picture thumbnail as an extra, to serve as a placeholder image
-            Bitmap thumbnailBitmap = ((BitmapDrawable) ((ImageView) thumbnailView).getDrawable()).getBitmap();
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            thumbnailBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            byte[] bitmapdata = stream.toByteArray();
+            BitmapDrawable imageDrawable = (BitmapDrawable) ((ImageView) thumbnailView).getDrawable();
+            if (imageDrawable != null) {
+                Bitmap thumbnailBitmap = ((BitmapDrawable) ((ImageView) thumbnailView).getDrawable()).getBitmap();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                thumbnailBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] bitmapdata = stream.toByteArray();
+                intent.putExtra(PhotoViewActivity.EXTRA_THUMBNAIL_BYTES, bitmapdata);
+            }
 
             // Send picture id and url with intent
             intent.putExtra(PhotoViewActivity.EXTRA_PHOTO_ID, picture.getObjectId());
             intent.putExtra(PhotoViewActivity.EXTRA_FULLSIZE_URL, picture.getPhoto().getUrl());
             intent.putExtra(PhotoViewActivity.EXTRA_THUMBNAIL_URL, picture.getThumbnail().getUrl());
-            intent.putExtra(PhotoViewActivity.EXTRA_THUMBNAIL_BYTES, bitmapdata);
 
             // Animate the activity transition using the thumbnail as a shared view
             String transitionName = getString(R.string.transition_picture);
